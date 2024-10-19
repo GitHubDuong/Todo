@@ -1,0 +1,93 @@
+<div class="px-2 py-3">
+  <h5>Báo cáo đơn hàng mới</h5>
+  <p-table #dt1 [value]="data" [columns]="columns" [dataKey]="this.optionSelected === 0 ? 'goodName' : 'customerName'"
+    [loading]="loading" [rowHover]="true" styleClass="p-datatable-gridlines sidebar-custom"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'" [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true" scrollDirection="both" [scrollable]="!isMobile" [resizableColumns]="true"
+    [autoLayout]="true">
+    <ng-template pTemplate="caption">
+      <div class="grid p-fluid">
+        <div class="field col-12 md:col-3">
+          <p-calendar [showIcon]="true" inputId="icon" [(ngModel)]="fromDate" dateFormat="dd-mm-yy"
+            [placeholder]="'Ngày bắt đầu'" (onSelect)="onLoad()"></p-calendar>
+        </div>
+        <div class="field col-12 md:col-3">
+          <p-calendar [showIcon]="true" inputId="icon" [(ngModel)]="toDate" dateFormat="dd-mm-yy"
+            [placeholder]="'Ngày kết thúc'" (onSelect)="onLoad()"></p-calendar>
+        </div>
+        <div class="field col-12 md:col-3">
+          <p-dropdown [options]="options" [optionLabel]="'key'" class="w-full" [optionValue]="'value'"
+            [(ngModel)]="optionSelected" [ngModelOptions]="{ standalone: true }" (onChange)="initTableColumn()">
+          </p-dropdown>
+        </div>
+        <div class="field col-12 md:col-3 flex justify-content-end">
+          <button class="p-button-warning w-auto" pButton type="button" [label]="'label.export_excel' | translate"
+            (click)="onChangePrintReport()"></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <ng-container *ngFor="let col of columns">
+          <th [ngClass]="col.class">
+            <span [translate]="col.label"></span>
+          </th>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-data let-expanded="expanded" let-columns="columns">
+      <tr>
+        <ng-container *ngFor="let col of columns">
+          <td *ngIf="col.field === 'expand'" [ngClass]="col.class">
+            <p-button type="button" pRipple [pRowToggler]="rowData" [text]="true" [rounded]="true" [plain]="true"
+              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></p-button>
+          </td>
+          <td *ngIf="col.field !== 'expand'" [ngClass]="col.class">
+            {{ rowData[col.field] }}
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="rowexpansion" let-rowData>
+      <tr>
+        <td class="w-full">
+          <div class="p-3 w-full">
+            <p-table [value]="rowData.items" [columns]="subColumns" class="w-full">
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <ng-container *ngFor="let col of columns">
+                    <th [ngClass]="col.class">
+                      <span [translate]="col.label"></span>
+                    </th>
+                  </ng-container>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-item let-columns="columns" let-index="rowIndex">
+                <tr>
+                  <ng-container *ngFor="let col of columns">
+                    <td class="justify-content-center" *ngIf="col.field === 'index'" [ngClass]="col.class">
+                      {{ index + 1 }}
+                    </td>
+                    <td *ngIf="col.field !== 'index'" [ngClass]="col.class" style="height: 32px;">
+                      {{ item[col.field] }}
+                    </td>
+                  </ng-container>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr>
+                  <td colspan="6">Không có dữ liệu.</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>    
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="w-full pt-4 pb-4">Không có dữ liệu.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

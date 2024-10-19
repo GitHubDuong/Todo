@@ -1,0 +1,14 @@
+<p-dialog header="In QR" [(visible)]="display" [style]="{width: '50vw'}">
+  <div class="qr-code-container" #qrCodesContainer>
+    <div class="qr-code-row" *ngFor="let row of qrCodeRows">
+      <div class="qr-code-item" *ngFor="let qrCode of row">
+        <img [src]="qrCode.url" alt="QR Code">
+        <div class="qr-code-text"><strong>{{ qrCode.text }}</strong></div>
+      </div>
+    </div>
+  </div>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-print" (click)="showPrintDialog()" label="In" styleClass="p-button-text"></p-button>
+    <p-button icon="pi pi-check" (click)="toggleDialog()" label="Ok" styleClass="p-button-text"></p-button>
+  </ng-template>
+</p-dialog>

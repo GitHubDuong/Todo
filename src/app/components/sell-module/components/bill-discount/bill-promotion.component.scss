@@ -1,0 +1,37 @@
+:host ::ng-deep .p-frozen-column {
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-datatable-frozen-tbody {
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-progressbar {
+  height: 0.5rem;
+}
+:host ::ng-deep .p-datepicker-group-container {
+  width: 18rem;
+}
+:host ::ng-deep .dropdown-table {
+  height: 100%;
+  width: 100%;
+  .p-dropdown {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+:host ::ng-deep {
+  .p-splitbutton .p-splitbutton-defaultbutton,
+  .p-splitbutton.p-button-rounded > .p-splitbutton-defaultbutton.p-button,
+  .p-splitbutton.p-button-outlined > .p-splitbutton-defaultbutton.p-button,
+  .p-splitbutton-menubutton,
+  .p-splitbutton.p-button-rounded > .p-splitbutton-menubutton.p-button,
+  .p-splitbutton.p-button-outlined > .p-splitbutton-menubutton.p-button,
+  .p-button,
+  .p-inputtext,
+  .p-inputnumber-buttons-stacked .p-inputnumber-button-group,
+  .p-dropdown {
+    height: 38px;
+  }
+}

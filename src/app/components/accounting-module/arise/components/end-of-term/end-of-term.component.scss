@@ -1,0 +1,45 @@
+:host ::ng-deep {
+  .p-button .p-button-icon-left {
+    padding: 0.5rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th {
+    padding: 2px 2px;
+    font-size: 11px;
+  }
+
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 2px 2px;
+    font-size: 11px;
+    min-height: 30px;
+  }
+
+  .p-datatable-scrollable-both .p-datatable-thead > tr > th,
+  .p-datatable-scrollable-both .p-datatable-tbody > tr > td {
+    padding: 0.5rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  .p-button {
+    padding: 0.5rem !important;
+    font-size: 0.875rem !important;
+  }
+
+  .p-dialog .p-dialog-header,
+  .p-inputtext {
+    font-size: 0.875rem !important;
+  }
+
+  .p-dropdown .p-dropdown-panel {
+    min-width: 400px;
+  }
+
+  .p-paginator {
+    height: auto !important;
+  }
+}
+
+.eot {
+  min-height: 60vh;
+}

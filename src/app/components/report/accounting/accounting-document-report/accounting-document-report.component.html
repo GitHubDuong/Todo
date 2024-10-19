@@ -1,0 +1,83 @@
+<div class="print-container">
+  <div id="accounting-container" class="border">
+    <h1 style="text-transform: uppercase;">{{documentType}}</h1>
+
+    <div class="detail">
+      <table class="customer-info">
+        <tr>
+          <td class="column1">Họ tên: {{ dataPrint?.orginalCompanyName }}</td>
+          <td class="column2">Số: {{ dataPrint?.orginalVoucherNumber }}</td>
+        </tr>
+        <tr>
+          <td>Địa chỉ: {{ dataPrint?.orginalAddress }}</td>
+          <td>Ngày: {{ dataPrint.orginalBookDate | date: "dd-MM-YYYY" }}</td>
+        </tr>
+        <tr>
+          <td colspan="2">Diễn giải: {{dataPrint?.orginalDescription}} </td>
+        </tr>
+      </table>
+
+      <table class="product-detail">
+        <thead>
+        <tr>
+          <th>STT</th>
+          <th> Diễn giải </th>
+          <th> Ghi nợ </th>
+          <th> Ghi có </th>
+          <th>Thành tiền</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let item of products;  let i = index">
+          <td class="order-col">{{ i + 1 }}</td>
+          <td> {{ item.orginalDescription }}</td>
+          <td>
+            <span>
+              {{item.debitCode}}<br/>
+              {{item.debitDetailCodeFirst}}<br/>
+              {{item.debitDetailCodeSecond}}
+            </span>  </td>
+          <td> <span>
+            {{item.creditCode}}<br/>
+            {{item.creditDetailCodeFirst}}<br/>
+            {{item.creditDetailCodeSecond}}
+          </span> </td>
+          <td class="amount-col"> {{ item.amount | number }} </td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+          <th scope="row" colspan="2">Cộng</th>
+          <td></td>
+          <td></td>
+          <td class="amount-col">{{ totalAmount | number }}</td>
+        </tr>
+        </tfoot>
+      </table>
+
+      <p>Thành tiền bằng chữ: <b>{{ totalAmountInWord }} đồng</b></p>
+      <p class="description">Ghi chú ...................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................</p>
+    </div>
+
+    <div class="footer">
+      <div class="signature">
+        <div class="column">
+          <p>Người lập</p>
+          <span>(Ký, họ tên)</span>
+        </div>
+        <div class="column">
+          <p>TPBH</p>
+          <span>(Ký, họ tên)</span>
+        </div>
+        <div class="column">
+          <p>KT tổng hợp</p>
+          <span>(Ký, họ tên)</span>
+        </div>
+        <div class="column">
+          <p>Tổng giám đốc</p>
+          <span>(Ký, họ tên)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

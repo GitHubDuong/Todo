@@ -1,0 +1,238 @@
+<div *ngIf="visible" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5 [translate]="'label.goods_promotion'"></h5>
+      <form [formGroup]="detailForm" autocomplete="off">
+        <div class="grid w-full">
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="local">{{ "label.start_date" | translate }}</label>
+            <p-inputMask
+              mask="99/99/9999"
+              slotChar="dd/mm/yyyy"
+              [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('fromAt')}"
+              formControlName="fromAt"
+            ></p-inputMask>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="end_date">{{ "label.end_date" | translate }}</label>
+            <p-inputMask
+              mask="99/99/9999"
+              slotChar="dd/mm/yyyy"
+              [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('toAt')}"
+              formControlName="toAt"
+            ></p-inputMask>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="code">{{ "label.goods_promotion_code" | translate }}</label>
+            <input
+              class="w-full"
+              pInputText
+              type="text"
+              [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('code')}"
+              formControlName="code"
+            />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="outAt"
+            >{{ "label.goods_promotion_name" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <input
+              class="w-full"
+              pInputText
+              type="text"
+              [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('name')}"
+              formControlName="name"
+            />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="reason">{{ "label.goods_promotion_value" | translate }}</label>
+            <p-inputNumber
+              class="w-full"
+              [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('value')}"
+              formControlName="value"
+            ></p-inputNumber>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="reason">{{ "label.goods_promotion_customer" | translate }}</label>
+            <p-dropdown
+              class="w-full"
+              appendTo="body"
+              optionValue="id"
+              optionLabel="name"
+              [options]="customerTypes"
+              [showClear]="true"
+              [filter]="true"
+              [placeholder]="'label.goods_promotion_customer' | translate"
+              [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('customerNote')}"
+              formControlName="customerNote"
+            >
+            </p-dropdown>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="reason">{{ "label.goods_promotion_province" | translate }}</label>
+            <p-dropdown
+              showClear="true"
+              filterBy="name"
+              appendTo="body"
+              optionValue="id"
+              optionLabel="name"
+              [options]="provinces"
+              [filter]="true"
+              [placeholder]="'label.goods_promotion_province' | translate"
+              [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('address')}"
+              formControlName="address"
+            >
+            </p-dropdown>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="note">{{ "label.goods_promotion_note" | translate }}</label>
+            <input
+              id="note"
+              class="w-full"
+              pInputText
+              type="text"
+              [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('note')}"
+              formControlName="note"
+            />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="note">{{ "label.file" | translate }}</label>
+            <button
+              pButton
+              icon="pi pi-upload"
+              (click)="uploadFile.click()"
+              [label]="'button.import' | translate"
+            ></button>
+
+            <input
+              #uploadFile
+              class="hidden"
+              type="file"
+              multiple
+            />
+
+            <small
+              *ngIf="selectedFile"
+              (click)="selectedFile = null; uploadFile.value = null"
+              class="p-error"
+              style="cursor: pointer; margin-top: 10px"
+            >{{ selectedFile.name }}
+            </small>
+          </div>
+        </div>
+      </form>
+
+      <p-table
+        #dt
+        dataKey="id"
+        styleClass="p-datatable-gridlines mt-2"
+        responsiveLayout="scroll'"
+        scrollable="true"
+        scrollDirection="both"
+        [value]="promotionGoods"
+      >
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="w-2 flex justify-content-center">
+              <div class="flex align-items-center">
+                <span [translate]="'label.goods_promotion_success_rate'"></span>
+              </div>
+            </th>
+
+            <th class="w-2 flex justify-content-center">
+              <div class="flex align-items-center">
+                <span [translate]="'label.goods_promotion_discount'"></span>
+              </div>
+            </th>
+
+            <th class="w-2 flex justify-content-center">
+              <div class="flex align-items-center">
+                <span [translate]="'label.goods_promotion_account'"></span>
+              </div>
+            </th>
+
+            <th class="w-2 flex justify-content-center">
+              <div class="flex align-items-center">
+                <span [translate]="'label.goods_promotion_detail1'"></span>
+              </div>
+            </th>
+
+            <th class="w-2 flex justify-content-center">
+              <div class="flex align-items-center">
+                <span [translate]="'label.goods_promotion_detail2'"></span>
+              </div>
+            </th>
+
+            <th
+              *ngIf="isMobile"
+              style="min-width: 80px !important"
+              class="w-2 flex justify-content-start md:justify-content-center"
+            >
+              <button
+                pButton
+                icon="pi pi-plus"
+                (click)="addItem()"
+              ></button>
+            </th>
+
+            <th
+              *ngIf="!isMobile"
+              style="min-width: 80px !important"
+              class="w-2 flex justify-content-start md:justify-content-center"
+              alignFrozen="right"
+              pFrozenColumn
+              [frozen]="true"
+            >
+              <button
+                pButton
+                icon="pi pi-plus"
+                (click)="addItem()"
+              ></button>
+            </th>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex">
+          <app-good-promotion-item [rowIndex]="rowIndex" [rowData]="rowData" (onRemove)="deleteItem(rowIndex)"></app-good-promotion-item>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+          <tr class="p-rowgroup-footer hover:bg-white">
+            <td colspan="12"
+                class="w-full flex justify-content-center pt-4 pb-4 border-left-none border-right-none border-bottom-none">
+              {{ "info.no_data" | translate }}
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="loadingbody">
+          <tr>
+            <td class="w-full pt-4 pb-4">
+              {{ "info.loading" | translate }}
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onBack()"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="submit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

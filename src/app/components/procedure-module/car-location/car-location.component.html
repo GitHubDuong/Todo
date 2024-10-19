@@ -1,0 +1,52 @@
+<app-table-layout
+  *ngIf="!showForm"
+  pageTitle="Quản lý vị trí xe"
+>
+  <ng-template appTemplate="menu">
+    <app-tab-menu [tabItems]="tabMenuList" [(ngModel)]="selectedTab" (onTabChange)="onLoad()"></app-tab-menu>
+  </ng-template>
+  <ng-template appTemplate="action_left">
+    <app-procedure-filter
+      [filter]="filter"
+      (filterChange)="onLoad()"
+    ></app-procedure-filter>
+  </ng-template>
+  <ng-template appTemplate="action_right">
+    <button
+      pButton
+      [label]="'button.addF7' | translate"
+      icon="pi pi-save"
+      (click)="onShowForm()"
+    ></button>
+  </ng-template>
+  <ng-template appTemplate="content">
+    <app-table
+      [loading]="loading"
+      [data]="data"
+      [columns]="columns"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [totalRecords]="totalItem"
+      (load)="onLoad($event)"
+    >
+      <ng-template appTemplate="action" let-item>
+        <button
+          pButton class="p-button-success" icon="pi pi-angle-double-right" (click)="onAccept(item.id)"></button>
+        <button pButton icon="pi pi-search-plus" (click)="onShowForm(item)"></button>
+        <button *ngIf="item.shoulNotAccept"
+                pButton class="p-button-success" icon="pi pi-angle-double-left" (click)="onNotAccept(item.id)"></button>
+        <button *ngIf="item.shoulDelete"
+                pButton class="p-button-danger" icon="pi pi-trash" (click)="onDelete(item.id)"></button>
+        <button
+          pButton class="p-button-info" icon="pi pi-download" (click)="onExport(item.id)"></button>
+      </ng-template>
+    </app-table>
+  </ng-template>
+</app-table-layout>
+<app-car-location-form
+  *ngIf="showForm"
+  [(isDisplay)]="showForm"
+  [item]="selectedItem"
+>
+
+</app-car-location-form>

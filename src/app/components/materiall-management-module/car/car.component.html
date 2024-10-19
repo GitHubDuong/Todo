@@ -1,0 +1,220 @@
+<div *ngIf="!display" class="px-2 py-3">
+  <h5 [translate]="'label.license_plate_car'"></h5>
+  <div class="grid w-full">
+    <div class="field col-12 md:col-4 flex align-items-center">
+      <label htmlFor="km">{{ "label.select_license_plate" | translate }}</label>
+      <p-dropdown
+        class="ml-2"
+        [options]="listCar"
+        [(ngModel)]="carId"
+        optionLabel="licensePlates"
+        [filter]="true"
+        filterBy="licensePlates"
+        [showClear]="true"
+        [optionValue]="'id'"
+        [placeholder]="'label.select_license_plate' | translate"
+        (onChange)="onChangeLicensePlate($event)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <p-table
+    *ngIf="displayCarField"
+    #dt1
+    [value]="carFieldSetup"
+    dataKey="id"
+    [rowHover]="true"
+    styleClass="p-datatable-gridlines mt-2"
+    [paginator]="false"
+    responsiveLayout="scroll'"
+    [showCurrentPageReport]="true"
+    [lazy]="true"
+    scrollable="true"
+    scrollDirection="both"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-2">
+          <div class="flex align-items-center"></div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.numeric_format'"></span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span [translate]="'label.start_time'"></span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span [translate]="'label.end_time'"></span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span [translate]="'label.warning_time'"></span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span [translate]="'label.person_tobe_notified'"></span>
+          </div>
+        </th>
+        <th class="w-4">
+          <div class="flex align-items-center">
+            <span [translate]="'label.file'"></span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span [translate]="'label.note'"></span>
+          </div>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+      <tr>
+        <td class="w-2">
+          {{ item.carFieldName }}
+        </td>
+        <td class="w-1">
+          <p-inputNumber
+            class="w-full"
+            [(ngModel)]="item.valueNumber"
+            [ngModelOptions]="{ standalone: true }"
+          ></p-inputNumber>
+        </td>
+        <td class="w-2">
+          <p-calendar
+            appendTo="body"
+            [showIcon]="true"
+            inputId="icon"
+            [(ngModel)]="item.fromAt"
+            [maxDate]="item.toAt"
+          ></p-calendar>
+        </td>
+        <td class="w-2">
+          <p-calendar
+            appendTo="body"
+            [showIcon]="true"
+            inputId="icon"
+            [(ngModel)]="item.toAt"
+            [minDate]="item.fromAt"
+          ></p-calendar>
+        </td>
+        <td class="w-2">
+          <p-calendar
+            appendTo="body"
+            [showIcon]="true"
+            inputId="icon"
+            [(ngModel)]="item.warningAt"
+            [minDate]="item.fromAt"
+            [maxDate]="item.toAt"
+          ></p-calendar>
+        </td>
+        <td class="w-2">
+          <p-multiSelect
+            class="w-full dropdown-table"
+            [options]="employees"
+            [optionLabel]="'fullName'"
+            [optionValue]="'id'"
+            [appendTo]="'body'"
+            [(ngModel)]="item.userIds"
+            [placeholder]="'label.person_tobe_notified' | translate"
+            [showClear]="true"
+            [filter]="true"
+            [ngModelOptions]="{ standalone: true }"
+          >
+          </p-multiSelect>
+        </td>
+        <td class="w-4">
+          <button
+            pButton
+            icon="pi pi-upload"
+            (click)="uploadFile.click()"
+            [label]=""
+          ></button>
+          <input
+            #uploadFile
+            class="hidden"
+            type="file"
+            (change)="doAttachFile($event, rowIndex)"
+            single
+            [disabled]="selectedFile && selectedFile[rowIndex]?.length >= 4"
+          />
+          <div
+            style="cursor: pointer"
+            class="flex gap-8"
+            *ngIf="selectedFile[rowIndex]"
+          >
+            <button
+              pButton
+              icon="pi pi-times"
+              *ngIf="selectedFile[rowIndex]?.length > 0 "
+              (click)="onRemoveFile(rowIndex)"
+              [label]=""
+            ></button>
+            <div *ngFor="let url of selectedFile[rowIndex]">
+              <img
+                *ngIf="isImageExtension(url['fileId'])"
+                id="{{ url.fileId }}"
+                class="style_prev_kit"
+                (click)="onImageClick(url.fileId)"
+                src="{{ serverImg + url['fileId'] }}"
+                alt="image"
+                style="max-height: 42px"
+              />
+              <app-file-preview
+                *ngIf="!isImageExtension(url['fileId'])"
+                [fileName]="url['fileId']"
+                [serverURLImage]="serverImg"
+                style="max-height: 42px"
+              ></app-file-preview>
+            </div>
+          </div>
+        </td>
+        <td class="w-2">
+          <input
+            pInputText
+            class="w-full"
+            [(ngModel)]="item.note"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr class="p-rowgroup-footer">
+        <td colspan="10" class="w-full pt-4 pb-4">
+          {{ "info.no_data" | translate }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="10" class="w-full pt-4 pb-4">
+          {{ "info.loading" | translate }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <div class="row">
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-table>
+</div>

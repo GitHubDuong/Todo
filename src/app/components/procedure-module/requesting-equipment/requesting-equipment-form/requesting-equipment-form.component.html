@@ -1,0 +1,540 @@
+<!--Dialog IF enable dialog mode-->
+<p-dialog *ngIf="dialog; else formContentTemplate"
+          [header]="isEdit ? ('label.request_equipment_edit' | translate) : ('label.request_equipment_add' | translate)"
+          [(visible)]="visible"
+          [style]="{width: '100vw'}">
+  <ng-container [ngTemplateOutlet]="formContentTemplate"></ng-container>
+  <ng-template pTemplate="footer">
+    <ng-container [ngTemplateOutlet]="footerActionsTemplate"></ng-container>
+  </ng-template>
+</p-dialog>
+
+<!--Form content-->
+<ng-template #formContentTemplate>
+  <div *ngIf="visible && !showProcedureForm" class="grid m-0">
+    <div class="col-12 p-0">
+      <div class="px-2 py-3">
+        <h5 *ngIf="!dialog"
+            [translate]="isEdit ? 'label.request_equipment_edit' : 'label.request_equipment_add'"></h5>
+        <form [formGroup]="detailForm" autocomplete="off">
+          <div class="grid w-full">
+
+            <div class="field col-12 md:col-6 flex flex-column">
+              <label for="procedureNumber">{{ "label.requesting_payment_pass_procedure_id" | translate }}</label>
+              <input
+                id="procedureNumber"
+                type="text"
+                pInputText
+                [formControlName]="'procedureNumber'"
+              />
+            </div>
+
+            <div class="field col-12 md:col-6 flex flex-column">
+              <label>Nhân viên</label>
+              <p-dropdown
+                [options]="users"
+                appendTo="body"
+                [optionLabel]="'username'"
+                [optionValue]="'id'"
+                [showClear]="true"
+                [placeholder]="'Nhân viên'"
+                formControlName="userId"
+                [disabled]="true"
+                [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('userId')}"
+              >
+              </p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-6 flex flex-column">
+              <label htmlFor="approved">{{ 'label.department' | translate }}</label>
+              <p-dropdown
+                [options]="departments"
+                [optionLabel]="'name'"
+                appendTo="body"
+                [optionValue]="'id'"
+                [showClear]="true"
+                [placeholder]="'label.department' | translate"
+                formControlName="departmentId"
+                [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('departmentId')}"
+                [filter]="true"
+                filterBy="name"
+                [disabled]="!canSave"
+              >
+              </p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-6 flex flex-column">
+              <label>{{ "label.date" | translate }}<span class="text-pink-400">*</span></label>
+              <p-calendar
+                class="w-full p-calendar-width-full"
+                [showIcon]="true"
+                formControlName="date"
+                dateFormat="dd-mm-yy"
+                [placeholder]="'label.date' | translate"
+                [showTime]="true" [showSeconds]="true"
+                appendTo="body"
+                [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('date')}"
+                [disabled]="!canSave"
+              ></p-calendar>
+            </div>
+
+            <div class="field col-12 md:col-12 flex flex-column">
+              <label>{{ "label.note" | translate }}</label>
+              <textarea
+                pInputTextarea
+                rows="5"
+                formControlName="note"
+                placeholder="Ghi chú"
+                [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('note')}"
+                [disabled]="!canSave"
+              >
+            </textarea>
+            </div>
+            <div class="col-12">
+              <app-multiple-upload
+                [fileLink]="fileLink"
+                (removeFile)="onFileLinkChange($event)"
+                (attackFiles)="onAttachFile($event)"
+              ></app-multiple-upload>
+            </div>
+          </div>
+          <div class="px-2">
+            <p-table
+              #dt
+              dataKey="id"
+              styleClass="p-datatable-gridlines mt-2"
+              [responsiveLayout]="isMobile ? 'stack':'scroll'"
+              scrollable="true"
+              scrollDirection="both"
+              [value]="rows.controls"
+              [rows]="10"
+              [rowHover]="true"
+            >
+              <ng-template pTemplate="header">
+                <tr *ngIf="isMobile">
+                  <th
+                    class="w-full flex justify-content-end"
+                    alignFrozen="right"
+                    pFrozenColumn
+                    [frozen]="true"
+                  >
+                    <button
+                      pButton
+                      icon="pi pi-plus"
+                      (click)="addItem()"
+                    ></button>
+                  </th>
+                </tr>
+                <tr *ngIf="!isMobile">
+                  <th class="w--5 flex justify-content-center">
+                    <p-checkbox
+                      [binary]="true"
+                      [(ngModel)]="isCheckAll"
+                      (onChange)="onToggleCheckAll()"
+                      [ngModelOptions]="{standalone: true}"
+                    ></p-checkbox>
+                  </th>
+                  <th class="w--5 flex justify-content-center">
+                    {{ "label.order_number" | translate }}
+                  </th>
+
+                  <th class="w--15 flex justify-content-center">
+                    Tên hàng
+                  </th>
+
+                  <th class="w--10 flex justify-content-center">
+                    Chủng loại
+                  </th>
+
+                  <th class="w--10 flex justify-content-center">
+                    Nhà sản xuất
+                  </th>
+
+                  <th class="w--10 flex justify-content-center">
+                    Số catalog
+                  </th>
+
+                  <th class="w--10 flex justify-content-center">
+                    Đơn vị tính
+                  </th>
+
+                  <th class="w--10 flex justify-content-center">
+                    Số lượng
+                  </th>
+
+                  <th class="w--15 flex justify-content-center">
+                    Thời gian mong muốn nhận hàng
+                  </th>
+
+                  <th class="w--10 flex justify-content-center">
+                    Loại hàng hóa
+                  </th>
+
+                  <th class="w--10 flex justify-content-center">
+                    ghi chú
+                  </th>
+
+                  <th
+                    class="w--10 flex justify-content-start md:justify-content-center"
+                    alignFrozen="right"
+                    pFrozenColumn
+                    [frozen]="true"
+                  >
+                    <button
+                      *ngIf="canSave"
+                      pButton
+                      icon="pi pi-plus"
+                      (click)="addItem()"
+                    ></button>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-rowIndex="rowIndex">
+                <ng-container formArrayName="items">
+                  <ng-container [formGroupName]="rowIndex">
+                    <ng-container *ngIf="isMobile">
+                      <tr>
+                        <td class="block w-full">
+                          <div class="w-full grid pt-3">
+                            <div class="col-6 flex">
+                              <label class="text-primary">STT : &nbsp;</label>
+                              <strong>{{ rowIndex + 1 }}</strong>
+                            </div>
+                            <div class="col-6 flex justify-content-end">
+                              <p-checkbox [binary]="true" formControlName="checked"></p-checkbox>
+                            </div>
+                          </div>
+                          <div class="w-full grid pt-3">
+                            <div class="col-6 flex flex-column gap-2">
+                              <label class="text-primary">Tên hàng</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodName') }}</span>
+                              <input
+                                *ngIf="canSave"
+                                pInputText
+                                formControlName="goodName"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodName')}"
+                                class="w-full">
+                            </div>
+                            <div class="col-6 flex flex-column gap-2">
+                              <label class="text-primary">Chủng loại</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodCategory') }}</span>
+                              <input
+                                *ngIf="canSave"
+                                pInputText
+                                formControlName="goodCategory"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodCategory')}"
+                                class="w-full">
+                            </div>
+                          </div>
+                          <div class="w-full grid pt-3">
+                            <div class="col-6 flex flex-column gap-2">
+                              <label class="text-primary">Nhà sản xuất</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodProducer') }}</span>
+                              <input
+                                *ngIf="canSave"
+                                pInputText
+                                formControlName="goodProducer"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodProducer')}"
+                                class="w-full">
+                            </div>
+                            <div class="col-6 flex flex-column gap-2">
+                              <label class="text-primary">Số catalog</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodCatalog') }}</span>
+                              <input
+                                *ngIf="canSave"
+                                pInputText
+                                formControlName="goodCatalog"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodCatalog')}"
+                                class="w-full">
+                            </div>
+                          </div>
+                          <div class="w-full grid pt-3">
+                            <div class="col-6 flex flex-column gap-2">
+                              <label class="text-primary">Đơn vị tính</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodUnit') }}</span>
+                              <input
+                                *ngIf="canSave"
+                                pInputText
+                                formControlName="goodUnit"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodUnit')}"
+                                class="w-full">
+                            </div>
+                            <div class="col-6 flex flex-column gap-2">
+                              <label class="text-primary">Số lượng</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'quantity') }}</span>
+                              <input
+                                *ngIf="canSave"
+                                pInputText
+                                formControlName="quantity"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'quantity')}"
+                                class="w-full">
+                            </div>
+                          </div>
+                          <div class="w-full grid pt-3">
+                            <div class="col-12 flex flex-column gap-2">
+                              <label class="text-primary">Thời gian</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'date') | date:"dd/MM/yyyy" }}</span>
+                              <p-calendar
+                                *ngIf="canSave"
+                                class="w-full p-calendar-width-full"
+                                [showIcon]="true"
+                                formControlName="date"
+                                dateFormat="dd-mm-yy"
+                                [placeholder]="'label.date' | translate"
+                                [showTime]="true" [showSeconds]="true"
+                                appendTo="body"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'date')}"
+                              ></p-calendar>
+                            </div>
+                            <div class="col-12 flex flex-column gap-2">
+                              <label class="text-primary">Loại hàng</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodType') }}</span>
+                              <p-dropdown
+                                *ngIf="canSave"
+                                class="w-full"
+                                [options]="goodTypes"
+                                [optionLabel]="'value'"
+                                appendTo="body"
+                                [optionValue]="'id'"
+                                [showClear]="true"
+                                placeholder="Loại hàng hóa"
+                                formControlName="goodType"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodType')}"
+                              >
+                              </p-dropdown>
+                            </div>
+                          </div>
+                          <div class="w-full grid pt-3">
+                            <div class="col-12 flex flex-column gap-2">
+                              <label class="text-primary">Ghi chú</label>
+                              <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'note') }}</span>
+                              <input
+                                *ngIf="canSave"
+                                pInputText
+                                formControlName="note"
+                                [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'note')}"
+                                class="w-full">
+                            </div>
+                          </div>
+                          <div class="w-full grid pt-3">
+                            <div class="col-12">
+                              <button
+                                *ngIf="canSave"
+                                pButton
+                                class="p-button-danger"
+                                icon="pi pi-trash"
+                                (click)="deleteItem(rowIndex)"
+                              ></button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </ng-container>
+                    <ng-container *ngIf="!isMobile">
+                      <tr>
+                        <td class="w--5 flex justify-content-center">
+                          <p-checkbox [binary]="true" formControlName="checked"></p-checkbox>
+                        </td>
+                        <td class="w--5 flex justify-content-center">
+                          <strong>{{ rowIndex + 1 }}</strong>
+                        </td>
+                        <td class="w--15 px-2">
+                          <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodName') }}</span>
+                          <input
+                            *ngIf="canSave"
+                            pInputText
+                            formControlName="goodName"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodName')}"
+                            class="w-full">
+                        </td>
+                        <td class="w--10 px-2">
+                          <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodCategory') }}</span>
+                          <input
+                            *ngIf="canSave"
+                            pInputText
+                            formControlName="goodCategory"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodCategory')}"
+                            class="w-full">
+                        </td>
+                        <td class="w--10 px-2">
+                          <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodProducer') }}</span>
+                          <input
+                            *ngIf="canSave"
+                            pInputText
+                            formControlName="goodProducer"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodProducer')}"
+                            class="w-full">
+                        </td>
+                        <td class="w--10 px-2">
+                          <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodCatalog') }}</span>
+                          <input
+                            *ngIf="canSave"
+                            pInputText
+                            formControlName="goodCatalog"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodCatalog')}"
+                            class="w-full">
+                        </td>
+                        <td class="w--10 px-2">
+                          <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodUnit') }}</span>
+                          <input
+                            *ngIf="canSave"
+                            pInputText
+                            formControlName="goodUnit"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodUnit')}"
+                            class="w-full">
+                        </td>
+                        <td class="w--10 px-2">
+                          <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'quantity') }}</span>
+                          <input
+                            *ngIf="canSave"
+                            pInputText
+                            formControlName="quantity"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'quantity')}"
+                            class="w-full">
+                        </td>
+                        <td class="w--15 px-2">
+                          <span *ngIf="!canSave">
+                            {{ getFormValue(rowIndex, 'date') | date:"dd/MM/yyyy" }}
+                          </span>
+                          <p-calendar
+                            *ngIf="canSave"
+                            class="w-full p-calendar-width-full"
+                            [showIcon]="true"
+                            formControlName="date"
+                            dateFormat="dd-mm-yy"
+                            [placeholder]="'label.date' | translate"
+                            [showTime]="true" [showSeconds]="true"
+                            appendTo="body"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'date')}"
+                          ></p-calendar>
+                        </td>
+
+                        <td class="w--10 px-2">
+                          <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'goodType') }}</span>
+                          <p-dropdown
+                            *ngIf="canSave"
+                            class="w-full"
+                            [options]="goodTypes"
+                            [optionLabel]="'value'"
+                            appendTo="body"
+                            [optionValue]="'id'"
+                            [showClear]="true"
+                            placeholder="Loại hàng hóa"
+                            formControlName="goodType"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'goodType')}"
+                          >
+                          </p-dropdown>
+                        </td>
+                        <td class="w--10 px-2">
+                          <span *ngIf="!canSave">{{ getFormValue(rowIndex, 'note') }}</span>
+                          <input
+                            *ngIf="canSave"
+                            pInputText
+                            formControlName="note"
+                            [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'note')}"
+                            class="w-full">
+                        </td>
+                        <td
+                          style="min-width: 80px !important"
+                          class="w--10 flex justify-content-start md:justify-content-center"
+                          pFrozenColumn
+                          alignFrozen="right"
+                          [frozen]="true"
+                        >
+                          <button
+                            *ngIf="canSave"
+                            pButton
+                            class="p-button-danger"
+                            icon="pi pi-trash"
+                            (click)="deleteItem(rowIndex)"
+                          ></button>
+                        </td>
+                      </tr>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-template>
+              <ng-template pTemplate="emptymessage">
+                <tr class="p-rowgroup-footer hover:bg-white">
+                  <td colspan="12"
+                      class="w-full flex justify-content-center pt-4 pb-4 border-left-none border-right-none border-bottom-none">
+                    {{ "info.no_data" | translate }}
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+          <div *ngIf="canCreateExpenditurePlan" class="px-2 flex justify-content-end mt-2">
+            <p-button
+              icon="pi pi-check"
+              (click)="onCreateExpenditurePlan()"
+              [label]="'Tạo kế hoạch dự chi'"
+            ></p-button>
+          </div>
+          <div *ngIf="!dialog" class="col-12">
+            <div class="p-fluid p-formgrid grid mt-2">
+              <div class="field col-12 gap-8 flex justify-content-end p-0">
+                <ng-container [ngTemplateOutlet]="footerActionsTemplate"></ng-container>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="px-2 py-3" *ngIf="showProcedureForm">
+    <h5 [translate]="'label.produce_planning_name'"></h5>
+    <form [formGroup]="procedureForm" class="mt-3">
+      <div class="w-full p-3 border-orange-500 border-1 border-round mt-3">
+        <div class="w-full mt-3 grid">
+          <div class="grid col-12 px-0">
+            <div class="col-12 md:col-6">
+              <p-dropdown class="mr-3" [options]="produceProductsExistList" [optionLabel]="'procedureNumber'"
+                          filterBy="note" appendTo="body" [filter]="true" [optionValue]="'id'" [showClear]="true"
+                          [placeholder]="'label.planning_product_orders' | translate"
+                          formControlName="planningProduceProductId"
+                          (onChange)="getCars($event)">
+              </p-dropdown>
+            </div>
+            <div class="col-12 md:col-6">
+              <p-dropdown class="mr-3" [options]="cars" [optionLabel]="'licensePlates'" filterBy="licensePlates"
+                          appendTo="body" [filter]="true" [optionValue]="'id'" [showClear]="true"
+                          [placeholder]="'label.select_car' | translate" formControlName="carId">
+              </p-dropdown>
+            </div>
+          </div>
+          <div class="grid col-12">
+            <input class="w-full" pInputText type="text" [placeholder]="'label.note' | translate"
+                   formControlName="produceProductsName" />
+          </div>
+        </div>
+      </div>
+      <div class="w-full flex align-items-center justify-content-end gap-5 mt-3">
+        <p-button icon="pi pi-check" label="Lưu"
+                  (click)="onSaveProcedure()"></p-button>
+        <p-button type="button" styleClass="p-button-outlined" icon="pi pi-times"
+                  label="{{ 'button.cancel' | translate }}" (click)="onCancelCreateProcedure()"></p-button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<!-- Footer buttons -->
+<ng-template #footerActionsTemplate>
+  <p-button
+    *ngIf="item.procedureStatusName=='Hoàn thành'"
+    icon="pi pi-check" label="Tạo kế hoaạch"
+    (click)="onCreateProcedureProcedure()"></p-button>
+  <p-button
+    icon="pi pi-times"
+    (click)="onBack()"
+    [label]="'button.backF6' | translate"
+    styleClass="p-button-outlined"
+  ></p-button>
+  <p-button
+    icon="pi pi-check"
+    (click)="submit()"
+    [label]="'button.saveF8' | translate"
+  >
+  </p-button>
+</ng-template>

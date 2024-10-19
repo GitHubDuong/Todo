@@ -1,0 +1,23 @@
+<p-dialog header="Nhận diện khuôn mặt" [(visible)]="visibleSidebar" [breakpoints]="{'960px': '100vw'}" [showHeader]="false">
+  <div class="container flex align-items-center justify-content-center flex-column">
+    <p-message [severity]="isCaptured ? 'success' : 'info'" [text]="msg" styleClass="mr-2"></p-message>
+    <div class="scanner">
+      <video #video
+             id="camera-stream"
+             [width]="WIDTH"
+             [height]="HEIGHT"
+             autoplay
+             muted>
+      </video>
+      <div #canvas></div>
+      <ng-container *ngIf="isCaptured">
+        <svg viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg">
+          <g stroke="currentColor" stroke-width="2" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+            <path class="circle" d="M13 1C6.372583 1 1 6.372583 1 13s5.372583 12 12 12 12-5.372583 12-12S19.627417 1 13 1z"/>
+            <path class="tick" d="M6.5 13.5L10 17 l8.808621-8.308621"/>
+          </g>
+        </svg>
+      </ng-container>
+    </div>
+  </div>
+</p-dialog>

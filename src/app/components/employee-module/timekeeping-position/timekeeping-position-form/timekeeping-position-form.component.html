@@ -1,0 +1,185 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="card card-table">
+  <h5
+    [translate]="
+      isEdit
+        ? 'label.timekeeping_position_update'
+        : 'label.timekeeping_position_add'
+    "
+  ></h5>
+  <form [formGroup]="TargetForm">
+    <div class="grid w-full">
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="code"
+          >{{ "label.code" | translate
+          }}<span class="text-pink-400">*</span></label
+        >
+        <input
+          pInputText
+          id="code"
+          [(ngModel)]="TargetForm.value.code"
+          formControlName="code"
+          [ngClass]="checkValidValidator('code')"
+        />
+        <small
+          *ngIf="checkValidValidator('code')"
+          class="p-error"
+          [innerHTML]="'info.code' | translate"
+        ></small>
+      </div>
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="name_target"
+          >{{ "label.name_target" | translate
+          }}<span class="text-pink-400">*</span></label
+        >
+        <input
+          pInputText
+          id="name_target"
+          [(ngModel)]="TargetForm.value.name"
+          formControlName="name"
+          [ngClass]="checkValidValidator('name')"
+        />
+        <small
+          *ngIf="checkValidValidator('name')"
+          class="p-error"
+          [innerHTML]="'info.name' | translate"
+        ></small>
+      </div>
+
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="ip_address"
+          >{{ "label.ip_address" | translate
+          }}<span class="text-pink-400"></span></label>
+        <div class="p-inputgroup">
+          <input
+          pInputText
+          id="ip_address"
+          [(ngModel)]="TargetForm.value.ipAddress"
+          formControlName="ipAddress"
+          [ngClass]="checkValidValidator('ipAddress')"
+        />
+          <button type="button" pButton pRipple icon="pi pi-compass" styleClass="p-button-danger" (click)="getPublicIp()"></button>
+        </div>
+        <small
+          *ngIf="checkValidValidator('ipAddress')"
+          class="p-error"
+          [innerHTML]="'info.ip_address' | translate"
+        ></small>
+      </div>
+
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="latitude_point"
+          >{{ "label.latitude_point" | translate
+          }}<span class="text-pink-400"></span>
+        </label>
+        <input
+          id="latitude_point"
+          [(ngModel)]="TargetForm.value.latitudePoint"
+          formControlName="latitudePoint"
+          [ngClass]="checkValidValidator('latitudePoint')"
+          pInputText
+        />
+        <small
+          *ngIf="checkValidValidator('latitudePoint')"
+          class="p-error"
+          [innerHTML]="'info.latitude_point' | translate"
+        ></small>
+      </div>
+
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="longitude_point"
+          >{{ "label.longitude_point" | translate
+          }}<span class="text-pink-400"></span></label
+        >
+        <input
+          id="longitude_point"
+          [(ngModel)]="TargetForm.value.longitudePoint"
+          formControlName="longitudePoint"
+          [ngClass]="checkValidValidator('longitudePoint')"
+          pInputText
+        />
+        <small
+          *ngIf="checkValidValidator('longitudePoint')"
+          class="p-error"
+          [innerHTML]="'info.longitude_point' | translate"
+        ></small>
+      </div>
+
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="allowed_radius"
+          >{{ "label.allowed_radius" | translate
+          }}<span class="text-pink-400"></span></label
+        >
+        <p-inputNumber
+          id="allowed_radius"
+          [(ngModel)]="TargetForm.value.allowedRadius"
+          formControlName="allowedRadius"
+          [ngClass]="checkValidValidator('allowedRadius')"
+        >
+        </p-inputNumber>
+        <small
+          *ngIf="checkValidValidator('allowedRadius')"
+          class="p-error"
+          [innerHTML]="'info.allowed_radius' | translate"
+        ></small>
+      </div>
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="note">{{ "label.note" | translate }}</label>
+        <input
+          pInputText
+          id="note"
+          [(ngModel)]="TargetForm.value.note"
+          formControlName="note"
+        />
+      </div>
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="status_active">{{
+          "label.status_active" | translate
+        }}</label>
+        <div class="flex">
+          <div class="field-radiobutton md:pr-6 mt-2 pt-1">
+            <p-radioButton
+              id="status-true"
+              name="status"
+              [value]="true"
+              [(ngModel)]="TargetForm.value.status"
+              [formControlName]="'status'"
+            >
+            </p-radioButton>
+            <label [translate]="'label.cooperate'"></label>
+          </div>
+          <div class="field-radiobutton mt-2 pt-1">
+            <p-radioButton
+              id="status-false"
+              name="status"
+              [value]="false"
+              [(ngModel)]="TargetForm.value.status"
+              [formControlName]="'status'"
+            ></p-radioButton>
+            <label
+              [translate]="'label.stop_cooperate'"
+            ></label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="p-fluid p-formgrid grid mt-2">
+        <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+          <p-button
+            icon="pi pi-times"
+            (click)="onBack()"
+            [label]="'button.backF6' | translate"
+            styleClass="p-button-outlined"
+          ></p-button>
+          <p-button
+            icon="pi pi-check"
+            (click)="onSubmit()"
+            [label]="'button.saveF8' | translate"
+          >
+          </p-button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

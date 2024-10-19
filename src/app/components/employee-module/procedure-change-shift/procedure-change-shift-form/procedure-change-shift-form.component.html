@@ -1,0 +1,189 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5
+        [translate]="
+          isEdit ? 'label.edit_change_shift' : 'label.add_change_shift'
+        "
+      ></h5>
+      <form [formGroup]="form" autocomplete="off">
+        <div class="grid w-full">
+          <!-- Code Control -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="code"
+              >{{ "label.code" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <input
+              pInputText
+              disabled
+              [(ngModel)]="form.value.procedureNumber"
+              formControlName="procedureNumber"
+              [ngClass]="checkValidValidator('procedureNumber')"
+              [ngModelOptions]="{ standalone: true }"
+              [placeholder]="'label.code' | translate"
+            />
+            <small
+              *ngIf="checkValidValidator('procedureNumber')"
+              class="p-error"
+              [innerHTML]="'label.code' | translate"
+            ></small>
+          </div>
+          <!-- From Employee Control -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="fromEmployee"
+              >{{ "label.from_employee" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-dropdown
+              [options]="employees"
+              [formControlName]="'fromUserId'"
+              [(ngModel)]="form.value.fromUserId"
+              [filter]="true"
+              [filterBy]="'fullName'"
+              optionLabel="fullName"
+              optionValue="id"
+              [ngModelOptions]="{ standalone: true }"
+              [placeholder]="'label.from_employee' | translate"
+              [ngClass]="checkValidValidator('fromUserId')"
+            >
+            </p-dropdown>
+            <small
+              *ngIf="checkValidValidator('fromUserId')"
+              class="p-error"
+              [innerHTML]="'label.from_employee' | translate"
+            ></small>
+          </div>
+          <!-- To Employee Control -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="toEmployee"
+              >{{ "label.to_employee" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-dropdown
+              [options]="employees"
+              [formControlName]="'toUserId'"
+              [(ngModel)]="form.value.toUserId"
+              [filter]="true"
+              [filterBy]="'fullName'"
+              optionLabel="fullName"
+              optionValue="id"
+              [ngModelOptions]="{ standalone: true }"
+              [placeholder]="'label.to_employee' | translate"
+              [ngClass]="checkValidValidator('toUserId')"
+            >
+            </p-dropdown>
+            <small
+              *ngIf="checkValidValidator('toUserId')"
+              class="p-error"
+              [innerHTML]="'label.to_employee' | translate"
+            ></small>
+          </div>
+          <!-- From Datetime Control -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="employeesName"
+              >{{ "label.from_at" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-calendar
+              [formControlName]="'fromAt'"
+              [(ngModel)]="form.value.fromAt"
+              appendTo="body"
+              [showIcon]="true"
+              inputId="icon"
+              [maxDate]="form.value.toAt"
+              [ngModelOptions]="{ standalone: true }"
+              [style]="{ width: '100%' }"
+              [placeholder]="'label.from_at' | translate"
+            ></p-calendar>
+            <small
+              *ngIf="checkValidValidator('fromAt')"
+              class="p-error"
+              [innerHTML]="'label.from_at' | translate"
+            ></small>
+          </div>
+          <!-- To Datetime Control -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="employeesName"
+              >{{ "label.to_at" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-calendar
+              [formControlName]="'toAt'"
+              [(ngModel)]="form.value.toAt"
+              appendTo="body"
+              [showIcon]="true"
+              inputId="icon"
+              [minDate]="form.value.fromAt"
+              [ngModelOptions]="{ standalone: true }"
+              [style]="{ width: '100%' }"
+              [placeholder]="'label.to_at' | translate"
+            ></p-calendar>
+            <small
+              *ngIf="checkValidValidator('toAt')"
+              class="p-error"
+              [innerHTML]="'label.to_at' | translate"
+            ></small>
+          </div>
+          <!-- Note Control -->
+          <div class="field col-12 md:col-12 flex flex-column">
+            <label htmlFor="reason"
+              >{{ "label.reason" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <textarea
+              class="mt-1"
+              pInputTextarea
+              [rows]="3"
+              [(ngModel)]="form.value.note"
+              [formControlName]="'note'"
+              [label]="'label.reason' | translate"
+              [cols]="30"
+            ></textarea>
+          </div>
+          <!-- The end Control -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="time_end"
+              >{{ "label.time_end" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-checkbox
+              class="mt-1"
+              [label]="'label.time_end' | translate"
+              [formControlName]="'isFinish'"
+              [(ngModel)]="form.value.isFinish"
+              [binary]="true"
+              inputId="binary"
+            >
+            </p-checkbox>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onCancel.emit({})"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmitAndContinue()"
+                [label]="'button.save_continue_F10' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

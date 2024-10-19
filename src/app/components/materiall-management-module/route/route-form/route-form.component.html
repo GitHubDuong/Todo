@@ -1,0 +1,69 @@
+<app-form-layout
+  [isDisplay]="isDisplay"
+  [header]="item ? 'Tạo lộ trình':'Sửa lộ trình'"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <form [formGroup]="mForm">
+      <div class="p-fluid formgrid grid">
+        <div class="field col">
+          <label for="code">Mã lộ trình</label>
+          <input
+            pInputText
+            id="code"
+            class="w-full"
+            placeholder="Nhập mã lộ trình"
+            [formControl]="code"
+          />
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col">
+          <label for="name">Tên lộ trình</label>
+          <input
+            pInputText
+            id="name"
+            class="w-full"
+            placeholder="Nhập tên lộ trình"
+            [formControl]="name"
+          />
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col">
+          <label for="description">Chốt cảnh sát</label>
+          <p-multiSelect
+            [options]="policePostList"
+            [formControl]="policeCheckPointIds"
+            optionLabel="name"
+            optionValue="id"
+            appendTo="body"
+          ></p-multiSelect>
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col">
+          <label for="number-of-trips">Lương chuyến</label>
+          <p-inputNumber 
+            id="number-of-trips"
+            class="align-left" 
+            [formControl]="numberOfTrips"
+          ></p-inputNumber>
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col">
+          <label for="description">Mô tả</label>
+          <textarea
+            pInputTextarea
+            id="description"
+            [formControl]="roadRouteDetail"
+            rows="4"
+            placeholder="Nhập mô tả"
+          ></textarea>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</app-form-layout>

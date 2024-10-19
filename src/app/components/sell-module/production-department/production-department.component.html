@@ -1,0 +1,61 @@
+<div *ngIf="!showDetail" class="px-2 py-3">
+  <h5>Quản lý bộ phận sản xuất</h5>
+  <p-tabMenu [model]="tabMenuItems" [activeItem]="activeItem"></p-tabMenu>
+  <div class="action flex justify-content-start md:justify-content-between flex-column md:flex-row">
+    <div class="p-input-icon-left grid">
+      <div class="col-6 md:col-3">
+        <p-calendar [showIcon]="true" inputId="icon" [(ngModel)]="startDate" dateFormat="dd-mm-yy"
+                    styleClass="mb-2"
+                    [placeholder]="'Ngày bắt đầu'" (onSelect)="getByPage(null)"></p-calendar>
+      </div>
+      <div class="col-6 md:col-3">
+        <p-calendar [showIcon]="true" inputId="icon" [(ngModel)]="endDate" dateFormat="dd-mm-yy"
+                    styleClass="mb-2"
+                    [placeholder]="'Ngày kết thúc'" (onSelect)="getByPage(null)"></p-calendar>
+      </div>
+      <div class="col-12 md:col-3">
+        <input #filter [(ngModel)]="param.searchText" pInputText type="text" (change)="getByPage(null)"
+               [placeholder]="'label.search' | translate" class="w-full mb-2" />
+      </div>
+      <div class="col-12 md:col-3">
+        <p-dropdown
+          styleClass="w-full"
+          [options]="userList"
+          [(ngModel)]="param.userId"
+          [showClear]="true"
+          (ngModelChange)="getByPage(null)"
+          placeholder="Nhân viên"
+          optionLabel="fullName"
+          optionValue="id"
+        ></p-dropdown>
+      </div>
+    </div>
+  </div>
+  <app-table
+    [data]="data"
+    [columns]="columns"
+    [loading]="false"
+    [pageIndex]="param.page"
+    [pageSize]="param.pageSize"
+    [totalRecords]="totalItems"
+    (load)="getByPage($event)"
+  >
+    <ng-template appTemplate="action" let-item>
+      <button *ngIf="this.currentStatus == orderStatus.Pending" pButton class="p-button-success"
+              icon="pi pi-angle-double-right" (click)="onAccept(item.id)"></button>
+
+      <button pButton icon="pi pi-search-plus" (click)="onEdit(item)"></button>
+      <button *ngIf="this.currentStatus == orderStatus.Pending && item.shoulNotAccept" pButton class="p-button-success"
+              icon="pi pi-angle-double-left" (click)="onNotAccept(item.id)"></button>
+
+      <button *ngIf="item.shoulDelete" pButton class="p-button-danger" icon="pi pi-trash"
+              (click)="onDelete(item.id)"></button>
+    </ng-template>
+  </app-table>
+</div>
+
+<app-production-department-form
+  [display]="showDetail"
+  [formData]="selectedData"
+  (onCancel)="onCancelForm($event)"
+></app-production-department-form>

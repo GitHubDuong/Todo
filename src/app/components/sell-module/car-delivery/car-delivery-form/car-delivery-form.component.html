@@ -1,0 +1,112 @@
+<p-dialog [header]="'label.car_delivery_edit' | translate" [(visible)]="visible"
+          [style]="{width: '50vw'}" class="p-fluid" [formGroup]="form">
+  <ng-template pTemplate="content">
+    <div class="grid w-full">
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="code">{{ "label.license_plate_car" | translate }}</label>
+        <input
+          class="w-full"
+          pInputText
+          type="text"
+          [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('licensePlates')}"
+          formControlName="licensePlates"
+        />
+      </div>
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="code">{{ "label.driver" | translate }}</label>
+        <input
+          class="w-full"
+          pInputText
+          type="text"
+          [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('driver')}"
+          formControlName="driver"
+        />
+      </div>
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="code">{{ "label.phone_number" | translate }}</label>
+        <input
+          class="w-full"
+          pInputText
+          type="text"
+          [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('phoneNumber')}"
+          formControlName="phoneNumber"
+        />
+      </div>
+
+      <div class="field col-12 md:col-6 flex flex-column">
+        <label htmlFor="code">{{ "label.note" | translate }}</label>
+        <input
+          class="w-full"
+          pInputText
+          type="text"
+          [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('note')}"
+          formControlName="note"
+        />
+      </div>
+
+      <div class="field col-12 flex flex-column">
+        <label htmlFor="code">{{ "button.upload_file" | translate }}</label>
+        <!--        <input-->
+        <!--          class="w-full"-->
+        <!--          pInputText-->
+        <!--          type="text"-->
+        <!--          [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('fileLink')}"-->
+        <!--          formControlName="fileLink"-->
+        <!--        />-->
+
+        <div class="flex gap-8 align-items-start">
+          <p-button
+            icon="pi pi-upload"
+            (click)="uploadFile.click()"
+            [label]="'button.import' | translate"
+          ></p-button>
+          <p-button
+            icon="pi pi-times"
+            [disabled]="this.fileLink.length === 0"
+            (click)="onRemoveImages()"
+            [label]="'button.remove' | translate"
+          ></p-button>
+          <input
+            #uploadFile
+            class="hidden"
+            type="file"
+            (change)="doAttachFile($event)"
+            multiple
+          />
+        </div>
+      </div>
+      <div class="flex gap-8" *ngIf="fileLink">
+        <div *ngFor="let url of fileLink">
+          <img
+            *ngIf="isImageExtension(url['fileUrl'])"
+            id="{{ url.fileName }}"
+            class="style_prev_kit"
+            (click)="onImageClick(url)"
+            src="{{ serverImg + url['fileUrl'] }}"
+            alt="image" height="200px"
+          />
+          <app-file-preview
+            *ngIf="!isImageExtension(url['fileName'])"
+            [fileName]="url['fileName']"
+            [serverURLImage]="serverImg"
+          ></app-file-preview>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-times" (click)="visible = false" [label]="'button.cancel' | translate"
+              class="p-button-text p-button-secondary"></p-button>
+    <p-button icon="pi pi-check" (click)="onSubmit()" [label]="'button.save'| translate"
+              styleClass="p-button-text"></p-button>
+  </ng-template>
+</p-dialog>
+<p-dialog
+  [(visible)]="showImageDetail"
+  [modal]="true"
+  [showHeader]="false"
+  [dismissableMask]="true"
+  [style]="{width: '50vw'}"
+>
+  <img [src]="serverImg + selectedImage?.fileUrl" class="w-full">
+</p-dialog>

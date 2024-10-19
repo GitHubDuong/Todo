@@ -1,0 +1,26 @@
+.layout-wrapper {
+  height: 100%;
+  .header {
+    height: 5rem;
+    &.is-mobile {
+      height: 0;
+    }
+  }
+  .body {
+    height: calc(100% - 5rem);
+    &.is-mobile {
+      height: 100%;
+    }
+  }
+  .layout-main-container {
+    height: 100%;
+    padding: unset !important;
+    margin-left: 300px;
+
+    .layout-main {
+      height: 100%;
+      overflow: auto;
+      background: white;
+    }
+  }
+}

@@ -1,0 +1,193 @@
+<p-table
+  [value]="dataSource"
+  [columns]="columns"
+  [rowHover]="true"
+  [rows]="paginator.pageSize"
+  styleClass="p-datatable-gridlines sidebar-custom"
+  [responsiveLayout]="appUtil.isMobile() ? 'stack' : 'scroll'"
+  [totalRecords]="paginator.totalRecords"
+  [rowsPerPageOptions]="[5, 10, 20, 50]"
+  [showCurrentPageReport]="true"
+  scrollDirection="both"
+  [scrollable]="!appUtil.isMobile()"
+  currentPageReportTemplate=""
+  [lazy]="true"
+  [paginator]="true"
+  (onPage)="onPage($event)"
+>
+  <ng-template pTemplate="caption">
+    <div
+      class="header flex justify-content-start {{showSearch? 'md:justify-content-between':'md:justify-content-end'}} flex-column md:flex-row"
+    >
+        <span *ngIf="showSearch" class="search-box p-input-icon-left mb-2">
+          <i class="pi pi-search"></i>
+          <input
+            #filter
+            [(ngModel)]="filterParams.searchText"
+            pInputText
+            type="text"
+            (keypress)="onSearch($event)"
+            [placeholder]="'label.search' | translate"
+            class="w-full"
+          />
+        </span>
+
+      <div class="button-list flex justify-content-end mt-2 md:mt-0">
+        <ng-container *ngFor="let action of headerActions">
+          <ng-container *ngIf="action.hasAccess; else noAccessTemplate">
+            <button
+              *appHasAccess="action.hasAccess"
+              pButton
+              [label]="action.label | translate"
+              class="mb-2"
+              [icon]="action.icon"
+              (click)="action.command()"
+              [className]="action.styleClass"
+            ></button>
+          </ng-container>
+          <ng-template #noAccessTemplate>
+            <button
+              pButton
+              [label]="action.label | translate"
+              class="mb-2"
+              [icon]="action.icon"
+              (click)="action.command()"
+              [className]="action.styleClass"
+            ></button>
+          </ng-template>
+        </ng-container>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <ng-container *ngFor="let col of columns">
+        <ng-container [ngSwitch]="col.columnType">
+          <ng-container *ngSwitchCase="ColumnDataType.action">
+            <th [style.width]="col.width"
+                alignFrozen="right" pFrozenColumn>
+              {{ col.header | translate }}
+            </th>
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            <th [style.width]="col.width">
+              {{ col.header | translate }}
+            </th>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData>
+    <tr>
+      <ng-container *ngFor="let col of columns">
+        <ng-container [ngSwitch]="col.columnType">
+          <ng-container *ngSwitchCase="ColumnDataType.checkbox">
+            <td [style.width]="col.width" class="px-3">
+              <p-checkbox [(ngModel)]="rowData[col.field]" [ngModelOptions]="{standalone: true}"
+                          [binary]="true"></p-checkbox>
+            </td>
+          </ng-container>
+          <ng-container *ngSwitchCase="ColumnDataType.action">
+            <td [style.width]="col.width"
+                class="action flex align-items-center justify-content-center"
+                alignFrozen="right" pFrozenColumn>
+              <ng-container *ngFor="let action of col.actions">
+                <ng-container *ngIf="action.hasAccess; else noAccessTemplate">
+                  <button
+                    *appHasAccess="action.hasAccess"
+                    pButton
+                    [className]="action.styleClass"
+                    class="ml-3" icon="pi pi-print"
+                    (click)="action.command($event, rowData)"
+                  >
+                  </button>
+                </ng-container>
+                <ng-template #noAccessTemplate>
+                  <button
+                    *ngIf="action.visibleCondition == null  || action.visibleCondition(rowData)"
+                    pButton
+                    [className]="action.styleClass"
+                    class="ml-3"
+                    [icon]="action.icon"
+                    (click)="action.command($event, rowData)"
+                  >
+                  </button>
+                </ng-template>
+              </ng-container>
+            </td>
+          </ng-container>
+          <ng-container *ngSwitchCase="ColumnDataType.date_time">
+            <td [style.width]="col.width" class="px-3">
+              <label *ngIf="isMobile" class="text-primary">
+                {{ col.header | translate }}: &nbsp;
+              </label>
+              <span>{{ rowData[col.field] | date:'dd/MM/yyyy HH:mm:ss' }}</span>
+            </td>
+          </ng-container>
+          <ng-container *ngSwitchCase="ColumnDataType.date">
+            <td [style.width]="col.width" class="px-3">
+              <label *ngIf="isMobile" class="text-primary">
+                {{ col.header | translate }}: &nbsp;
+              </label>
+              <span>{{ rowData[col.field] | date:'dd/MM/yyyy' }}</span>
+            </td>
+          </ng-container>
+          <ng-container *ngSwitchCase="ColumnDataType.template">
+            <td [style.width]="col.width" class="p-3">
+              <ng-container *ngTemplateOutlet="col.template; context: { $implicit: rowData }">
+              </ng-container>
+            </td>
+          </ng-container>
+          <ng-container *ngSwitchCase="ColumnDataType.text">
+            <td [style.width]="col.width" class="px-3">
+              <label *ngIf="isMobile" class="text-primary">
+                {{ col.header | translate }}: &nbsp;
+              </label>
+              <span [pTooltip]="rowData[col.field]" tooltipPosition="top">{{ rowData[col.field] }}</span>
+            </td>
+          </ng-container>
+          <ng-container *ngSwitchCase="ColumnDataType.number">
+            <td [style.width]="col.width" class="px-3">
+              <div class="w-full flex justify-content-end">
+                <label *ngIf="isMobile" class="text-primary">
+                  {{ col.header | translate }}: &nbsp;
+                </label>
+                <span>{{ rowData[col.field] | number }}</span>
+              </div>
+            </td>
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            <td [style.width]="col.width" class="px-3">
+              <label *ngIf="isMobile" class="text-primary">
+                {{ col.header | translate }}: &nbsp;
+              </label>&nbsp;
+              <span>
+              {{
+                  col?.columnType === ColumnDataType.date_time
+                    ? (rowData[col.field] | date:'dd/MM/yyyy HH:mm:ss')
+                    : col?.columnType === ColumnDataType.number
+                      ? (rowData[col.field] | number)
+                      : rowData[col.field]
+                }}
+              </span>
+            </td>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td class="w-full pt-4 pb-4">Data not found.</td>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="loadingbody">
+    <tr>
+      <td class="w-full pt-4 pb-4">
+        Loading data. Please wait.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

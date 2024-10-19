@@ -1,0 +1,29 @@
+.row-mobile {
+  padding: 6px 2px;
+}
+
+@media screen and (max-width: 768px) {
+  :host ::ng-deep .p-panel.p-panel-toggleable .p-panel-header {
+    padding: 8px;
+    min-height: 30px;
+  }
+}
+
+::ng-deep tr.p-selectable-row.stock-warning {
+  background: #bfffe2;
+}
+
+:host::ng-deep {
+  .p-datatable-gridlines {
+    .p-datatable-wrapper {
+      .p-datatable-tbody {
+        tr {
+          td {
+            white-space: pre-wrap;
+          }
+        }
+      }
+    }
+  }
+}
+

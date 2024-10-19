@@ -1,0 +1,89 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5
+        [translate]="
+          isEdit ? 'label.edit_working_hours' : 'label.add_working_hours'
+        "
+      ></h5>
+      <form [formGroup]="shiftForm" autocomplete="off">
+        <div class="grid w-full">
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="employeesName"
+              >{{ "label.shift_name" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-dropdown
+              [options]="listSymbol"
+              [formControlName]="'symbolId'"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              [placeholder]="'label.shift_name' | translate"
+              [ngClass]="checkValidValidator('symbolId')"
+            >
+            </p-dropdown>
+            <small
+              *ngIf="checkValidValidator('symbolId')"
+              class="p-error"
+              [innerHTML]="'label.shift_name' | translate"
+            ></small>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="time_in">{{ "label.time_in" | translate }}</label>
+            <p-calendar
+              [(ngModel)]="timeIn"
+              [timeOnly]="true"
+              [hourFormat]="24"
+              inputId="timeonly"
+              [ngModelOptions]="{ standalone: true }"
+              [style]="{ width: '100%' }"
+            ></p-calendar>
+            <small
+              *ngIf="checkValidValidator('timeOut')"
+              class="p-error"
+              [innerHTML]="'label.time_in' | translate"
+            ></small>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="time_out">{{ "label.time_out" | translate }}</label>
+            <p-calendar
+              [(ngModel)]="timeOut"
+              [timeOnly]="true"
+              [hourFormat]="24"
+              inputId="timeonly"
+              [ngModelOptions]="{ standalone: true }"
+              [style]="{ width: '100%' }"
+            ></p-calendar>
+            <small
+              *ngIf="checkValidValidator('timeOut')"
+              class="p-error"
+              [innerHTML]="'label.time_out' | translate"
+            ></small>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onCancel.emit({})"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

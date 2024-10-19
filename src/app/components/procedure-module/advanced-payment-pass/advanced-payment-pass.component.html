@@ -1,0 +1,56 @@
+<div *ngIf="!isDetailVisible" class="px-2 py-3">
+  <h5 [translate]="'label.advanced_payment_pass_list'"></h5>
+  <app-tab-menu [tabItems]="tabList" [(ngModel)]="filterParams.statusTab" (onTabChange)="loadData()"></app-tab-menu>
+  <app-procedure-filter
+    [filter]="filterParams"
+    (filterChange)="onFilterChange($event)"
+  ></app-procedure-filter>
+  <app-data-table
+    [(filterParams)]="filterParams"
+    [columns]="columns"
+    [headerActions]="headerActions"
+    [dataSource]="dataSource"
+    (onLoad)="loadData()"
+    [showSearch]="false"
+    [paginator]="paginator">
+  </app-data-table>
+  <div class="mt-3" *ngIf="filterParams.statusTab == tabStatus.Done">
+    <button
+      pButton
+      label="Tạo kế hoạch dự chi"
+      icon="pi pi-plus"
+      (click)="onCreateExpenditurePlan()"
+    ></button>
+  </div>
+</div>
+<ng-template #cb let-row>
+  <div class="w-full flex justify-content-center">
+    <p-checkbox
+      *ngIf="row.isImmediate"
+      [binary]="true"
+      [(ngModel)]="row.checked"
+    ></p-checkbox>
+  </div>
+</ng-template>
+<ng-template #userAndMoney let-row>
+  <div class="w-full flex flex-column gap-2">
+    <div class="flex justify-content-end">{{ row.user }}</div>
+    <div class="flex justify-content-end font-bold"> {{ row.amount | number }}</div>
+  </div>
+</ng-template>
+<app-advanced-payment-form
+  #detailFormComponent
+  [(visible)]="isDetailVisible"
+  (onCancel)="loadData()"
+></app-advanced-payment-form>
+<app-expenditure-plan-form
+  *ngIf="showExpenditureForm"
+  [type]="'advance_payment'"
+  [(visible)]="showExpenditureForm"
+  [selectedIds]="selectedIds"
+></app-expenditure-plan-form>
+<app-image-dialog
+  *ngIf="showImage"
+  [(visible)]="showImage"
+  [fileList]="fileList"
+></app-image-dialog>

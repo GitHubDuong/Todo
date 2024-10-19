@@ -1,0 +1,139 @@
+<p-toast></p-toast>
+<div class="px-2 py-3">
+  <div class="w-full flex align-items-center justify-content-between">
+    <h5 [translate]="'label.kpi_customer_score'"></h5>
+  </div>
+  <fom [formGroup]="filterForm">
+    <div class="w-full grid m-0">
+      <div class="col-12 md:col-2">
+        <label
+          htmlFor="department"
+          [translate]="'label.kpi_month'"
+        ></label>
+        <p-dropdown
+          [options]="months"
+          optionLabel="name"
+          optionValue="value"
+          formControlName="month"
+        ></p-dropdown>
+      </div>
+      <div class="col-12 md:col-3">
+        <label
+          htmlFor="department"
+          [translate]="'label.department'"
+        ></label>
+        <p-dropdown
+          [options]="departments"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [optionValue]="'id'"
+          [showClear]="true"
+          [placeholder]="'label.department' | translate"
+          formControlName="departmentId"
+        >
+        </p-dropdown>
+      </div>
+      <div class="col-12 md:col-3">
+        <label
+          htmlFor="department"
+          [translate]="'label.kpi_user'"
+        ></label>
+        <p-dropdown
+          [options]="employees"
+          [optionLabel]="'fullName'"
+          [filter]="true"
+          filterBy="fullName"
+          [optionValue]="'id'"
+          [showClear]="true"
+          [placeholder]="'label.kpi_user' | translate"
+          formControlName="employeeId"
+        >
+          <ng-template pTemplate="filter" let-options="options">
+            <div class="flex gap-1">
+              <div class="p-inputgroup">
+                <input type="text" pInputText placeholder="Nhập tìm kiếm" formControlName="employeeTextSearch" />
+              </div>
+            </div>
+          </ng-template>
+        </p-dropdown>
+      </div>
+      <div class="col-12 md:col-2 flex align-items-end">
+        <button
+          pButton
+          [label]="'label.kpi_score' | translate"
+          icon="pi pi-search"
+          (click)="calculateUserPoint()"
+        ></button>
+      </div>
+    </div>
+  </fom>
+  <div class="w-full align-items-center flex pt-5 gap-5">
+    <h5 [translate]="'label.kpi_customer_score_info'" class="m-0"></h5>
+    <span class="text-2xl font-semibold text-green-500">
+      {{ (result?.data || 0) | number }}
+    </span>
+  </div>
+  <!--  <p-table-->
+  <!--    #dt1-->
+  <!--    [columns]="cols"-->
+  <!--    [value]="listData"-->
+  <!--    dataKey="id"-->
+  <!--    [rows]="10"-->
+  <!--    [loading]="loading"-->
+  <!--    [rowHover]="true"-->
+  <!--    styleClass="p-datatable-gridlines sidebar-custom"-->
+  <!--    [paginator]="true"-->
+  <!--    [responsiveLayout]="isMobile ? 'stack' : 'scroll'"-->
+  <!--    [totalRecords]="totalRecords"-->
+  <!--    [rowsPerPageOptions]="[5, 10, 25, 50]"-->
+  <!--    [showCurrentPageReport]="true"-->
+  <!--    [lazy]="true"-->
+  <!--    scrollDirection="both"-->
+  <!--    [scrollable]="!isMobile"-->
+  <!--    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"-->
+  <!--    [(first)]="first"-->
+  <!--  >-->
+  <!--    <ng-template pTemplate="header" let-columns>-->
+  <!--      <tr>-->
+  <!--        <ng-container *ngFor="let col of columns">-->
+  <!--          <th *ngIf="col.display" [ngClass]="col.width">-->
+  <!--            <span [translate]="col.header"></span>-->
+  <!--          </th>-->
+  <!--        </ng-container>-->
+  <!--      </tr>-->
+  <!--    </ng-template>-->
+  <!--    <ng-template pTemplate="body" let-rowData let-columns="columns" let-item>-->
+  <!--      <tr>-->
+  <!--        <ng-container *ngFor="let col of columns">-->
+  <!--          <td *ngIf="col.display" [ngClass]="!isMobile ? col.width : ''">-->
+  <!--            <span class="p-column-title" [translate]="col.header"></span>-->
+  <!--            <div [ngSwitch]="col.type">-->
+  <!--              <div *ngSwitchCase="'date'">-->
+  <!--                {{ rowData[col.value] | date: "dd/mm/yy" }}-->
+  <!--              </div>-->
+  <!--              <div *ngSwitchCase="'number'">-->
+  <!--                {{ rowData[col.value] | number }}-->
+  <!--              </div>-->
+  <!--              <div *ngSwitchDefault>{{ rowData[col.value] }}</div>-->
+  <!--            </div>-->
+  <!--          </td>-->
+  <!--        </ng-container>-->
+  <!--      </tr>-->
+  <!--    </ng-template>-->
+  <!--    <ng-template pTemplate="emptymessage">-->
+  <!--      <tr class="p-rowgroup-footer">-->
+  <!--        <td colspan="10" class="w-full pt-4 pb-4">-->
+  <!--          {{ "info.no_data" | translate }}-->
+  <!--        </td>-->
+  <!--      </tr>-->
+  <!--    </ng-template>-->
+  <!--    <ng-template pTemplate="loadingbody">-->
+  <!--      <tr>-->
+  <!--        <td colspan="10" class="w-full pt-4 pb-4">-->
+  <!--          {{ "info.loading" | translate }}-->
+  <!--        </td>-->
+  <!--      </tr>-->
+  <!--    </ng-template>-->
+  <!--  </p-table>-->
+</div>

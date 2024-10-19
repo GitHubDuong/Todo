@@ -1,0 +1,388 @@
+<div *ngIf="display" class="px-2 py-3">
+  <h5 translate="label.produce_planning_edit"></h5>
+  <p-table
+    [value]="detailItems"
+    styleClass="p-datatable-gridlines mt-2"
+  >
+    <ng-template pTemplate="header">
+      <tr class="header-row">
+        <th style="width: 10px"></th>
+        <th class="w--5">STT</th>
+        <th class="w-3">Tên sản phẩm</th>
+        <th class="w--5">ĐVT</th>
+        <th class="w--5">SL TẤN</th>
+        <th class="w-1">Đơn giá</th>
+        <th class="w-1">Thành tiền</th>
+        <th class="w-1">Giảm giá</th>
+        <th class="w-1">Còn lại</th>
+        <th class="w--5">SL BAO</th>
+        <th class="w-2">GHI CHÚ</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowGroup>
+      <ng-container
+        *ngFor="let groupLv1 of rowGroup.goods | groupBy: ['customerName', 'orderProduceProductCode']; let lv1grIndex = index">
+        <ng-container *ngFor="let item of groupLv1.value; let lv2GrIndex = index">
+          <tr *ngIf="lv2GrIndex == 0">
+            <td colspan="10">
+              <div class="flex justify-content-between align-items-center flex-wrap">
+                <span class="p-3">
+                  <p-checkbox [binary]="true" [(ngModel)]="item.checked"></p-checkbox>
+                  &nbsp;
+                  Mã đơn hàng: <strong>{{ item.orderProduceProductCode }}</strong> - Khách hàng: <strong>{{ item.customerName }}</strong>
+                </span>
+                <div class="flex justify-content-end align-items-center gap-3 flex-shrink-1 ">
+                  <p-fileUpload
+                    mode="basic"
+                    [chooseLabel]="item?.fileDelivered ? item?.fileDelivered?.fileName :'Upload giấy giao hàng'"
+                    (onSelect)="onUploadFile($event, item)"
+                  ></p-fileUpload>
+                  <div style="height: 55px">
+                    <ng-container *ngIf="item?.fileDelivered">
+                      <img [src]="item?.fileDelivered.fileUrl" class="h-full cursor-pointer"
+                           (click)="onShowImage(item)">
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+          <ng-container *ngIf="!isMobile">
+            <tr>
+              <td class="text-center">
+                <button
+                  pButton
+                  class="p-button-danger p-button-sm"
+                  icon="pi pi-trash"
+                  *ngIf="plan.shoulDelete"
+                  (click)="removeRow(rowGroup.goods, item.originIndex); removeRow(groupLv1.value, item.lv2GrIndex)"
+                >
+                </button>
+              </td>
+              <td class="text-center">
+                <span>{{ item.index + 1 }}</span>
+              </td>
+              <td>
+                <span>{{ item.goodsName }}</span>
+              </td>
+              <td class="text-center">
+                <span>{{ item.stockUnit }}</span>
+              </td>
+              <td class="text-center">
+                <span>{{ item.quantity }}</span>
+              </td>
+              <td class="text-center">
+                <span>{{ item.unitPrice | currency: ' ' }}</span>
+              </td>
+              <td class="text-center">
+                <span>{{ (item.unitPrice * item.quantity) | currency: ' ' }}</span>
+              </td>
+              <td *ngIf="lv2GrIndex == 0" [attr.rowspan]="groupLv1.value.length" class="text-center">
+                <span>{{ sumGroup(groupLv1.value, "promotionAmount") | number }}</span>
+                <span *ngIf="sumGroup(groupLv1.value, 'promotionAmount') != 0">
+                  &nbsp;
+                  <i
+                    class="pi pi-angle-right text-orange-500 cursor-pointer"
+                    (click)="onShowPromotion(groupLv1.value)"
+                  ></i>
+                </span>
+              </td>
+              <td *ngIf="lv2GrIndex == 0" [attr.rowspan]="groupLv1.value.length" class="text-center">
+                <span>
+              {{ (sumSubTotal(groupLv1.value) - sumGroup(groupLv1.value, "promotionAmount")) | number }}
+              </span>
+              </td>
+              <td class="text-center">
+                <span>{{ item.goodsNec }}</span>
+              </td>
+
+              <!-- colspan description column -->
+              <td *ngIf="lv1grIndex == 0 && lv2GrIndex == 0"
+                  [attr.rowspan]="rowGroup.goods.length
+                                + (rowGroup.goods | groupBy: ['customerName', 'orderProduceProductCode']).length * 2"
+                  class="text-center">
+                <div class="p-inputgroup flex justify-content-center">
+                  <span class="p-inputgroup-addon"> <strong>{{ rowGroup.carName }}</strong> </span>
+                  <button type="button" pButton icon="pi pi-angle-down"
+                          (click)="groupHandleItem = rowGroup; menu.toggle($event)"></button>
+                  <p-menu appendTo="body" #menu [popup]="true" [model]="items"></p-menu>
+                </div>
+                <div *ngIf="rowGroup.licensePlates" class="w-full p-1">
+                  <p-chip
+                    [label]="'Biển số:' + rowGroup.licensePlates"
+                    icon="pi pi-credit-card"
+                    styleClass="mr-2 custom-chip">
+                  </p-chip>
+                  <p *ngIf="rowGroup.note"><strong>Ghi chú: </strong>{{ rowGroup.note }}</p>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+          <ng-container *ngIf="isMobile">
+            <tr>
+              <div class="flex justify-content-between mt-3 px-2">
+                <div class="font-bold">{{ item.index + 1 }}</div>
+                <div><span class="font-bold text-orange">{{ item.goodsName }}</span></div>
+              </div>
+              <div class="grid mt-2">
+                <div class="col-6">
+                  <span>SL:</span>&nbsp;
+                  <span class="font-bold">{{ item.quantity }} {{ item.stockUnit }}</span>
+                </div>
+                <div class="col-6 flex justify-content-end">
+                  <span>Đơn giá:</span>&nbsp;
+                  <span class="font-bold">{{ item.unitPrice | currency: ' ' }}</span>
+                </div>
+              </div>
+              <div class="grid mt-2">
+                <div class="col-6">
+                  <span>Giảm giá:</span>&nbsp;
+                  <span class="font-bold">{{ sumGroup(groupLv1.value, "promotionAmount") | number }}</span>
+                  <span *ngIf="sumGroup(groupLv1.value, 'promotionAmount') != 0">
+                  &nbsp;
+                  <i
+                    class="pi pi-angle-right text-orange-500 cursor-pointer"
+                    (click)="onShowPromotion(groupLv1.value)"
+                  ></i>
+                </span>
+                </div>
+                <div class="col-6 flex justify-content-end">
+                  <span>Thành tiền:</span>&nbsp;
+                  <span class="font-bold">{{ (item.unitPrice * item.quantity) | currency: ' ' }}</span>
+                </div>
+              </div>
+              <div class="grid mt-2">
+                <div class="col-6">
+                  <span>SL Bao:</span>&nbsp;
+                  <span class="font-bold">{{ item.goodsNec }}</span>
+                </div>
+                <div class="col-6 flex justify-content-end">
+                  <span>Còn lại:</span>&nbsp;
+                  <span
+                    class="font-bold text-orange">{{ (sumSubTotal(groupLv1.value) - sumGroup(groupLv1.value, "promotionAmount")) | number }}
+                  </span>
+                </div>
+              </div>
+              <div *ngIf="lv1grIndex == 0 && lv2GrIndex == 0" class="text-center">
+                <div class="p-inputgroup flex justify-content-center">
+                  <span class="p-inputgroup-addon"> <strong>{{ rowGroup.carName }}</strong> </span>
+                  <button type="button" pButton icon="pi pi-angle-down"
+                          (click)="groupHandleItem = rowGroup; menu.toggle($event)"></button>
+                  <p-menu appendTo="body" #menu [popup]="true" [model]="items"></p-menu>
+                </div>
+                <div *ngIf="rowGroup.licensePlates" class="w-full p-1">
+                  <p-chip
+                    [label]="'Biển số:' + rowGroup.licensePlates"
+                    icon="pi pi-credit-card"
+                    styleClass="mr-2 custom-chip">
+                  </p-chip>
+                  <p *ngIf="rowGroup.note"><strong>Ghi chú: </strong>{{ rowGroup.note }}</p>
+                </div>
+              </div>
+            </tr>
+          </ng-container>
+        </ng-container>
+
+        <!-- Group level 2 summary -->
+        <tr *ngIf="rowGroup.goods.length > 0" class="row-group-total">
+          <td colspan="4" class="text-center">
+          </td>
+          <ng-container *ngIf="!isMobile">
+            <td class="row-group-total text-center">
+              {{ sumGroup(groupLv1.value, 'quantity') | number }}
+            </td>
+            <td class="row-group-total text-center">
+            </td>
+            <td class="row-group-total text-center">
+              {{ sumSubTotal(groupLv1.value) | number }}
+            </td>
+            <td class="row-group-total text-center">
+              {{ sumGroup(groupLv1.value, "promotionAmount") | number }}
+            </td>
+            <td class="row-group-total text-center">
+              {{ (sumSubTotal(groupLv1.value) - sumGroup(groupLv1.value, "promotionAmount")) | number }}
+            </td>
+            <td class="text-center">
+              {{ sumGroup(groupLv1.value, "goodsNec") | number }}
+            </td>
+          </ng-container>
+          <ng-container *ngIf="isMobile">
+            <div class="grid">
+              <div class="col-6">
+                <label class="text-orange">Số lượng:</label>
+                &nbsp;
+                <span>{{ sumGroup(groupLv1.value, 'quantity') | number }}</span>
+              </div>
+              <div class="col-6">
+                <label class="text-orange">Thành tiền:</label>
+                &nbsp;
+                <span>{{ sumSubTotal(groupLv1.value) | number }}</span>
+              </div>
+            </div>
+            <div class="grid mt-2 pb-3">
+              <div class="col-6">
+                <label class="text-orange">Giảm giá:</label>
+                &nbsp;
+                <span>{{ (sumSubTotal(groupLv1.value) - sumGroup(groupLv1.value, "promotionAmount")) | number }}</span>
+              </div>
+              <div class="col-6">
+                <label class="text-orange">Còn lại:</label>
+                &nbsp;
+                <span>{{ sumGroup(groupLv1.value, "goodsNec") | number }}</span>
+              </div>
+            </div>
+          </ng-container>
+        </tr>
+      </ng-container>
+      <tr *ngIf="rowGroup.goods.length > 0" class="row-group-total">
+        <ng-container *ngIf="!isMobile">
+          <td colspan="4" class="text-center">
+            TỔNG CỘNG
+          </td>
+          <td class="text-center">
+            {{ sumGroup(rowGroup.goods, "quantity") }}
+          </td>
+          <td></td>
+          <td class="text-center">
+            {{ total(rowGroup.goods) | currency: ' ' }}
+          </td>
+          <td class="text-center">
+            {{ sumGroup(rowGroup.goods, "promotionAmount") | currency: ' ' }}
+          </td>
+          <td class="text-center">
+            {{ (total(rowGroup.goods) - sumGroup(rowGroup.goods, "promotionAmount")) | currency: ' ' }}
+          </td>
+          <td class="text-center">
+            {{ sumGroup(rowGroup.goods, "goodsNec") }}
+          </td>
+        </ng-container>
+        <ng-container *ngIf="isMobile">
+          <div class="grid background-orange text-white pt-3">
+            <div class="col-6">
+              <label class="text-white">Số lượng:</label>
+              &nbsp;
+              <span class="text-white">{{ sumGroup(rowGroup.goods, "quantity") }}</span>
+            </div>
+            <div class="col-6">
+              <label class="text-white">Thành tiền:</label>
+              &nbsp;
+              <span class="text-white">{{ total(rowGroup.goods) | currency: ' ' }}</span>
+            </div>
+          </div>
+          <div class="grid background-orange text-white pt-2 pb-3">
+            <div class="col-6">
+              <label class="text-white">Giảm giá:</label>
+              &nbsp;
+              <span
+                class="text-white">{{ (total(rowGroup.goods) - sumGroup(rowGroup.goods, "promotionAmount")) | currency: ' ' }}</span>
+            </div>
+            <div class="col-6">
+              <label class="text-white">Còn lại:</label>
+              &nbsp;
+              <span class="text-white">{{ sumGroup(rowGroup.goods, "goodsNec") }}</span>
+            </div>
+          </div>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <div class="grid mt-2">
+    <div class="col-12 md:col-6 flex justify-content-start align-items-center">
+      <p-button
+        *ngIf="currentTab == orderStatus.Done.toString()"
+        label="Hủy kế hoạch"
+        (click)="onCancelDetail()"
+        styleClass="p-button-secondary"
+        icon="pi pi-trash"
+      ></p-button>
+    </div>
+    <div class="col-12 md:col-6 gap-3 flex justify-content-end">
+      <p-button
+        icon="pi pi-times"
+        (click)="onCancel()"
+        [label]="'button.backF6' | translate"
+        styleClass="p-button-outlined"
+      ></p-button>
+      <p-button
+        icon="pi pi-check"
+        (click)="onSubmit()"
+        [label]="'button.saveF8' | translate"
+      >
+      </p-button>
+    </div>
+  </div>
+</div>
+
+<app-car-delivery-form
+  #carDeliveryForm
+  [(visible)]="carUpdateFormVisible"
+  (onSuccess)="onCarUpdateSuccess($event)"
+>
+</app-car-delivery-form>
+
+<app-produce-planning-requesting-payment-form
+  #requestingPaymentFormComponent
+  [(visible)]="requestingPaymentFormVisible"
+  [dialog]="true"
+></app-produce-planning-requesting-payment-form>
+
+<p-dialog
+  [(visible)]="showImageDetail"
+  [modal]="true"
+  [showHeader]="false"
+  [dismissableMask]="true"
+>
+  <img [src]="selectedItem?.fileDelivered?.fileUrl" class="w-full">
+</p-dialog>
+
+<p-dialog
+  [(visible)]="showPromotion"
+  [modal]="true"
+  header="Danh sách khuyến mãi"
+  [style]="{width: '92vw'}"
+>
+  <p-table
+    [value]="promotionList"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-2 text-center">Khuyến mãi</th>
+        <th class="w-2 text-center">Nội dung</th>
+        <th class="w-2 text-center">Số lượng</th>
+        <th class="w-2 text-center">Đơn vị</th>
+        <th class="w-2 text-center">Chiết khấu</th>
+        <th class="w-2 text-center">Số tiền</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td class="w-1 text-center">
+          <label *ngIf="isMobile">Khuyến mãi &nbsp;</label>
+          {{ item.name }} || {{ item.code }}
+        </td>
+        <td class="w-2 text-center">
+          <label *ngIf="isMobile">Nội dung &nbsp;</label>
+          {{ item.note }}
+        </td>
+        <td class="w-2 text-center">
+          <label *ngIf="isMobile">Số lượng &nbsp;</label>
+          <span class="font-bold">{{ item.qty }}</span>
+        </td>
+        <td class="w-2 text-center">
+          <label *ngIf="isMobile">Đơn vị &nbsp;</label>
+          <span class="font-bold">{{ item.unit }}</span>
+        </td>
+        <td class="w-2 text-center">
+          <label *ngIf="isMobile">Chiết khấu &nbsp;</label>
+          <span class="font-bold">{{ item.discount | number }}</span>
+        </td>
+        <td class="w-2 text-center ">
+          <label *ngIf="isMobile">Số tiền &nbsp;</label>
+          <span class="font-bold">{{ item.amount | currency : ' ' }}</span>
+        </td>
+      </tr>
+    </ng-template>
+
+  </p-table>
+</p-dialog>

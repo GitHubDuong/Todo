@@ -1,0 +1,107 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5
+        [translate]="
+          isEdit ? 'label.edit_working_days' : 'label.add_working_days'
+        "
+      ></h5>
+      <form [formGroup]="form" autocomplete="off">
+        <div class="grid w-full">
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="days"
+              >{{ "label.working_day" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-multiSelect
+              [options]="days"
+              [formControlName]="'days'"
+              [optionLabel]="'val'"
+              optionValue="key"
+              [filter]="true"
+              [ngModelOptions]="{ standalone: true }"
+              [placeholder]="'label.working_day' | translate"
+              [ngClass]="checkValidValidator('days')"
+              class="w-full"
+              [appendTo]="'body'"
+            >
+            </p-multiSelect>
+            <small
+              *ngIf="checkValidValidator('days')"
+              class="p-error"
+              [innerHTML]="'label.working_day' | translate"
+            ></small>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="employeesName"
+              >{{ "label.holiday" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-calendar
+              [formControlName]="'holidays'"
+              selectionMode="multiple"
+              appendTo="body"
+              [showIcon]="true"
+              inputId="icon"
+              [ngModelOptions]="{ standalone: true }"
+              [style]="{ width: '100%' }"
+              [placeholder]="'label.holiday' | translate"
+            ></p-calendar>
+            <small
+              *ngIf="checkValidValidator('holidays')"
+              class="p-error"
+              [innerHTML]="'label.holiday' | translate"
+            ></small>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="employeesName"
+              >{{ "label.year" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-dropdown
+              [options]="years"
+              [formControlName]="'year'"
+              [(ngModel)]="year"
+              [filter]="true"
+              [showClear]="true"
+              [ngModelOptions]="{ standalone: true }"
+              [placeholder]="'label.year' | translate"
+              [ngClass]="checkValidValidator('year')"
+            >
+            </p-dropdown>
+            <small
+              *ngIf="checkValidValidator('year')"
+              class="p-error"
+              [innerHTML]="'label.year' | translate"
+            ></small>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onCancel.emit({})"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmitAndContinue()"
+                [label]="'button.save_continue_F10' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

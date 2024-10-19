@@ -1,0 +1,118 @@
+<div *ngIf="display != true" class="px-2 py-3">
+  <h5 [translate]="'label.produce_planning-warehouse'"></h5>
+  <p-tabMenu [model]="tabMenuItems" [activeItem]="activeItem"></p-tabMenu>
+  <p-table [value]="producesTemp" [loading]="loading" [rowHover]="true" [rows]="20"
+           styleClass="p-datatable-gridlines sidebar-custom" [paginator]="true"
+           [responsiveLayout]="isMobile ? 'stack' : 'scroll'" [totalRecords]="totalRecords"
+           [rowsPerPageOptions]="[20, 50]"
+           [showCurrentPageReport]="true" [lazy]="true" scrollDirection="both" [scrollable]="!isMobile"
+           currentPageReportTemplate="" [(first)]="first" (onLazyLoad)="getOrder($event)">
+    <ng-template pTemplate="caption">
+      <div class="flex justify-content-start md:justify-content-between flex-column md:flex-row">
+        <div class="p-input-icon-left mb-2 grid">
+          <div class="col-6 md:col-3">
+            <p-calendar appendTo="body" [showIcon]="true" inputId="icon" [(ngModel)]="startDate" dateFormat="dd-mm-yy"
+                        class="mr-3"
+                        [placeholder]="'Ngày bắt đầu'" (onSelect)="getOrder()"></p-calendar>
+          </div>
+          <div class="col-6 md:col-3">
+            <p-calendar appendTo="body" [showIcon]="true" inputId="icon" [(ngModel)]="endDate" dateFormat="dd-mm-yy"
+                        class="mr-3"
+                        [placeholder]="'Ngày kết thúc'" (onSelect)="getOrder()"></p-calendar>
+          </div>
+          <div class="col-12 md:col-3">
+            <input #filter [(ngModel)]="getParams.searchText" pInputText type="text" (keypress)="getOrder()"
+                   class="w-full" [placeholder]="'label.search' | translate" />
+          </div>
+          <div class="col-12 md:col-3">
+            <p-dropdown
+              styleClass="w-full"
+              [options]="userList"
+              [(ngModel)]="getParams.userId"
+              [showClear]="true"
+              (ngModelChange)="getOrder()"
+              placeholder="Nhân viên"
+              optionLabel="fullName"
+              optionValue="id"
+            ></p-dropdown>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 15%">
+          <span [translate]="'label.code_orders'"></span>
+        </th>
+        <th style="width: 30%">
+          <span [translate]="'label.status'"></span>
+        </th>
+        <th style="width: 25%">
+          <span [translate]="'label.name'"></span>
+        </th>
+        <th style="width: 15%">
+          <span [translate]="'label.stock_quantity'"></span>
+        </th>
+        <th style="width: 15%"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr>
+        <td style="width: 15%" class="px-3">
+          <label *ngIf="isMobile" class="text-primary">
+            {{ 'label.code_orders' | translate }}: &nbsp;
+          </label>
+          <span>{{ item.procedureNumber }}</span>
+        </td>
+        <td style="width: 30%" class="px-3">
+          <label *ngIf="isMobile" class="text-primary">
+            {{ 'label.status' | translate }}: &nbsp;
+          </label>
+          <span>{{ item.procedureStatusName }}</span>
+        </td>
+        <td style="width: 25%" class="px-3">
+          <label *ngIf="isMobile" class="text-primary">
+            {{ 'label.name' | translate }}: &nbsp;
+          </label>
+          <span>{{ item.note }}</span>
+        </td>
+        <td style="width: 15%" class="px-3" [class.justify-content-end]="!isMobile">
+          <label *ngIf="isMobile" class="text-primary">
+            {{ 'label.stock_quantity' | translate }}: &nbsp;
+          </label>
+          <span class="font-bold">{{ item.quantity | number }}</span>
+        </td>
+        <td style="width: 15%" class="action flex align-items-center justify-content-center md:justify-content-end">
+          <button *ngIf="currentStatus == OrderStatus.Pending" pButton class="p-button-success"
+                  icon="pi pi-angle-double-right" (click)="accept(item.id)"></button>
+
+          <button pButton icon="pi pi-search-plus" (click)="onDetailProduce(item)"></button>
+          <button *ngIf="currentStatus == OrderStatus.Pending  && item.shoulNotAccept"
+                  pButton class="p-button-success"
+                  icon="pi pi-angle-double-left" (click)="notAccept(item.id)"></button>
+
+          <button *ngIf="currentStatus == OrderStatus.Pending && item.shouDelete"
+                  pButton class="p-button-danger" icon="pi pi-trash"
+                  (click)="delete(item.id)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="w-full pt-4 pb-4">No General website order new found.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td class="w-full pt-4 pb-4">
+          Loading website order new data. Please wait.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<app-produce-planning-warehouse-form
+  *ngIf="display"
+  (onFormClosing)="display = false" [display]="display" [detail]="orderDetail">
+</app-produce-planning-warehouse-form>

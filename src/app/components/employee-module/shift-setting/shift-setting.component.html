@@ -1,0 +1,347 @@
+<p-toast></p-toast>
+<div class="grid grid-nogutter">
+  <div class="col-12 p-0">
+    <div class="px-2 py-3">
+      <div class="flex justify-content-between align-items-center">
+        <h5 class="pt-3" [translate]="'label.shift_setting'"></h5>
+      </div>
+      <form [formGroup]="form" autocomplete="off">
+        <div class="grid w-full">
+          <!-- Code Control -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="name"
+            >{{
+                "label.name" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <input
+              id="disabled-input"
+              type="text"
+              pInputText
+              [formControlName]="'name'"
+              [ngClass]="checkValidValidator('name')"
+              [placeholder]="'label.name' | translate"
+            />
+            <small
+              *ngIf="checkValidValidator('name')"
+              class="p-error"
+              [innerHTML]="'label.name' | translate"
+            ></small>
+          </div>
+          <!-- From Employee Control -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="month"
+            >{{
+                "label.month" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-dropdown
+              [options]="monthsOfYear"
+              [optionLabel]="'value'"
+              [optionValue]="'key'"
+              [(ngModel)]="selectedMonth"
+              [formControlName]="'month'"
+              [placeholder]="'label.month' | translate"
+              (onChange)="getShiftUserByMonth()"
+            >
+            </p-dropdown>
+            <small
+              *ngIf="checkValidValidator('month')"
+              class="p-error"
+              [innerHTML]="'label.month' | translate"
+            ></small>
+          </div>
+          <div
+            class="field col-12 md:col-4 flex column-gap-3 align-items-end justify-content-end"
+          >
+            <p-button
+              icon="pi pi-check"
+              (click)="onSubmit()"
+              [label]="'button.saveF8' | translate"
+            >
+            </p-button>
+            <p-button
+              *ngIf="form.get('id')?.value"
+              class="p-button-info"
+              icon="pi pi-sync"
+              (click)="syncUser()"
+              [label]="'button.sync_user' | translate"
+            >
+            </p-button>
+          </div>
+          <!-- To Employee Control -->
+          <div class="field col-12 md:col-12 flex flex-column">
+            <label htmlFor="note"
+            >{{
+                "label.note" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <textarea
+              class="mt-1"
+              pInputTextarea
+              [rows]="3"
+              [formControlName]="'note'"
+              [cols]="30"
+            ></textarea>
+          </div>
+        </div>
+      </form>
+      <div class="col-12">
+        <p-table
+          #dt1
+          [value]="lstUsers"
+          dataKey="id"
+          [rows]="10"
+          [loading]="false"
+          [rowHover]="true"
+          styleClass="p-datatable-gridlines sidebar-custom"
+          [paginator]="true"
+          [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+          scrollDirection="both"
+          [rowsPerPageOptions]="[5, 10, 25, 50]"
+          [showCurrentPageReport]="true"
+          currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+          [scrollable]="!isMobile"
+        >
+          <ng-template pTemplate="caption">
+            <div
+              class="flex justify-content-start md:justify-content-between flex-column md:flex-row"
+            >
+              <span class="p-input-icon-left mb-2">
+                <i class="pi pi-search"></i>
+                <input
+                  #filter
+                  pInputText
+                  type="text"
+                  [(ngModel)]="searchText"
+                  (keypress)="onSearch($event)"
+                  [placeholder]="'label.search' | translate"
+                  class="w-full"
+                />
+              </span>
+              <!-- target -->
+              <div class="flex align-items-center column-gap-3">
+                <button
+                  pButton
+                  label="Thiết lập ca"
+                  icon="pi pi-plus"
+                  (click)="onShowShiftBulkSetting()"
+                ></button>
+                <p-dropdown
+                  [options]="listTarget"
+                  [ngModelOptions]="{ standalone: true }"
+                  [(ngModel)]="targetSelected"
+                  [optionLabel]="'name'"
+                  [filter]="true"
+                  filterBy="name"
+                  [optionValue]="'id'"
+                  [showClear]="true"
+                  (onChange)="onFilterTarget()"
+                  [placeholder]="'label.target' | translate"
+                >
+                </p-dropdown>
+              </div>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 60px" class="flex justify-content-center">
+                <p-checkbox [binary]="true" [(ngModel)]="isCheckAll" (ngModelChange)="onCheckAllChange($event)">
+                </p-checkbox>
+              </th>
+              <th
+                style="width: 100px"
+                alignFrozen="left"
+                pFrozenColumn
+                [frozen]="true"
+              >
+                <div class="flex align-items-center">
+                  <span [translate]="'label.numerical_order'"></span>
+                </div>
+              </th>
+              <th
+                pFrozenColumn
+                style="width: 200px"
+                [alignFrozen]="'left'"
+                [frozen]="true"
+                [pSortableColumn]="'userFullName'"
+              >
+                <div class="flex justify-content-between align-items-center">
+                  <span [translate]="'label.employee_name'"></span>
+                  <p-sortIcon field="userFullName"></p-sortIcon>
+                </div>
+              </th>
+              <th style="width: 200px" [pSortableColumn]="'targetId'">
+                <div class="flex align-items-center">
+                  <span [translate]="'label.name_target'"></span>
+                  <p-sortIcon field="targetId"></p-sortIcon>
+                </div>
+              </th>
+              <th style="width: 120px" *ngFor="let date of rangeDateArray">
+                <div class="flex align-items-center">
+                  <span [translate]="date | date: 'EEE dd/MM'"></span>
+                </div>
+              </th>
+              <th *ngIf="isMobile"></th>
+              <th
+                style="width: 200px !important"
+                class="w-2"
+                *ngIf="!isMobile"
+                alignFrozen="right"
+                pFrozenColumn
+                [frozen]="true"
+              ></th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-user let-i="rowIndex">
+            <tr>
+              <td style="width: 60px" class="flex justify-content-center">
+                <p-checkbox [(ngModel)]="user.checked" [binary]="true"></p-checkbox>
+              </td>
+              <td
+                class="w-2 flex"
+                alignFrozen="left"
+                pFrozenColumn
+                [frozen]="true"
+                style="width: 100px !important; z-index: 1009"
+              >
+                <span
+                  class="p-column-title"
+                  [translate]="'label.numerical_order'"
+                ></span>
+                {{ i + 1 }}
+              </td>
+              <td
+                class="w-2 flex"
+                alignFrozen="left"
+                pFrozenColumn
+                [frozen]="true"
+                style="width: 200px !important; z-index: 1009"
+              >
+                <span
+                  class="p-column-title"
+                  [translate]="'label.employee_name'"
+                ></span>
+                {{ user.userFullName }}
+              </td>
+              <td class="w-2" style="width: 200px !important">
+                <span
+                  class="p-column-title"
+                  [translate]="'label.code_target'"
+                ></span>
+                <ng-container *ngIf="user.isEdit">
+                  <p-dropdown
+                    [(ngModel)]="user.targetId"
+                    [optionLabel]="'name'"
+                    class="w-full"
+                    [options]="listTarget"
+                    [optionValue]="'id'"
+                    appendTo="body"
+                  ></p-dropdown>
+                </ng-container>
+                <ng-container *ngIf="!user.isEdit">
+                  {{ targetName(user.targetId) }}
+                </ng-container>
+              </td>
+              <td
+                style="width: 120px"
+                class="justify-content-center"
+                *ngFor="let date of rangeDateArray; let idx = index"
+              >
+                <span
+                  class="p-column-title"
+                  [translate]="date | date: 'EEE dd/MM'"
+                ></span>
+                <ng-container *ngIf="user.isEdit">
+                  <p-dropdown
+                    class="w-full"
+                    [optionLabel]="'code'"
+                    [(ngModel)]="user['day' + (idx + 1)]"
+                    [options]="listSymbol"
+                    [placeholder]="'Chọn ca làm việc'"
+                    [optionValue]="'id'"
+                    appendTo="body"
+                  ></p-dropdown>
+                </ng-container>
+                <ng-container *ngIf="!user.isEdit">
+                  {{ symbolName(user["day" + (idx + 1)]) }}
+                </ng-container>
+              </td>
+              <td *ngIf="isMobile">
+                <button
+                  pButton
+                  icon="pi pi-pencil"
+                  severity="success"
+                  (click)="user.isEdit = true"
+                ></button>
+                <button
+                  class="p-button-secondary"
+                  *ngIf="user.isEdit"
+                  pButton
+                  icon="pi pi-times"
+                  severity="success"
+                  (click)="user.isEdit = false"
+                ></button>
+              </td>
+              <td
+                style="width: 200px !important"
+                *ngIf="!isMobile"
+                alignFrozen="right"
+                pFrozenColumn
+                [frozen]="true"
+                class="w-2 flex justify-content-start md:justify-content-center column-gap-3"
+              >
+                <button
+                  class="p-button-info"
+                  *ngIf="!user.isEdit"
+                  pButton
+                  icon="pi pi-pencil"
+                  (click)="user.isEdit = true"
+                ></button>
+                <button
+                  class="p-button-primary"
+                  *ngIf="user.isEdit"
+                  pButton
+                  icon="pi pi-save"
+                  (click)="saveUser(user)"
+                ></button>
+                <button
+                  class="p-button-secondary"
+                  *ngIf="user.isEdit"
+                  pButton
+                  icon="pi pi-ban"
+                  severity="success"
+                  (click)="user.isEdit = false"
+                ></button>
+                <button
+                  class="p-button-primary"
+                  pButton
+                  [icon]="'pi pi-times'"
+                  [severity]="'success'"
+                  (click)="removeUser(user)"
+                ></button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td class="w-full pt-4 pb-4">No Shift setting found.</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="loadingbody">
+            <tr>
+              <td class="w-full pt-4 pb-4">
+                Loading Shift setting data. Please wait.
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </div>
+</div>
+<app-shift-bulk-setting
+  *ngIf="showBulkCreate"
+  [(visible)]="showBulkCreate"
+  (reload)="onReload()"
+></app-shift-bulk-setting>

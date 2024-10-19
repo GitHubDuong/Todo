@@ -1,0 +1,39 @@
+<p-dialog
+  [header]="'label.dept_information' | translate"
+  [(visible)]="displayDept"
+  [modal]="true"
+  [style]="{ width: '50vw' }"
+  [draggable]="false"
+  [resizable]="false"
+  (onHide)="onCancel.emit()"
+>
+  <p-messages severity="info">
+    <ng-template pTemplate>
+      <span style="white-space: pre-wrap">{{
+        "label.dept_notify" | translate
+      }}</span>
+    </ng-template>
+  </p-messages>
+  <app-account-connection
+    [isSubmitted]="isSubmitted"
+    #accountConnection
+  ></app-account-connection>
+  <ng-template pTemplate="footer">
+    <button
+      pButton
+      pRipple
+      type="button"
+      class="p-button-outlined"
+      (click)="onCancel.emit({})"
+    >
+      {{ "button.back" | translate }}
+    </button>
+    <button
+      type="button"
+      pButton
+      icon="pi pi-check"
+      [label]="'button.save' | translate"
+      (click)="onSave()"
+    ></button>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,73 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="card card-table">
+  <form [formGroup]="officeAddForm" class="grid">
+    <div *ngIf="!hiddenTitle" class="col-12 py-2">
+      <h5
+        class="m-0"
+        [translate]="isEdit ? 'label.edit_stationeri' : 'label.add_stationeri'"
+      ></h5>
+    </div>
+    <div class="field col-12 md:col-4 flex flex-column">
+      <label htmlFor="order" [translate]="'label.code_stationeri'"></label>
+      <input
+        pInputText
+        id="code"
+        [(ngModel)]="officeAddForm.value.code"
+        formControlName="code"
+        [class.ng-invalid]="checkValidValidator('code')"
+        [class.ng-dirty]="checkValidValidator('code')"
+      />
+      <small
+        *ngIf="checkValidValidator('code')"
+        class="p-error"
+        [innerHTML]="'info.enter_code_stationeri' | translate"
+      ></small>
+    </div>
+    <div class="field col-12 md:col-4 flex flex-column">
+      <label htmlFor="name" [translate]="'label.unit_stationeri'"></label>
+      <input
+        pInputText
+        id="unit"
+        [(ngModel)]="officeAddForm.value.unit"
+        formControlName="unit"
+        [class.ng-invalid]="checkValidValidator('unit')"
+        [class.ng-dirty]="checkValidValidator('unit')"
+      />
+      <small
+        *ngIf="checkValidValidator('unit')"
+        class="p-error"
+        [innerHTML]="'info.enter_unit_stationeri' | translate"
+      ></small>
+    </div>
+    <div class="field col-12 md:col-4 flex flex-column">
+      <label htmlFor="color" [translate]="'label.name_stationeri'"></label>
+      <input
+        pInputText
+        id="name"
+        [(ngModel)]="officeAddForm.value.name"
+        formControlName="name"
+        [class.ng-invalid]="checkValidValidator('name')"
+        [class.ng-dirty]="checkValidValidator('name')"
+      />
+      <small
+        *ngIf="checkValidValidator('name')"
+        class="p-error pr-2"
+        [innerHTML]="'info.enter_name_stationeri' | translate"
+      ></small>
+    </div>
+    <div class="col-12 flex justify-content-end">
+      <p-button
+        icon="pi pi-times"
+        (click)="onCancel.emit({})"
+        [label]="'button.backF6' | translate"
+        styleClass="p-button-outlined"
+        class="pr-2"
+      ></p-button>
+      <p-button
+        icon="pi pi-check"
+        (click)="onSubmit()"
+        [label]="'button.saveF8' | translate"
+      ></p-button>
+    </div>
+  </form>
+</div>

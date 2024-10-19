@@ -1,0 +1,13 @@
+<app-dialog-layout
+  [header]="header"
+  [visible]="visible"
+  (save)="onSave()"
+  (cancel)="onCancel()"
+>
+  <ng-template appTemplate="content">
+    <div class="field">
+      <label>Nhập lưu ý báo giá</label>
+      <textarea pInputTextarea rows="10" pInputText [(ngModel)]="company.note" class="w-full"></textarea>
+    </div>
+  </ng-template>
+</app-dialog-layout>

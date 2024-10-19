@@ -1,0 +1,31 @@
+<div class="flex flex-wrap gap-3 p-2">
+  <p-calendar
+    [showIcon]="true"
+    dateFormat="dd/mm/yy"
+    placeholder="Từ ngày"
+    [(ngModel)]="filter.fromAt"
+    (ngModelChange)="onLoadData()"
+  ></p-calendar>
+  <p-calendar
+    [showIcon]="true"
+    dateFormat="dd/mm/yy"
+    placeholder="Đến ngày"
+    [(ngModel)]="filter.toAt"
+    (ngModelChange)="onLoadData()"
+  ></p-calendar>
+  <input
+    pInputText
+    placeholder="Tìm kiếm"
+    [(ngModel)]="filter.searchText"
+    (ngModelChange)="onLoadData()"
+  >
+  <p-dropdown
+    [options]="userList"
+    [(ngModel)]="filter.userId"
+    (ngModelChange)="onLoadData()"
+    [showClear]="true"
+    placeholder="Chọn nhân viên"
+    optionLabel="fullName"
+    optionValue="id"
+  ></p-dropdown>
+</div>

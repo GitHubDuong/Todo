@@ -1,0 +1,27 @@
+<div *ngIf="!isDetailVisible" class="px-2 py-3">
+  <h5 [translate]="'label.gate_pass_list'"></h5>
+  <app-tab-menu [tabItems]="tabMenus" [(ngModel)]="filterParams.statusTab" (onTabChange)="loadData()"></app-tab-menu>
+  <app-procedure-filter
+    [filter]="filterParams"
+    (filterChange)="onFilterChange($event)"
+  ></app-procedure-filter>
+  <app-data-table
+    [(filterParams)]="filterParams"
+    [columns]="columns"
+    [headerActions]="headerActions"
+    [dataSource]="dataSource"
+    (onLoad)="loadData()"
+    [showSearch]="false"
+    [paginator]="paginator">
+  </app-data-table>
+</div>
+
+<ng-template #special let-rowData>
+  <p-tag styleClass="mr-2" [value]="rowData.isSpecial ? 'Đặc biệt': ''"></p-tag>
+</ng-template>
+
+<app-gate-pass-form
+  #detailFormComponent
+  [(visible)]="isDetailVisible"
+  (onFormClosing)="onFormClosing($event)"
+></app-gate-pass-form>

@@ -1,0 +1,37 @@
+<div
+  class="layout-wrapper"
+  [ngClass]="{
+    'layout-overlay': isOverlay(),
+    'layout-static': isStatic(),
+    'layout-theme-light': !config.dark,
+    'layout-theme-dark': config.dark,
+    'layout-overlay-sidebar-active': overlayMenuActive,
+    'layout-static-sidebar-inactive': staticMenuInactive,
+    'layout-mobile-sidebar-active': menuActiveMobile,
+    'p-ripple-disabled': !config.ripple,
+    'p-input-filled': config.inputStyle === 'filled'
+  }"
+>
+  <div class="header" *ngIf="!isLargeScreen()" [class.is-mobile]="isMobile()">
+    <app-topbar></app-topbar>
+  </div>
+  <div
+    class="body w-full"
+    [class.is-mobile]="isMobile()"
+  >
+    <div *ngIf="!isLargeScreen()" class="layout-sidebar sidebar-custom">
+      <app-menu></app-menu>
+    </div>
+    <div
+      [ngClass]="{ 'layout-main-container': !isLargeScreen() }"
+      class="layout-main-container"
+    >
+      <div class="layout-main">
+        <router-outlet></router-outlet>
+      </div>
+      <app-footer></app-footer>
+    </div>
+    <app-config *ngIf="!isLargeScreen()"></app-config>
+  </div>
+  <!--        <div *ngIf="menuActiveMobile" class="layout-mask p-component-overlay"></div>-->
+</div>

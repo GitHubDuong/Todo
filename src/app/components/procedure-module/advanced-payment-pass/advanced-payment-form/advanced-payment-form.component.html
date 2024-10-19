@@ -1,0 +1,191 @@
+<div *ngIf="visible" class="grid grid-nogutter">
+  <div class="col-12 p-0">
+    <div class="px-2 py-3">
+      <h5 [translate]="isEdit ? 'label.advanced_payment_pass_edit' : 'label.advanced_payment_pass_add'"></h5>
+      <form [formGroup]="detailForm" autocomplete="off">
+        <div class="grid w-full">
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label for="procedureNumber">{{ "label.advanced_payment_pass_procedure_id" | translate }}</label>
+            <input
+              id="procedureNumber"
+              type="text"
+              pInputText
+              formControlName="procedureNumber"
+              disabled
+            />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label>
+              {{ "label.advanced_payment_pass_payment_time" | translate }}<span class="text-pink-400">*</span>
+            </label>
+            <p-calendar
+              class="w-full p-calendar-width-full"
+              [showIcon]="true"
+              formControlName="datePayment"
+              dateFormat="dd-mm-yy"
+              [placeholder]="'Thời gian thanh toán'"
+              [showTime]="true"
+              appendTo="body"
+            ></p-calendar>
+          </div>
+          <div class="field col-12 flex flex-column mb-0">
+            <label for="note">{{ "label.advanced_payment_pass_advanced_reason" | translate }}</label>
+            <textarea
+              id="note"
+              pInputTextarea rows="5" formControlName="note"
+              placeholder="Nhập lý do tạm ứng"></textarea>
+          </div>
+          <div class="field col-12">
+            <app-multiple-upload
+              [fileLink]="fileLink"
+              (removeFile)="onFileLinkChange($event)"
+              (attackFiles)="onAttachFile($event)"
+            ></app-multiple-upload>
+          </div>
+          <div class="field col-12" *ngIf="isFinished.value">
+            <app-multiple-upload
+              [label]="'Tệp tin quyết toán'"
+              [removable]="false"
+              [fileLink]="settlementFile"
+              (removeFile)="onSettlementFileLinkChange($event)"
+              (attackFiles)="onSettlementAttachFile($event)"
+            ></app-multiple-upload>
+          </div>
+        </div>
+        <div class="col-12 mt-2">
+          <p-table
+            #dt
+            dataKey="id"
+            styleClass="p-datatable-gridlines mt-2"
+            responsiveLayout="scroll'"
+            scrollable="true"
+            scrollDirection="both"
+            [value]="items.controls"
+            [rows]="10"
+            [rowHover]="true"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="w-1 flex justify-content-center">
+                  {{ "label.order_number" | translate }}
+                </th>
+
+                <th class="w-7 flex justify-content-center">
+                  {{ "label.content" | translate }}
+                </th>
+
+                <th class="w-3 flex justify-content-center">
+                  {{ "label.amount_of_money" | translate }}
+                </th>
+                <th
+                  class="w-1 flex justify-content-start md:justify-content-center"
+                  alignFrozen="right"
+                  pFrozenColumn
+                  [frozen]="true"
+                >
+                  <button
+                    pButton
+                    icon="pi pi-plus"
+                    (click)="addItem()"
+                  ></button>
+                </th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowIndex="rowIndex">
+              <ng-container formArrayName="items">
+                <ng-container [formGroupName]="rowIndex">
+                  <tr>
+                    <td class="w-1 flex justify-content-center">
+                      <strong>{{ rowIndex + 1 }}</strong>
+                    </td>
+
+                    <td class="w-7 flex justify-content-center">
+                      <input pInputText
+                             formControlName="note"
+                             [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'note')}"
+                             class="w-full">
+                    </td>
+
+                    <td class="w-3 flex justify-content-center">
+                      <p-inputNumber
+                        class="w-full"
+                        [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'amount')}"
+                        formControlName="amount">
+                      </p-inputNumber>
+                    </td>
+                    <td
+                      style="min-width: 80px !important"
+                      class="w-1 flex justify-content-start md:justify-content-center"
+                      pFrozenColumn
+                      alignFrozen="right"
+                      [frozen]="true"
+                    >
+                      <button
+                        pButton
+                        class="p-button-danger"
+                        icon="pi pi-trash"
+                        (click)="deleteItem(rowIndex)"
+                      ></button>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr class="p-rowgroup-footer hover:bg-white">
+                <td colspan="12"
+                    class="w-full flex justify-content-center pt-4 pb-4 border-left-none border-right-none border-bottom-none">
+                  {{ "info.no_data" | translate }}
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <tr class="footer-row">
+                <td colspan="2" class="w-8 flex justify-content-end">
+                  {{ "label.total" | translate | uppercase }}
+                </td>
+                <td class="w-3 flex justify-content-end">
+                  {{ sumAmount | number }}
+                </td>
+                <td
+                  style="min-width: 80px !important"
+                  class="w-1 flex justify-content-start md:justify-content-center"
+                  pFrozenColumn
+                  alignFrozen="right"
+                  [frozen]="true"
+                >
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+        <div class="col-12 mt-2">
+          <div class="p-fluid p-formgrid grid">
+            <div class="field col-12 gap-8 flex justify-content-end p-0">
+              <p-checkbox
+                [binary]="true"
+                formControlName="isImmediate"
+                label="Cần chi gấp"
+              ></p-checkbox>
+              <p-button
+                icon="pi pi-times"
+                (click)="onBack()"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="submit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

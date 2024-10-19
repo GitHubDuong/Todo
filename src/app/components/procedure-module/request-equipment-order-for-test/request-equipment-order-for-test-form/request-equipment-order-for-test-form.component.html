@@ -1,0 +1,108 @@
+<app-form-layout
+  [isDisplay]="isDisplay"
+  [header]="'Sửa đơn mua hàng'"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <div class="grid">
+      <div class="field col-12 md:col-6">
+        <label for="code">Mã quy trình</label>
+        <input
+          pInputText
+          id="code"
+          class="w-full"
+          [ngModel]="detail?.procedureNumber"
+          [disabled]="true"
+        />
+      </div>
+      <div class="field col-12 md:col-6">
+        <label>Thời gian</label>
+        <input
+          pInputText
+          class="w-full"
+          [ngModel]="detail?.date | date: 'dd/MM/yyyy'"
+          [disabled]="true"
+        />
+      </div>
+      <div class="field col-12 md:col-6">
+        <label>Nhà cung cấp</label>
+        <p-dropdown
+          optionLabel="name" optionValue="id" 
+          [filter]="true"
+          [options]="customers"
+          [(ngModel)]="detail.customerId"
+          class="ml-2"
+          [showClear]="true" placeholder="Chọn nhà cung cấp"
+          (onFilter)="getListCustomer($event)"
+        ></p-dropdown>
+      </div>
+      <div class="field col-12 md:col-6">
+        <label>Ghi chú</label>
+        <textarea
+          pInputTextarea
+          rows="3"
+          class="w-full"
+          [(ngModel)]="detail.note"
+        ></textarea>
+      </div>
+      <div class="field col-12">
+        <app-multiple-upload
+          [fileLink]="fileLink"
+          (removeFile)="onFileLinkChange($event)"
+          (attackFiles)="onAttachFile($event)"
+        ></app-multiple-upload>
+      </div>
+    </div>
+    <p-table
+      [value]="getItems()"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="col-2">STT</th>
+          <th class="col-3">Diễn giải</th>
+          <th class="col-1">Đơn vị</th>
+          <th class="col-1">Số lượng</th>
+          <th class="col-2">Đơn giá</th>
+          <th class="col-3">Thành tiền</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-idx="rowIndex">
+        <tr>
+          <td class="col-2 px-3">{{ idx+1 }}</td>
+          <td class="col-3 px-3">{{ item.goodName }}</td>
+          <td class="col-1 px-3">
+            <input
+              pInputText
+              class="w-full"
+              [(ngModel)]="item.goodUnit"
+              placeholder="Đơn vị"
+            >
+          </td>
+          <td class="col-1 px-3">
+            <p-inputNumber
+              class="w-full"
+              [(ngModel)]="item.quantity"
+              (ngModelChange)="getAmount(item)"
+              placeholder="Số lượng"
+
+            ></p-inputNumber>
+          </td>
+          <td class="col-2 px-3">
+            <p-inputNumber
+              class="w-full"
+              [(ngModel)]="item.unitPrice"
+              (ngModelChange)="getAmount(item)"
+              placeholder="Đon giá"
+            ></p-inputNumber>
+          </td>
+          <td class="col-3 px-3">
+            <div class="w-full flex justify-content-end">
+              {{ item.amount | number }}
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-template>
+</app-form-layout>

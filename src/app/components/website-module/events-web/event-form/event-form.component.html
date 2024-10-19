@@ -1,0 +1,168 @@
+<div *ngIf="isVisible" class="card card-table" [formGroup]="form">
+  <h5>
+    {{ (event ? "label.web_events_edit" : "label.web_events_add") | translate }}
+  </h5>
+  <div class="p-fluid formgrid grid mt-4">
+    <div class="field col">
+      <label for="name">
+        {{ "label.web_events_name" | translate }}
+      </label>
+      <input
+        pInputText
+        id="name"
+        type="text"
+        class="w-full"
+        placeholder="{{ 'label.web_events_name' | translate }}"
+        formControlName="name"
+      />
+      <small
+        *ngIf="f.name.touched && f.name.hasError('required')"
+        class="p-error"
+      >
+        {{ "info.event_form_name_required" | translate }}
+      </small>
+    </div>
+    <div class="field col">
+      <label for="date">
+        {{ "label.web_events_date" | translate }}
+      </label>
+      <p-calendar
+        id="date"
+        [showIcon]="true"
+        placeholder="{{ 'label.web_events_date' | translate }}"
+        dateFormat="dd/mm/yy"
+        styleClass="w-full"
+        formControlName="date"
+      ></p-calendar>
+      <small
+        *ngIf="f.date.touched && f.date.hasError('required')"
+        class="p-error"
+      >
+        {{ "info.event_form_date_required" | translate }}
+      </small>
+    </div>
+  </div>
+  <div class="p-fluid formgrid grid mt-4">
+    <div class="field col">
+      <label for="order">
+        {{ "label.web_events_order" | translate }}
+      </label>
+
+      <p-inputNumber
+        id="order"
+        inputmode="integeronly"
+        formControlName="order"
+        placeholder="{{ 'label.web_events_order' | translate }}"
+        class="w-full"
+      ></p-inputNumber>
+      <small
+        *ngIf="f.order.touched && f.order.hasError('required')"
+        class="p-error"
+      >
+        {{ "info.event_form_order_required" | translate }}
+      </small>
+    </div>
+    <div class="field col">
+      <label for="driver">
+        {{ "label.web_events_driver" | translate }}
+      </label>
+      <input
+        pInputText
+        id="driver"
+        type="text"
+        class="w-full"
+        placeholder="{{ 'label.web_events_driver' | translate }}"
+        formControlName="linkDriver"
+      />
+    </div>
+  </div>
+  <div class="p-fluid formgrid grid mt-4">
+    <div class="field col">
+      <label for="note">
+        {{ "label.web_events_note" | translate }}
+      </label>
+      <input
+        pInputText
+        id="note"
+        type="text"
+        class="w-full"
+        placeholder="{{ 'label.web_events_note' | translate }}"
+        formControlName="note"
+      />
+    </div>
+  </div>
+  <div class="p-fluid formgrid grid mt-4">
+    <div class="field col">
+      <label for="image">
+        {{ "label.web_events_image" | translate }}
+        <span style="font-style: italic">
+          ({{
+            "label.web_events_max_image" | translate: { max: this.maxFile }
+          }})
+        </span>
+      </label>
+      <div class="flex gap-8">
+        <button
+          style="width: fit-content"
+          pButton
+          icon="pi pi-upload"
+          [label]="'button.import' | translate"
+          [disabled]="f.files.value.length >= maxFile"
+          (click)="uploadFile.click()"
+        ></button>
+        <button
+          style="width: fit-content"
+          pButton
+          icon="pi pi-times"
+          [label]="'button.remove' | translate"
+          [disabled]="!f.files.value.length"
+          (click)="f.files.setValue([])"
+        ></button>
+        <input
+          #uploadFile
+          class="hidden"
+          type="file"
+          id="image"
+          [accept]="accept.join(',')"
+          (change)="onFileChanges($event)"
+          multiple
+        />
+      </div>
+      <div class="event-files mt-3" *ngIf="f.files.value.length">
+        <div class="event-file" *ngFor="let file of f.files.value">
+          <p-image
+            [src]="file.fileFullUrl"
+            preview="true"
+            width="128px"
+            height="128px"
+          >
+            <ng-template pTemplate="indicator"></ng-template>
+          </p-image>
+          <span class="remove" (click)="onRemoveFile(file.fileName)">
+            <i class="pi pi-times"></i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="w-full col-12 flex align-items-center justify-content-end mt-2">
+    <button
+      icon="pi pi-times"
+      pButton
+      hotKey="F6"
+      class="w-auto p-button-outlined mr-2"
+      [label]="'button.backF6' | translate"
+      (click)="back.emit()"
+    ></button>
+    <button
+      icon="pi pi-check"
+      class="w-auto"
+      pButton
+      hotKey="F8"
+      [label]="'button.saveF8' | translate"
+      [disabled]="isSaving"
+      [loading]="isSaving"
+      (click)="onSave()"
+    ></button>
+  </div>
+</div>

@@ -1,0 +1,135 @@
+<app-form-layout
+  [isDisplay]="isDisplay"
+  [header]="!item ? 'Tạo vị trí xe':'Sửa vị trí xe'"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <form [formGroup]="mForm">
+      <div class="grid">
+        <div class="field col-12 md:col-6">
+          <label for="code">Mã quy trình</label>
+          <input
+            pInputText
+            id="code"
+            class="w-full"
+            [formControl]="procedureNumber"
+          />
+        </div>
+        <div class="field col col-12 md:col-6">
+          <label for="name">Ngày</label>
+          <p-calendar
+            id="name"
+            styleClass="w-full"
+            [showIcon]="true"
+            [formControl]="date"
+          ></p-calendar>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field col-12">
+          <label>Ghi chú</label>
+          <textarea
+            pInputTextarea
+            rows="3"
+            class="w-full"
+            [formControl]="note"
+          ></textarea>
+        </div>
+      </div>
+      <div class="grid mx-2">
+        <div class="col-12 flex justify-content-between align-items-center p-2 border-1 border-gray-300">
+          <span class="font-bold text-orange">Vị trí xe</span>
+          <button pButton icon="pi pi-plus" label="Thêm" (click)="onAddCarLocation()"></button>
+        </div>
+        <ng-container *ngFor="let item of items.controls; index as i"
+                      [formGroup]="toFormGroup(item)">
+          <div class="grid grid-nogutter border-1 border-gray-300 p-2 pr-0 mt-2">
+            <div class="field col-12 md:col-4 pr-2">
+              <label>Số xe</label>
+              <input
+                pInputText
+                class="w-full"
+                formControlName="licensePlates"
+              />
+            </div>
+            <div class="field col-12 md:col-4 pr-2">
+              <label>Loại xe</label>
+              <input
+                pInputText
+                class="w-full"
+                formControlName="type"
+              />
+            </div>
+            <div class="field col-12 md:col-4 pr-2">
+              <label>Tải trọng</label>
+              <input
+                pInputText
+                class="w-full"
+                formControlName="payload"
+              />
+            </div>
+            <div class="field col-12 md:col-4 pr-2">
+              <label>Tên tài xế</label>
+              <input
+                pInputText
+                class="w-full"
+                formControlName="driverName"
+              />
+            </div>
+            <div class="field col-12 md:col-4 pr-2">
+              <label>Vị trí hiện tại</label>
+              <input
+                pInputText
+                class="w-full"
+                formControlName="location"
+              />
+            </div>
+            <div class="field col-12 md:col-6 pr-2">
+              <label>Kế hoạch đang thực hiện</label>
+              <textarea
+                pInputTextarea
+                rows="3"
+                class="w-full"
+                formControlName="planInprogress"
+              ></textarea>
+            </div>
+            <div class="field col-12 md:col-6 pr-2">
+              <label>Kế hoạch dự kiến</label>
+              <textarea
+                pInputTextarea
+                rows="3"
+                class="w-full"
+                formControlName="planExpected"
+              ></textarea>
+            </div>
+            <div class="field col-12 pr-2">
+              <label>Ghi chú</label>
+              <textarea
+                pInputTextarea
+                rows="3"
+                class="w-full"
+                formControlName="note"
+              ></textarea>
+            </div>
+            <div class="field col-12">
+              <app-multiple-upload
+                [fileLink]="item.get('files').value"
+                (removeFile)="onFileLinkChange(item, $event)"
+                (attackFiles)="onAttachFile(item, $event)"
+              ></app-multiple-upload>
+            </div>
+            <div class="col-12 flex justify-content-end pr-2">
+              <button
+                pButton
+                icon="pi pi-trash"
+                label="Xóa"
+                (click)="onDeleteCarLocation(i)"
+              ></button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </form>
+  </ng-template>
+</app-form-layout>

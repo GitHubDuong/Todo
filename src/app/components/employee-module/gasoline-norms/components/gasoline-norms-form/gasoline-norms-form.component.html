@@ -1,0 +1,180 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid grid-nogutter">
+  <div class="col-12 p-0">
+    <div class="px-2 py-3">
+      <h5 [translate]="isEdit ? 'label.add_branch' : 'label.add_car'"></h5>
+      <form [formGroup]="gasForm" autocomplete="off">
+        <div class="grid w-full">
+          <!-- DATE -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="date">{{ "label.date" | translate }}</label>
+            <p-calendar
+              [style]="{ width: '100%' }"
+              [showIcon]="true"
+              inputId="icon"
+              [formControlName]="'date'"
+            ></p-calendar>
+          </div>
+
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="employeesName"
+            >{{
+                "label.car_recipient" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-dropdown
+              [options]="employees"
+              [formControlName]="'userId'"
+              optionLabel="fullName"
+              [filter]="true"
+              filterBy="fullName"
+              [showClear]="true"
+              [placeholder]="'label.employee_name' | translate"
+              [ngClass]="checkValidValidator('userId')"
+            >
+            </p-dropdown>
+            <small
+              *ngIf="checkValidValidator('userId')"
+              class="p-error"
+              [innerHTML]="'info.code' | translate"
+            ></small>
+          </div>
+
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="cars"
+            >{{
+                "label.car" | translate
+              }}<span class="text-pink-400">*</span></label
+            >
+            <p-dropdown
+              [options]="cars"
+              [formControlName]="'carId'"
+              optionLabel="licensePlates"
+              [filter]="true"
+              filterBy="licensePlates"
+              [showClear]="true"
+              [placeholder]="'label.car' | translate"
+              [ngClass]="checkValidValidator('carId')"
+            >
+            </p-dropdown>
+            <small
+              *ngIf="checkValidValidator('carId')"
+              class="p-error"
+              [innerHTML]="'info.code' | translate"
+            ></small>
+          </div>
+
+          <!-- Gas price -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="petroPrice">{{
+                "label.gas_price" | translate
+              }}</label>
+            <p-inputNumber
+              inputId="integeronly"
+              [formControlName]="'petroPrice'"
+            >
+            </p-inputNumber>
+          </div>
+
+          <!-- KM FROM -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="kmFrom">{{
+                "label.number_km_delivery" | translate
+              }}</label>
+            <p-inputNumber inputId="integeronly" [formControlName]="'kmFrom'">
+            </p-inputNumber>
+          </div>
+
+          <!-- KM TO -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="kmTo">{{
+                "label.number_km_receive" | translate
+              }}</label>
+            <p-inputNumber inputId="integeronly" [formControlName]="'kmTo'">
+            </p-inputNumber>
+          </div>
+
+          <!-- Location from -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label>{{
+                "label.location_from" | translate
+              }}</label>
+            <input
+              type="text"
+              pInputText
+              [formControlName]="'locationFrom'"
+            />
+          </div>
+
+          <!-- Location from -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="location_to">{{
+                "label.location_to" | translate
+              }}</label>
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [formControlName]="'locationTo'"
+            />
+          </div>
+
+          <!-- Advance Amount -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="advance_amount">{{
+                "label.advance_amount" | translate
+              }}</label>
+            <p-inputNumber
+              inputId="integeronly"
+              [formControlName]="'advanceAmount'"
+            >
+            </p-inputNumber>
+          </div>
+
+          <!-- NOTE -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label>{{ "label.note" | translate }}</label>
+            <input
+              type="text"
+              pInputText
+              [formControlName]="'note'"
+            />
+          </div>
+
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label>Lộ trình</label>
+            <p-dropdown
+              [options]="routerList"
+              optionLabel="name"
+              optionValue="id"
+              [filter]="true"
+              filterBy="name"
+              placeholder="Lộ trình"
+              formControlName="roadRouteId"
+              appendTo="body"
+            ></p-dropdown>
+          </div>
+
+        </div>
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onCancel.emit({})"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

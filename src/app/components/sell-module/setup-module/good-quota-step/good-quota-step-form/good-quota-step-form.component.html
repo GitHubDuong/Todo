@@ -1,0 +1,41 @@
+<p-dialog
+  [(visible)]="display" [style]="{width: '450px'}"
+  [header]="'label.add_good_quota_step' | translate"
+  [modal]="true"
+  styleClass="p-fluid">
+  <ng-template pTemplate="content">
+    <form [formGroup]="goodQuotaStepForm">
+      <div class="field">
+        <label for="code" translate="label.good_quota_step_code"></label>
+        <input type="text" pInputText id="code" formControlName="code" required autofocus/>
+      </div>
+
+      <div class="field">
+        <label for="name" translate="label.good_quota_step_name"></label>
+        <input type="text" pInputText id="name" formControlName="name" required autofocus class="mb-2"/>
+        <small class="p-error" *ngIf="submitted && goodQuotaStepFormControl.name.errors?.required">{{ 'invalid.good_quota_step_name' | translate }}</small>
+      </div>
+
+      <div class="field">
+        <label for="user" translate="label.good_quota_step_responsible_person"></label>
+        <p-multiSelect
+          [options]="employees"
+          formControlName="userIds"
+          [filter]="true"
+          optionLabel="fullName"
+          [placeholder]="'label.good_quota_step_responsible_person' | translate"
+          optionValue="id"
+          class="w-full"
+          [appendTo]="'body'"
+        >
+        </p-multiSelect>
+        <small class="p-error" *ngIf="submitted && goodQuotaStepFormControl.userIds.errors?.required">{{ 'invalid.good_quota_step_responsible_person' | translate }}</small>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <button pButton pRipple [label]="'button.cancel' | translate" icon="pi pi-times" class="p-button-text" (click)="toggleDisplay()"></button>
+    <button pButton pRipple [label]="'button.save' | translate" icon="pi pi-check" class="p-button-text" (click)="onSubmit()"></button>
+  </ng-template>
+</p-dialog>

@@ -1,0 +1,40 @@
+<p-dialog
+  [(visible)]="visible"
+  (visibleChange)="visibleChange.emit(false)"
+  [modal]="true"
+  header="Ảnh/File"
+  [style]="{'width': '92vw'}"
+>
+  <ng-template pTemplate="body">
+    <div class="w-full flex flex-column md:flex-row justify-content-start align-items-stretch gap-3">
+      <ng-container *ngFor="let image of fileList">
+        <img
+          *ngIf="isImageExtension(image.fileUrl); else file"
+          [src]="serverImg + image.fileUrl"
+          class="h-10rem cursor-pointer"
+          (click)="onViewImage(image)"
+        />
+        <ng-template #file>
+          <a
+            href="{{ serverImg + image.fileUrl }}"
+            target="_blank"
+            class="cursor-pointer"
+            title="{{ image.fileName }}"
+          >
+            <i class="pi pi-file"></i> {{ image.fileName }}
+          </a>
+        </ng-template>
+      </ng-container>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  [(visible)]="showImageDetail"
+  [modal]="true"
+  [showHeader]="false"
+  [dismissableMask]="true"
+  [style]="{width: isMobile?'92vw':'50vw'}"
+>
+  <img [src]="serverImg + selectedImage?.fileUrl" class="w-full">
+</p-dialog>

@@ -1,0 +1,376 @@
+<div class="card card-table">
+  <div class="grid m-2 md:m-4">
+      <form [formGroup]="form" class="grid">
+          <div class="field col-12 md:col-4 flex flex-column">
+              <label htmlFor="code">
+                  {{ "label.room_config_type_code" | translate }}
+                  <span class="required">*</span>
+              </label>
+              <input
+                  pInputText
+                  id="code"
+                  [(ngModel)]="form.value.code"
+                  [ngClass]="{
+                      'input-error': form.controls.code.invalid && isSubmit
+                  }"
+                  placeholder="{{
+                      'label.room_config_type_code_placeholder' | translate
+                  }}"
+                  formControlName="code"
+              />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+              <label htmlFor="type"
+                  >{{ "label.room_config_type_list" | translate }}
+                  <span class="required">*</span>
+              </label>
+              <p-dropdown
+                  id="type"
+                  [options]="listConfigTypes"
+                  formControlName="type"
+                  [(ngModel)]="form.value.type"
+                  placeholder="{{
+                      'label.room_config_type_list_placeholder' | translate
+                  }}"
+                  optionLabel="name"
+                  optionValue="id"
+              ></p-dropdown>
+          </div>
+          <div class="col-12 grid">
+              <div class="field col-12 md:col-4 flex flex-column pl-0">
+                  <label htmlFor="nameVn">
+                      {{ "label.room_config_type_name_vn" | translate }}
+                      <span class="required">*</span>
+                  </label>
+                  <input
+                      pInputText
+                      id="nameVn"
+                      placeholder="{{
+                          'label.room_config_type_name_placeholder'
+                              | translate
+                      }}"
+                      [ngClass]="{
+                          'input-error':
+                              form.controls.nameVn.invalid && isSubmit
+                      }"
+                      [(ngModel)]="form.value.nameVn"
+                      formControlName="nameVn"
+                  />
+              </div>
+              <div class="field col-12 md:col-4 flex flex-column pl-0">
+                  <label htmlFor="nameEn">
+                      {{ "label.room_config_type_name_en" | translate }}
+                      <span class="required">*</span>
+                  </label>
+                  <input
+                      pInputText
+                      id="nameEn"
+                      placeholder="{{
+                          'label.room_config_type_name_en_placeholder'
+                              | translate
+                      }}"
+                      [ngClass]="{
+                          'input-error':
+                              form.controls.nameEn.invalid && isSubmit
+                      }"
+                      [(ngModel)]="form.value.nameEn"
+                      formControlName="nameEn"
+                  />
+              </div>
+              <div class="field col-12 md:col-4 flex flex-column pl-0">
+                  <label htmlFor="nameKo">
+                      {{ "label.room_config_type_name_ko" | translate }}
+                      <span class="required">*</span>
+                  </label>
+                  <input
+                      pInputText
+                      id="nameKo"
+                      placeholder="{{
+                          'label.room_config_type_name_ko_placeholder'
+                              | translate
+                      }}"
+                      [ngClass]="{
+                          'input-error':
+                              form.controls.nameKo.invalid && isSubmit
+                      }"
+                      [(ngModel)]="form.value.nameKo"
+                      formControlName="nameKo"
+                  />
+              </div>
+          </div>
+          <div class="field col-12 flex flex-column">
+              <label htmlFor="note">
+                  {{ "label.room_config_type_desc" | translate }}
+              </label>
+              <textarea
+                  pInputTextarea
+                  id="note"
+                  placeholder="{{
+                      'label.room_config_type_desc_placeholder' | translate
+                  }}"
+                  rows="4"
+                  [(ngModel)]="form.value.note"
+                  formControlName="note"
+              ></textarea>
+          </div>
+          <div class="col-12">
+              <p-table
+                  [value]="form.value.items"
+                  dataKey="id"
+                  [rowHover]="true"
+                  styleClass="p-datatable-gridlines sidebar-custom"
+                  [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+                  [lazy]="true"
+                  scrollDirection="both"
+                  [scrollable]="!isMobile"
+              >
+                  <ng-template pTemplate="caption">
+                      <div class="w-full flex flex-column">
+                          <form [formGroup]="formAdd" class="grid">
+                              <div
+                                  class="field col-12 md:col-4 flex flex-column"
+                              >
+                                  <label htmlFor="code">
+                                      {{
+                                          "label.room_config_type_code"
+                                              | translate
+                                      }}
+                                      <span class="required">*</span>
+                                  </label>
+                                  <input
+                                      pInputText
+                                      id="code"
+                                      [(ngModel)]="formAdd.value.code"
+                                      placeholder="{{
+                                          'label.room_config_type_code_placeholder'
+                                              | translate
+                                      }}"
+                                      [ngClass]="{
+                                          'input-error':
+                                              formAdd.controls.code.invalid &&
+                                              isAdd
+                                      }"
+                                      formControlName="code"
+                                  />
+                              </div>
+                              <div class="col-12 grid">
+                                  <div
+                                      class="field col-12 md:col-4 flex flex-column pl-0"
+                                  >
+                                      <label htmlFor="nameVn">
+                                          {{
+                                              "label.room_config_type_name_vn"
+                                                  | translate
+                                          }}
+                                          <span class="required">*</span>
+                                      </label>
+                                      <input
+                                          pInputText
+                                          id="nameVn"
+                                          placeholder="{{
+                                              'label.room_config_type_name_placeholder'
+                                                  | translate
+                                          }}"
+                                          [ngClass]="{
+                                              'input-error':
+                                                  formAdd.controls.nameVn
+                                                      .invalid && isAdd
+                                          }"
+                                          [(ngModel)]="formAdd.value.nameVn"
+                                          formControlName="nameVn"
+                                      />
+                                  </div>
+                                  <div
+                                      class="field col-12 md:col-4 flex flex-column pl-0"
+                                  >
+                                      <label htmlFor="nameEn">
+                                          {{
+                                              "label.room_config_type_name_en"
+                                                  | translate
+                                          }}
+                                          <span class="required">*</span>
+                                      </label>
+                                      <input
+                                          pInputText
+                                          id="nameEn"
+                                          placeholder="{{
+                                              'label.room_config_type_name_en_placeholder'
+                                                  | translate
+                                          }}"
+                                          [ngClass]="{
+                                              'input-error':
+                                                  formAdd.controls.nameEn
+                                                      .invalid && isAdd
+                                          }"
+                                          [(ngModel)]="formAdd.value.nameEn"
+                                          formControlName="nameEn"
+                                      />
+                                  </div>
+                                  <div
+                                      class="field col-12 md:col-4 flex flex-column pl-0"
+                                  >
+                                      <label htmlFor="nameKo">
+                                          {{
+                                              "label.room_config_type_name_ko"
+                                                  | translate
+                                          }}
+                                          <span class="required">*</span>
+                                      </label>
+                                      <input
+                                          pInputText
+                                          id="nameKo"
+                                          placeholder="{{
+                                              'label.room_config_type_name_ko_placeholder'
+                                                  | translate
+                                          }}"
+                                          [ngClass]="{
+                                              'input-error':
+                                                  formAdd.controls.nameKo
+                                                      .invalid && isAdd
+                                          }"
+                                          [(ngModel)]="formAdd.value.nameKo"
+                                          formControlName="nameKo"
+                                      />
+                                  </div>
+                              </div>
+                          </form>
+                          <div
+                              class="flex flex-column-reverse gap-4 md:flex-row md:justify-content-between"
+                          >
+                              <div class="flex gap-2 flex-column md:flex-row">
+                                  <div class="mr-2 flex align-items-center">
+                                      <span class="pl-2 text-primary">{{
+                                          "label.room_config_type_name_items_header"
+                                              | translate
+                                      }}</span>
+                                  </div>
+                              </div>
+                              <button
+                                  pButton
+                                  [label]="'button.addF7' | translate"
+                                  icon="pi pi-plus"
+                                  (click)="onAdd()"
+                              ></button>
+                          </div>
+                      </div>
+                  </ng-template>
+                  <ng-template pTemplate="header">
+                      <tr>
+                          <th class="w-2">
+                              <div class="flex align-items-center">
+                                  {{
+                                      "label.room_config_type_name_item_code"
+                                          | translate
+                                  }}
+                              </div>
+                          </th>
+                          <th class="w-3">
+                              <div class="flex align-items-center">
+                                  {{
+                                      "label.room_config_type_name_item_name_vn"
+                                          | translate
+                                  }}
+                              </div>
+                          </th>
+                          <th class="w-3">
+                              <div class="flex align-items-center">
+                                  {{
+                                      "label.room_config_type_name_item_name_en"
+                                          | translate
+                                  }}
+                              </div>
+                          </th>
+                          <th class="w-3">
+                              <div class="flex align-items-center">
+                                  {{
+                                      "label.room_config_type_name_item_name_ko"
+                                          | translate
+                                  }}
+                              </div>
+                          </th>
+                          <th *ngIf="isMobile"></th>
+                          <th
+                              class="w-1"
+                              *ngIf="!isMobile"
+                              alignFrozen="right"
+                              pFrozenColumn
+                              [frozen]="true"
+                          ></th>
+                      </tr>
+                  </ng-template>
+                  <ng-template pTemplate="body" let-child>
+                      <tr>
+                          <td class="w-2">
+                              <span
+                                  class="p-column-title"
+                                  [translate]="'label.room_config_type_code'"
+                              ></span
+                              >{{ child.code }}
+                          </td>
+                          <td class="w-3">
+                              <span
+                                  class="p-column-title"
+                                  [translate]="
+                                      'label.room_config_type_name_vn'
+                                  "
+                              ></span
+                              >{{ child.nameVn }}
+                          </td>
+                          <td class="w-3">
+                              <span
+                                  class="p-column-title"
+                                  [translate]="
+                                      'label.room_config_type_name_en'
+                                  "
+                              ></span
+                              >{{ child.nameEn }}
+                          </td>
+                          <td class="w-3">
+                              <span
+                                  class="p-column-title"
+                                  [translate]="
+                                      'label.room_config_type_name_ko'
+                                  "
+                              ></span
+                              >{{ child.nameKo }}
+                          </td>
+                          <td
+                              alignFrozen="right"
+                              pFrozenColumn
+                              [frozen]="true"
+                              class="w-1 flex justify-content-space md:justify-content-center"
+                          >
+                              <button
+                                  (click)="onDelete(child)"
+                                  pButton
+                                  class="p-button-danger"
+                                  icon="pi pi-trash"
+                              ></button>
+                          </td>
+                      </tr>
+                  </ng-template>
+              </p-table>
+          </div>
+          <div class="col-12">
+              <div class="p-fluid p-formgrid grid mt-2">
+                  <div
+                      class="field col-12 gap-8 flex justify-content-end mt-4 p-0"
+                  >
+                      <p-button
+                          icon="pi pi-times"
+                          (click)="onCancel.emit({})"
+                          [label]="'button.backF6' | translate"
+                          styleClass="p-button-outlined"
+                      ></p-button>
+                      <p-button
+                          icon="pi pi-check"
+                          (click)="onSubmit()"
+                          [label]="'button.saveF8' | translate"
+                      >
+                      </p-button>
+                  </div>
+              </div>
+          </div>
+      </form>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5
+        [translate]="
+          isEdit ? 'label.add_vehicle_criteria' : 'label.edit_vehicle_criteria'
+        "
+      ></h5>
+      <form [formGroup]="carForm" autocomplete="off">
+        <div class="grid w-full">
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="km">{{ "label.car" | translate }}</label>
+            <p-multiSelect
+              [options]="licensePlates"
+              [(ngModel)]="carIds"
+              optionLabel="licensePlates"
+              [filter]="true"
+              filterBy="licensePlates"
+              [showClear]="true"
+              [optionValue]="'id'"
+              [placeholder]="'label.select_car' | translate"
+              [ngModelOptions]="{ standalone: true }"
+            >
+            </p-multiSelect>
+          </div>
+
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="km">{{ "label.stt" | translate }}</label>
+            <p-inputNumber inputId="integeronly" [formControlName]="'order'">
+            </p-inputNumber>
+          </div>
+
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="licensePlates">{{
+              "label.name" | translate
+            }}</label>
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [formControlName]="'name'"
+            />
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onCancel.emit({})"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

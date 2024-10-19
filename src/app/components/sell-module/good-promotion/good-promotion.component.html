@@ -1,0 +1,17 @@
+<div *ngIf="!isDetailVisible" xmlns="" class="px-2 py-3">
+  <h5 [translate]="'label.goods_promotion'"></h5>
+  <app-data-table
+    [(filterParams)]="filterParams"
+    [columns]="columns"
+    [headerActions]="headerActions"
+    [dataSource]="dataSource"
+    (onLoad)="loadData()"
+    [paginator]="paginator"
+  ></app-data-table>
+</div>
+
+<app-good-promotion-form
+  #detailFormComponent
+  [(visible)]="isDetailVisible"
+  (onFormClosing)="onFormClosing($event)"
+></app-good-promotion-form>

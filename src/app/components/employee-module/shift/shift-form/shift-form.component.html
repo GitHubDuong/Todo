@@ -1,0 +1,142 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5 [translate]="isEdit ? 'label.shift_update' : 'label.shift_add'"></h5>
+      <form [formGroup]="symbolForm">
+        <div class="grid w-full">
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="code">{{ "label.code" | translate }}</label>
+            <input
+              pInputText
+              id="code"
+              formControlName="code"
+            />
+            <small
+              *ngIf="checkValidValidator('code')"
+              class="p-error"
+              [innerHTML]="'info.code' | translate"
+            ></small>
+          </div>
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="name">{{ "label.name" | translate }}</label>
+            <input
+              pInputText
+              id="name"
+              formControlName="name"
+            />
+            <small
+              *ngIf="checkValidValidator('name')"
+              class="p-error"
+              [innerHTML]="'info.name' | translate"
+            ></small>
+          </div>
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="sum">{{ "label.sum" | translate }}</label>
+            <p-inputNumber
+              id="sum"
+              formControlName="timeTotal"
+            >
+            </p-inputNumber>
+          </div>
+
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="status_active">{{
+              "label.status_active" | translate
+            }}</label>
+            <div class="flex">
+              <div class="field-radiobutton md:pr-6 mt-2 pt-1">
+                <p-radioButton
+                  id="status"
+                  name="status"
+                  [value]="true"
+                  [formControlName]="'status'"
+                >
+                </p-radioButton>
+                <label for="cooperate" [translate]="'label.cooperate'"></label>
+              </div>
+              <div class="field-radiobutton mt-2 pt-1">
+                <p-radioButton
+                  id="status"
+                  name="status"
+                  [value]="false"
+                  [(ngModel)]="symbolForm.value.status"
+                  [formControlName]="'status'"
+                ></p-radioButton>
+                <label
+                  for="stop_cooperate"
+                  [translate]="'label.stop_cooperate'"
+                ></label>
+              </div>
+            </div>
+          </div>
+
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="sum">{{
+              "label.checkin_time_threshold" | translate
+            }}</label>
+            <p-inputNumber
+              formControlName="checkInTimeThreshold"
+            >
+            </p-inputNumber>
+          </div>
+
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="sum">{{
+              "label.checkout_time_threshold" | translate
+            }}</label>
+            <p-inputNumber
+              formControlName="checkOutTimeThreshold"
+            >
+            </p-inputNumber>
+          </div>
+
+
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="sum">{{
+                "label.shift_start_at" | translate
+              }}</label>
+              <p-calendar formControlName="shiftStartAt" [timeOnly]="true" hourFormat="24"></p-calendar>
+          </div>
+
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="sum">{{
+                "label.shift_end_at" | translate
+              }}</label>
+            <p-calendar formControlName="shiftEndAt" [timeOnly]="true" hourFormat="24"></p-calendar>
+          </div>
+
+          <div class="field col-12 md:col-6 flex flex-column">
+            <label htmlFor="note">{{ "label.note" | translate }}</label>
+            <input
+              pInputTextarea
+              rows="3"
+              autoResize="autoResize"
+              id="note"
+              formControlName="note"
+            />
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onBack()"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

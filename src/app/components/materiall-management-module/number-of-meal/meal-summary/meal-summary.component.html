@@ -1,0 +1,20 @@
+<div class="card card-hover mb-3">
+  <div class="flex justify-content-between align-items-start">
+    <h4 *ngIf="!isMobile" class="block {{color}} font-bold m-0">
+      {{ header }}
+    </h4>
+    <h6 *ngIf="isMobile" class="block {{color}} font-bold m-0">
+      {{ header }}
+    </h6>
+    <div
+      class="flex align-items-center justify-content-center {{bgColor}} border-round"
+      [ngStyle]="{ width: '2.5rem', height: '2.5rem' }"
+    >
+      <i class="pi {{icon}} text-green-500 text-xl"></i>
+    </div>
+  </div>
+  <div class="text-green-500 font-bold md:text-xl">
+    {{ num }}
+  </div>
+  <img src="assets/layout/images/wave_1.svg" />
+</div>

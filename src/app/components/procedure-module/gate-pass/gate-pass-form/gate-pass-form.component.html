@@ -1,0 +1,82 @@
+<div *ngIf="visible" class="grid m-0">
+  <div class="col-12 p-2 pt-3">
+    <h5 [translate]="isEdit ? 'label.gate_pass_edit' : 'label.gate_pass_add'"></h5>
+    <form [formGroup]="detailForm" autocomplete="off">
+      <div class="grid w-full">
+        <div class="field col-12 md:col-6 flex flex-column">
+          <label for="code">{{ "label.gate_pass_code" | translate }}</label>
+          <input
+            id="code"
+            type="text"
+            pInputText
+            [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('procedureNumber')}"
+            formControlName="procedureNumber"
+            placeholder="Nhập mã số giấy ra cổng"
+          />
+        </div>
+        <div class="field col-12 md:col-6 flex flex-column">
+          <label for="local">Người ra cổng</label>
+          <input id="local" pInputText formControlName="local" placeholder="Cho phép ra cổng"
+                 [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('local')}"
+          />
+        </div>
+
+        <div class="field col-12 md:col-6 flex flex-column">
+          <label for="car">{{ "label.gate_pass_plate_number" | translate }}</label>
+          <input id="car" pInputText formControlName="carName" placeholder="Số xe"
+                 [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('carName')}"
+          />
+        </div>
+        <div class="field col-12 md:col-6 flex flex-column">
+          <label>{{ "label.gate_pass_time" | translate }}<span class="text-pink-400">*</span></label>
+          <p-calendar
+            class="w-full p-calendar-width-full"
+            [showIcon]="true"
+            formControlName="date"
+            dateFormat="dd-mm-yy"
+            [placeholder]="'Thời gian ra'"
+            [showTime]="true"
+            [showSeconds]="true"
+            appendTo="body"
+            [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('date')}"
+          ></p-calendar>
+        </div>
+        <app-multiple-upload
+          [fileLink]="fileLink"
+          (removeFile)="onFileLinkChange($event)"
+          (attackFiles)="onAttachFile($event)"
+        ></app-multiple-upload>
+        <div class="field col-12 md:col-12 flex flex-column">
+          <label>{{ "label.note" | translate }}</label>
+          <textarea
+            pInputTextarea
+            rows="5"
+            formControlName="note"
+            placeholder="Nhập lý do"
+            [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('note')}">
+            </textarea>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="p-fluid p-formgrid grid mt-2">
+          <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+            <p-checkbox labelStyleClass="text-primary" label="Đặc biệt" formControlName="isSpecial"
+                        binary="true"></p-checkbox>
+            <p-button
+              icon="pi pi-times"
+              (click)="onBack()"
+              [label]="'button.backF6' | translate"
+              styleClass="p-button-outlined"
+            ></p-button>
+            <p-button
+              icon="pi pi-check"
+              (click)="submit()"
+              [label]="'button.saveF8' | translate"
+            >
+            </p-button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

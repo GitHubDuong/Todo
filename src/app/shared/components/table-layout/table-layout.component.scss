@@ -1,0 +1,51 @@
+.table-layout {
+  display: flex;
+  flex-direction: column;
+  background: white;
+
+  .action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .left {
+
+    }
+
+    .right {
+      flex: 1;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    background: #f8f9fa;
+    color: #343a40;
+    border: 1px solid #dee2e6;
+    padding: 8px;
+    font-weight: 700;
+  }
+
+  .table-content {
+    flex: 1;
+  }
+}
+
+:host::ng-deep {
+  .p-datatable-scrollable {
+    //height: calc(100% - 80px);
+    border-bottom: 1px solid #dee2e6;
+
+    .p-datatable-wrapper {
+      //height: 100%;
+
+      .p-datatable-thead {
+        tr {
+          th {
+            position: sticky;
+            top: 0;
+          }
+        }
+      }
+    }
+  }
+}

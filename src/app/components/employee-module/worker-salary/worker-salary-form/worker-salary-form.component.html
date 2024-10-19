@@ -1,0 +1,174 @@
+<app-form-layout
+  [isDisplay]="isDisplay"
+  [header]="item ? 'Sửa lương khoán công nhân': 'Tạo lương khoán công nhân'"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <form [formGroup]="mForm">
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="procedure">Lệnh sản xuất</label>
+          <input
+            pInputText
+            id="procedure"
+            class="w-full"
+            placeholder="Chọn lệnh sản xuất"
+            [formControl]="produceProductCode"
+          >
+        </div>
+        <div class="field col-12 md:col-6">
+          <label for="salaryType">Loại lương khoán</label>
+          <p-dropdown
+            id="salaryType"
+            [options]="salaryTypeList"
+            optionLabel="name"
+            optionValue="id"
+            class="w-full"
+            placeholder="Chọn loại lương khoán"
+            [formControl]="salaryTypeId"
+          ></p-dropdown>
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="quantity">Số lượng làm được</label>
+          <p-inputNumber
+            id="quantity"
+            [formControl]="quantity"
+            placeholder="Nhập số lượng"
+          ></p-inputNumber>
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12">
+          <label for="note">Ghi chú</label>
+          <textarea
+            pInputTextarea
+            [rows]="5"
+            id="note"
+            [formControl]="note"
+            placeholder="Nhập ghi chú"
+          ></textarea>
+        </div>
+      </div>
+      <div class="col-12 mt-2">
+        <p-table
+          #dt
+          dataKey="id"
+          styleClass="p-datatable-gridlines mt-2"
+          responsiveLayout="scroll'"
+          scrollable="true"
+          scrollDirection="both"
+          [value]="items.controls"
+          [rows]="10"
+          [rowHover]="true"
+        >
+          <ng-template pTemplate="caption">
+            <div class="flex justify-content-end gap-3">
+              <p-dropdown
+                [options]="targetList"
+                optionLabel="name"
+                optionValue="id"
+                class="w-20rem"
+                placeholder="Chọn vị trí chấm công"
+                [(ngModel)]="selectedTarget"
+                (ngModelChange)="onChangeTarget()"
+                [ngModelOptions]="{standalone: true}"
+              ></p-dropdown>
+              <button
+                pButton
+                icon="pi pi-plus"
+                (click)="addItem()"
+              ></button>
+            </div>
+          </ng-template>
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="w-5 flex justify-content-center">
+                Nhân viên
+              </th>
+
+              <th class="w-3 flex justify-content-center">
+                % Công việc
+              </th>
+
+              <th class="w-3 flex justify-content-center">
+                Ghi chú
+              </th>
+              <th
+                class="w-1 flex justify-content-start md:justify-content-center"
+                alignFrozen="right"
+                pFrozenColumn
+                [frozen]="true"
+              >
+              </th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-rowIndex="rowIndex">
+            <ng-container formArrayName="items">
+              <ng-container [formGroupName]="rowIndex">
+                <tr>
+                  <td class="w-5 px-2">
+                    <p-dropdown
+                      [options]="filterUserList"
+                      optionLabel="fullName"
+                      optionValue="id"
+                      class="w-full"
+                      placeholder="Chọn nhân viên"
+                      formControlName="userId"
+                      appendTo="body"
+                    ></p-dropdown>
+                  </td>
+
+                  <td class="w-3 px-2">
+                    <p-inputNumber
+                      class="w-full"
+                      suffix="%"
+                      formControlName="percent"
+                      [maxFractionDigits]="4"
+                    >
+                      >
+                    </p-inputNumber>
+                  </td>
+
+                  <td class="w-3 flex justify-content-center">
+                    <input
+                      pInputText
+                      class="w-full"
+                      formControlName="note">
+                  </td>
+                  <td
+                    style="min-width: 80px !important"
+                    class="w-1 flex justify-content-start md:justify-content-center"
+                    pFrozenColumn
+                    alignFrozen="right"
+                    [frozen]="true"
+                  >
+                    <button
+                      pButton
+                      class="p-button-danger"
+                      icon="pi pi-trash"
+                      (click)="deleteItem(rowIndex)"
+                    ></button>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr class="p-rowgroup-footer hover:bg-white">
+              <td colspan="12"
+                  class="w-full flex justify-content-center pt-4 pb-4 border-left-none border-right-none border-bottom-none">
+                {{ "info.no_data" | translate }}
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+    </form>
+  </ng-template>
+</app-form-layout>

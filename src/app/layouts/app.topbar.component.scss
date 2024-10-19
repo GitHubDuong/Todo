@@ -1,0 +1,22 @@
+:host ::ng-deep {
+  .p-button.p-button-sm {
+    padding: 0.45rem;
+  }
+  .menu-toggle {
+    margin-top: 40%;
+    left: 0;
+    position: fixed;
+    z-index: 9999999;
+  }
+
+  .p-password,
+  #oldPassword div .p-inputtext,
+  #confirmPassword div .p-inputtext,
+  #password div .p-inputtext {
+    width: 100% !important;
+  }
+
+  strong {
+    color: var(--primary-color);
+  }
+}

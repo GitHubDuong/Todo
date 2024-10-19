@@ -1,0 +1,82 @@
+<div *ngIf="display" class="card card-table">
+  <h5
+    [translate]="
+      isEdit ? 'label.edit_goods_quota_recipe' : 'label.add_goods_quota_recipe'
+    "
+  ></h5>
+  <form [formGroup]="goodsQuotaForm">
+    <div class="p-fluid formgrid grid">
+      <div class="field col">
+        <label htmlFor="code"
+          >{{ "label.code" | translate }}
+          <span class="text-pink-400">*</span></label
+        >
+        <input
+          pInputText
+          id="code"
+          [(ngModel)]="goodsQuotaForm.value.code"
+          formControlName="code"
+        />
+      </div>
+    </div>
+    <div class="p-fluid formgrid grid">
+      <div class="field col">
+        <label htmlFor="name"
+          >{{ "label.name" | translate }}
+          <span class="text-pink-400">*</span>
+        </label>
+        <input
+          pInputText
+          id="name"
+          [(ngModel)]="goodsQuotaForm.value.name"
+          formControlName="name"
+        />
+      </div>
+    </div>
+
+    <div class="p-fluid formgrid grid">
+      <div class="field col">
+        <label htmlFor="goodsQuotaStepId"
+        >{{ "label.good_quota_step" | translate }}
+          <span class="text-pink-400">*</span>
+        </label>
+        <div class="p-inputgroup">
+          <p-dropdown
+            id="goodsQuotaStepId"
+            [options]="goodQuotaSteps"
+            [optionLabel]="'name'"
+            [optionValue]="'id'"
+            showClear="true"
+            class="w-full"
+            [formControlName]="'goodsQuotaStepId'"
+            [appendTo]="'body'"
+            [placeholder]="'label.empty' | translate"
+            [filter]="true"
+            filterBy="name"
+          ></p-dropdown>
+          <button type="button" pButton pRipple icon="pi pi-plus" class="p-button-success" (click)="goodQuotaStepFormComponent.toggleDisplay()"></button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="w-full col-12 flex align-items-center justify-content-end mt-5 gap-8"
+    >
+      <p-button
+        icon="pi pi-times"
+        (click)="onCancel.emit({})"
+        [label]="'button.backF6' | translate"
+        styleClass="p-button-outlined"
+      ></p-button>
+      <p-button
+        icon="pi pi-check"
+        (click)="onSubmit()"
+        [label]="'button.saveF8' | translate"
+      ></p-button>
+    </div>
+  </form>
+</div>
+
+<app-good-quota-step-form
+  (onSuccess)="onCreateGoodQuotaStepSuccess($event)"
+  #goodQuotaStepFormComponent>
+</app-good-quota-step-form>

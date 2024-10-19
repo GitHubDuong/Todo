@@ -1,0 +1,66 @@
+<app-form-layout
+  [isDisplay]="isDisplay"
+  [header]="item ? 'Sửa chiết khấu' : 'Tạo chiết khấu'"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <form [formGroup]="mForm">
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="position">Chức vụ</label>
+          <p-dropdown
+            id="position"
+            [options]="positionList"
+            optionLabel="name"
+            optionValue="id"
+            class="w-full"
+            placeholder="Chọn chức vụ"
+            [formControl]="positionDetailId"
+          ></p-dropdown>
+        </div>
+        <div class="field col-12 md:col-6">
+          <label for="monthDiscount">Tiền chiếc khấu hưởng trong tháng</label>
+          <p-inputNumber
+            id="monthDiscount"
+            class="w-full"
+            placeholder="Nhập số tiền chiết khấu"
+            [formControl]="discountReceivedMonth"
+          ></p-inputNumber>
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="yearDiscount">Tiền chiếc khâu nhận cuối năm</label>
+          <p-inputNumber
+            id="yearDiscount"
+            [formControl]="discountReceivedYear"
+            placeholder="Nhập số tiền chiết khấu"
+          ></p-inputNumber>
+        </div>
+        <div class="field col-12 md:col-6">
+          <label for="percentDiscount">% chiếc khấu tạm ứng chi trong tháng</label>
+          <p-inputNumber
+            id="percentDiscount"
+            [formControl]="percentAdvanceDiscountMonth"
+            [minFractionDigits]="0"
+            [maxFractionDigits]="4"
+            placeholder="Nhập phần trăm chiết khấu"
+          ></p-inputNumber>
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12">
+          <label for="note">Ghi chú</label>
+          <textarea
+            pInputTextarea
+            [rows]="5"
+            id="note"
+            [formControl]="note"
+            placeholder="Nhập ghi chú"
+          ></textarea>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</app-form-layout>

@@ -1,0 +1,7 @@
+:host::ng-deep {
+  .p-inputtext {
+    &.p-inputtextarea {
+      height: unset;
+    }
+  }
+}

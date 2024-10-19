@@ -1,0 +1,36 @@
+<div class="card">
+    <h5>Chấm công</h5>
+    <p-timeline [value]="timeline">
+        <ng-template pTemplate="marker" let-event>
+            <span class="custom-marker shadow-2" [style.backgroundColor]="event.color">
+                <i [ngClass]="event.icon"></i>
+            </span>
+        </ng-template>
+
+        <ng-template pTemplate="content" let-event>
+            <small *ngIf="event.date != null" class="p-text-secondary">{{event.date}}</small>
+            <button
+              *ngIf="event.inProgress && !event.success"
+              pButton pRipple
+              type="button"
+              [label]="event.type == 'IN' ? ('label.shift_in' | translate) : ('label.shift_out' | translate)"
+              class="p-button-outlined"
+              (click)="checkIn(event)"
+            >
+            </button>
+        </ng-template>
+        <ng-template pTemplate="opposite" let-event>
+            <p-avatar
+              [icon]="event.type == 'IN' ? 'pi pi-arrow-right' : 'pi pi-arrow-left' "
+              styleClass="mr-2"
+              [style]=" {'background-color': event.type == 'IN' ? '#008000' : '#2196F3', 'color': '#ffffff'}"
+              shape="circle">
+            </p-avatar>
+            {{event.name}}
+        </ng-template>
+    </p-timeline>
+</div>
+
+<app-face-detector #faceDetectorComponent></app-face-detector>
+
+

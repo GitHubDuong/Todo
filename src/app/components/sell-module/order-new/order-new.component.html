@@ -1,0 +1,493 @@
+<div *ngIf="!display && !displayBillDetail && !showUpdatePlanning" class="px-2 py-3">
+  <h5 [translate]="'label.product_orders_new'"></h5>
+  <p-tabMenu [model]="tabMenuItems" [activeItem]="activeItem"></p-tabMenu>
+  <form [formGroup]="filterForm">
+    <div class="grid p-fluid mt-2">
+      <div class="field col-12 md:col-2">
+        <p-calendar [showIcon]="true" inputId="icon" formControlName="fromAt" dateFormat="dd-mm-yy"
+          [placeholder]="'Ngày bắt đầu'" [style]="calendarStyle"></p-calendar>
+      </div>
+      <div class="field col-12 md:col-2">
+        <p-calendar [showIcon]="true" inputId="icon" formControlName="toAt" dateFormat="dd-mm-yy"
+          [placeholder]="'Ngày kết thúc'" [style]="calendarStyle"></p-calendar>
+      </div>
+      <div class="col-12 md:col-2">
+        <p-dropdown class="w-full" [options]="status" [optionLabel]="'statusName'" [filter]="true" filterBy="name"
+          formControlName="status" [optionValue]="'statusValue'" [showClear]="true"
+          [placeholder]="'label.select_status' | translate">
+        </p-dropdown>
+      </div>
+      <div class="col-12 md:col-2">
+        <input pInputText type="text" class="w-full" formControlName="searchText"
+          [placeholder]="'label.search' | translate" />
+      </div>
+    </div>
+  </form>
+  <p-table [value]="dataSource" [columns]="dataColumns" [loading]="loading" [rowHover]="true"
+    [rows]="paginator.pageSize" styleClass="p-datatable-gridlines sidebar-custom"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'" [totalRecords]="paginator.totalRecords"
+    [rowsPerPageOptions]="[20, 50]" [showCurrentPageReport]="true" scrollDirection="both" [scrollable]="!isMobile"
+    currentPageReportTemplate="" [lazy]="true" [paginator]="true" (onPage)="getOrders($event)">
+    <ng-template pTemplate="caption">
+      <div class="flex justify-content-end md:justify-content-end flex-column md:flex-row">
+        <div class="flex justify-content-end md:justify-content-end mt-2 md:mt-0">
+          <button pButton [label]="'button.import' | translate" class="p-button-success mb-2 mr-2" icon="pi pi-upload"
+            (click)="fileInput.click()"></button>
+          <input id="fileInput" #fileInput type="file" (change)="importExcel($event)" style="display: none" />
+          <button pButton [label]="'button.export_excel' | translate" class="p-button-warning mb-2 mr-2"
+            icon="pi pi-download" (click)="exportExcel()"></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <ng-container *ngFor="let col of dataColumns">
+          <ng-container [ngSwitch]="col.type">
+            <ng-container *ngSwitchCase="ColumnDataType.checkbox">
+              <th [style.width]="col.width" class="flex justify-content-center">
+                <p-checkbox [binary]="true" [(ngModel)]="checkAllDetail"
+                  (ngModelChange)="onToggleCheckAll()"></p-checkbox>
+              </th>
+            </ng-container>
+            <ng-container *ngSwitchCase="ColumnDataType.action">
+              <th [style.width]="col.width" alignFrozen="right" pFrozenColumn>
+                {{ col.header | translate }}
+              </th>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              <th [style.width]="col.width">
+                {{ col.header | translate }}
+              </th>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr *ngIf="isMobile">
+        <div class="grid pt-2">
+          <div class="col-6">
+            <p-checkbox [(ngModel)]="item[col.value]" [ngModelOptions]="{standalone: true}"
+              [binary]="true"></p-checkbox>
+          </div>
+        </div>
+        <div class="grid pt-2">
+          <div class="col-6">
+            <p-tag styleClass="mr-2" [value]="isSpecial(item)"></p-tag>
+          </div>
+          <div class="col-6 flex justify-content-end">
+            <div class="bg-blue-500 text-0 border-round-md p-2">{{ item.procedureStatusName }}</div>
+          </div>
+        </div>
+        <div class="grid pt-2">
+          <div class="col-6">{{ item.procedureNumber }}</div>
+          <div class="col-6 flex justify-content-end">{{ item.date | date:'dd/MM/yyyy HH:mm' }}</div>
+        </div>
+        <div class="grid pt-2">
+          <div class="col-6">{{ item.userCreatedCode }}</div>
+          <div class="col-6 flex justify-content-end">{{ item.userCreatedName }}</div>
+        </div>
+        <div class="grid pt-2">
+          <div class="col-6">{{ item.customerCode }}</div>
+          <div class="col-6 flex justify-content-end">{{ item.customerName }}</div>
+        </div>
+        <div class="grid pt-2">
+          <div class="col-6">
+            <label>{{ 'label.new_order_number_of_product' | translate }}:</label>
+            &nbsp;
+            <span class="font-bold">{{ item.quantity }}</span>
+          </div>
+          <div class="col-6 flex justify-content-end">
+            <label>Tổng tiền:</label>
+            &nbsp;
+            <span class="text-orange font-bold">{{ item.totalAmount | number }}</span>
+          </div>
+        </div>
+        <div class="grid pt-2">
+          <div class="col-12">
+            <label>{{ 'label.note' | translate }}:</label>
+            &nbsp;
+            <span>{{ item.note }}</span>
+          </div>
+        </div>
+        <div class="flex justify-content-center pr-2 py-2 gap-2">
+          <button *ngIf="currentStatus == OrderStatus.Pending" pButton class="p-button-success"
+            icon="pi pi-angle-double-right" (click)="accept(item.id)"></button>
+
+          <button pButton icon="pi pi-search-plus" (click)="getOrderDetail(item)"></button>
+
+          <button *ngIf="currentStatus == OrderStatus.Pending && item.shoulNotAccept" pButton class="p-button-success"
+            icon="pi pi-angle-double-left" (click)="notAccept(item.id)"></button>
+
+          <button *ngIf="currentStatus == OrderStatus.Pending && item.shoulDelete" pButton class="p-button-danger"
+            icon="pi pi-trash" (click)="delete(item.id)"></button>
+          <button *ngIf="item.isFinished" pButton icon="pi pi-download" class="p-button-success"
+            (click)="onDownloadProduceProduct(item.id)"></button>
+        </div>
+      </tr>
+      <tr *ngIf="!isMobile">
+        <ng-container *ngFor="let col of dataColumns">
+          <ng-container [ngSwitch]="col.type">
+            <ng-container *ngSwitchCase="ColumnDataType.checkbox">
+              <td [style.width]="col.width" class="px-3 flex justify-content-center">
+                <p-checkbox [(ngModel)]="item[col.value]" [ngModelOptions]="{standalone: true}"
+                  [binary]="true"></p-checkbox>
+              </td>
+            </ng-container>
+            <ng-container *ngSwitchCase="ColumnDataType.action">
+              <td [style.width]="col.width" class="action flex align-items-center justify-content-center"
+                alignFrozen="right" pFrozenColumn>
+                <button *ngIf="currentStatus == OrderStatus.Pending" pButton class="p-button-success"
+                  icon="pi pi-angle-double-right" (click)="accept(item.id)"></button>
+
+                <button pButton icon="pi pi-search-plus" (click)="getOrderDetail(item)"></button>
+
+                <button *ngIf="currentStatus == OrderStatus.Pending && item.shoulNotAccept" pButton
+                  class="p-button-success" icon="pi pi-angle-double-left" (click)="notAccept(item.id)"></button>
+
+                <button *ngIf="currentStatus == OrderStatus.Pending && item.shoulDelete" pButton class="p-button-danger"
+                  icon="pi pi-trash" (click)="delete(item.id)"></button>
+
+                <button pButton icon="pi pi-download" class="p-button-success" [disabled]="downloading"
+                  (click)="onDownloadProduceProduct(item.id)"></button>
+              </td>
+            </ng-container>
+            <ng-container *ngSwitchCase="ColumnDataType.tag">
+              <td [style.width]="col.width" class="px-3">
+                <p-tag styleClass="mr-2" [value]="col.contentFunc(item)"></p-tag>
+              </td>
+            </ng-container>
+            <ng-container *ngSwitchCase="ColumnDataType.raw">
+              <td [style.width]="col.width" class="px-3 align-items-baseline">
+                <span [innerHTML]="item[col.value]"></span>
+              </td>
+            </ng-container>
+            <ng-container *ngSwitchDefault>
+              <td [style.width]="col.width" class="px-3">
+                <span>
+                  {{
+                  col?.type === ColumnDataType.date_time
+                  ? (item[col.value] | date:'dd/MM/yyyy HH:mm:ss')
+                  : col?.type === ColumnDataType.number
+                  ? (item[col.value] | number)
+                  : item[col.value]
+                  }}
+                </span>
+              </td>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="w-full pt-4 pb-4">No General website order new found.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td class="w-full pt-4 pb-4">
+          Loading website order new data. Please wait.
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<div *ngIf="displayBillDetail && !showUpdatePlanning" class="grid grid-nogutter">
+  <div class="col-12 p-0">
+    <div class="px-2 py-3">
+      <h5 [translate]="'label.order_new_detail'"></h5>
+      <p-table class="mt-2" dataKey="id" [columns]="detailColumns" [value]="detailDatasource" [loading]="loading"
+        [rowHover]="true" styleClass="p-datatable-gridlines sidebar-custom"
+        [responsiveLayout]="isMobile ? 'stack' : 'scroll'" scrollDirection="both" [scrollable]="!isMobile"
+        [resizableColumns]="true" [autoLayout]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <ng-container *ngFor="let col of detailColumns">
+              <ng-container *ngIf="col.type === ColumnDataType.checkbox">
+                <th [style.width]="col.width" class="flex justify-content-center">
+                  <p-checkbox [binary]="true" [(ngModel)]="checkAllDetail"
+                    (ngModelChange)="onToggleCheckAllDetail()"></p-checkbox>
+                </th>
+              </ng-container>
+              <ng-container *ngIf="col.type !== ColumnDataType.checkbox">
+                <th [style.width]="col.width">
+                  {{ col.header | translate }}
+                </th>
+              </ng-container>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-orderDetail let-expanded="expanded">
+          <tr *ngIf="isMobile">
+            <div class="grid pt-2">
+              <div class="col-6 flex align-items-center">
+                <p-checkbox [(ngModel)]="orderDetail.checked" [binary]="true"
+                  [disabled]="orderDetail.isProduced"></p-checkbox>
+              </div>
+              <div class="col-6 flex justify-content-end">
+                <div *ngIf="orderDetail?.goodsQuotes?.length" class="bg-blue-500 text-0 border-round-md p-2"
+                  (click)="onShowGoodDetail(orderDetail)">Nhấn xem định mức
+                </div>
+              </div>
+            </div>
+            <div class="grid pt-2">
+              <div class="col-12 text-orange font-bold">{{ orderDetail.goodsName }}</div>
+            </div>
+            <div class="grid pt-2">
+              <div class="col-6 flex align-items-center">
+                <label>SL đặt:</label>
+                &nbsp;
+                <span class="font-bold">{{ orderDetail.quantityRequired }}</span>
+              </div>
+              <div class="col-6 flex justify-content-end">
+                <p-inputNumber inputId="integeronly" [(ngModel)]="orderDetail.quantityReal">
+                </p-inputNumber>
+              </div>
+            </div>
+            <div class="grid pt-2">
+              <div class="col-6 flex align-items-center">
+                <label>SL tồn:</label>
+                &nbsp;
+                <span class="font-bold">{{ orderDetail.quantityStock }}</span>
+              </div>
+              <div class="col-6 flex justify-content-end">
+                <p-inputNumber inputId="integeronly" [(ngModel)]="orderDetail.unitPrice">
+                </p-inputNumber>
+              </div>
+            </div>
+            <div class="grid pt-2">
+              <div class="col-6 flex align-items-center">
+                <label>Đã giao:</label>
+                &nbsp;
+                <span class="font-bold">{{ orderDetail.quantityDelivered }}</span>
+              </div>
+              <div class="col-6 flex justify-content-end">
+                <label>Đang làm:</label>
+                &nbsp;
+                <span class="font-bold">{{ orderDetail.quantityInProgress }}</span>
+              </div>
+            </div>
+            <div class="grid pt-2">
+              <div class="col-6 flex">
+                <div class="flex bg-green-500 text-0 border-round-md p-2">{{ orderDetail.goodsCode }}</div>
+              </div>
+              <div class="col-6 flex justify-content-end">
+                <div class="bg-green-500 text-0 border-round-md p-2">{{ formatTotalDetailTotal(orderDetail) }}</div>
+              </div>
+            </div>
+          </tr>
+          <tr *ngIf="!isMobile">
+            <ng-container *ngFor="let col of detailColumns">
+              <ng-container [ngSwitch]="col.type">
+                <ng-container *ngSwitchCase="ColumnDataType.checkbox">
+                  <td [style.width]="col.width" class="flex align-items-center justify-content-center">
+                    <p-checkbox [(ngModel)]="orderDetail.checked" [binary]="true"
+                      [disabled]="orderDetail.isProduced"></p-checkbox>
+                  </td>
+                </ng-container>
+                <ng-container *ngSwitchCase="ColumnDataType.action">
+                  <td [style.width]="col.width" [style.height]="'3rem'"
+                    class="flex align-items-center justify-content-center">
+                    <button *ngIf="orderDetail?.goodsQuotes?.length"
+                      style="width: 2rem !important; height: 2rem !important;" type="button" pButton
+                      class="h-auto p-button-text p-button-rounded p-button-plain"
+                      [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                      (click)="onShowGoodDetail(orderDetail)"></button>
+                  </td>
+                </ng-container>
+                <ng-container *ngSwitchCase="ColumnDataType.edit">
+                  <td [style.width]="col.width" [style.height]="'3rem'"
+                    class="flex align-items-center justify-content-center p-2">
+                    <ng-container [ngSwitch]="col.controlType">
+                      <ng-container *ngSwitchCase="ControlType.InputNumber">
+                        <p-inputNumber inputId="integeronly" [(ngModel)]="orderDetail[col.value]"></p-inputNumber>
+                      </ng-container>
+                      <ng-container *ngSwitchDefault>
+                        <input pInputText [(ngModel)]="orderDetail[col.value]" [ngModelOptions]="{standalone: true}"
+                          class="h-2rem w--95" (ngModelChange)="onChangeRealQuantity(orderDetail)">
+                      </ng-container>
+                    </ng-container>
+                  </td>
+                </ng-container>
+                <ng-container *ngSwitchCase="ColumnDataType.number">
+                  <td [style.width]="col.width" [style.height]="'3rem'" class="px-3">
+                    <div class="w-full flex justify-content-end">
+                      <ng-container *ngIf="col.contentFunc; else noContentFunc">
+                        {{ col.contentFunc(orderDetail) }}
+                      </ng-container>
+                      <ng-template #noContentFunc>
+                        {{ orderDetail[col.value] | number }}
+                      </ng-template>
+                    </div>
+                  </td>
+                </ng-container>
+                <ng-container *ngSwitchDefault>
+                  <td [style.width]="col.width" [style.height]="'3rem'" class="px-3">
+                    <ng-container *ngIf="col.contentFunc; else noContentFunc">
+                      {{ col.contentFunc(orderDetail) }}
+                    </ng-container>
+                    <ng-template #noContentFunc>
+                      <span [pTooltip]="orderDetail[col.value]" tooltipPosition="top">{{ orderDetail[col.value]
+                        }}</span>
+                    </ng-template>
+                  </td>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-orderDetail>
+          <p-table class="mt-2" dataKey="goodsCode" [columns]="detailQuotaColumns" [value]="orderDetail.goodsQuotes"
+            [rowHover]="true" styleClass="p-datatable-gridlines sidebar-custom"
+            [responsiveLayout]="isMobile ? 'stack' : 'scroll'" scrollDirection="both" [scrollable]="!isMobile"
+            [resizableColumns]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <ng-container *ngFor="let col of detailQuotaColumns">
+                  <th [style.width]="col.width">
+                    {{ col.header | translate }}
+                  </th>
+                </ng-container>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-item let-index="rowIndex">
+              <tr [style.background-color]="item?.error ? '#ffd0ce' : '#FFFFFF'">
+                <ng-container *ngFor="let col of detailQuotaColumns">
+                  <ng-container [ngSwitch]="col.type">
+                    <ng-container *ngSwitchCase="ColumnDataType.checkbox"></ng-container>
+                    <ng-container *ngSwitchCase="ColumnDataType.action">
+                      <td [colSpan]="2" [style.width]="'11%'" class="text-center px-3">
+                        {{ index + 1 }}
+                      </td>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="ColumnDataType.number">
+                      <td [style.width]="col.width" class="px-3">
+                        <div class="w-full flex justify-content-end">{{ item[col.value] | number }}</div>
+                      </td>
+                    </ng-container>
+                    <ng-container *ngSwitchDefault>
+                      <td [style.width]="col.width" class="px-3">
+                        {{ item[col.value] }}
+                      </td>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <!--          <div class="flex align-items-center justify-content-between">-->
+              <!--            Tổng tiền:-->
+              <!--          </div>-->
+              abc
+            </ng-template>
+          </p-table>
+        </ng-template>
+        <ng-template pTemplate="summary">
+          <div class="flex justify-content-end w-full mt-3">
+            <div class="p-inputgroup">
+              <input type="text" [value]="billPromotionComponent.promotionDisplay" pInputText
+                placeholder="Chọn khuyến mãi" disabled>
+              <button type="button" pButton pRipple icon="pi pi-tags" class="p-button-success"
+                (click)="billPromotionComponent.toggleDisplay()"></button>
+            </div>
+          </div>
+          <div class="w-full pt-2">
+            <input pInputText [(ngModel)]="this.billDetail.note" placeholder="Ghi chú" class="w-full" />
+          </div>
+          <div class="grid mt-3">
+            <div class="col-4">Tổng tiền: <br *ngIf="isMobile" /> {{ subTotal | number }}</div>
+            <div class="col-4" [class.flex]="!isMobile" [class.justify-content-center]="!isMobile">
+              <span class="white-space-nowrap">Khuyến mãi:</span>
+              <br *ngIf="isMobile" />
+              {{ billDiscount | number }}
+            </div>
+            <div class="col-4 flex justify-content-end">Còn lại: <br *ngIf="isMobile" />{{ orderTotalAmount | number }}
+            </div>
+          </div>
+        </ng-template>
+      </p-table>
+      <form [formGroup]="footerActionForm">
+        <div class="flex justify-content-between flex-wrap">
+          <div class="flex-shrink-1 mt-3">
+            <p-button *ngIf="!billDetail.isCanceled && billDetail.isFinished" type="button" styleClass="p-button-danger"
+              icon="pi pi-times" label="Huỷ đơn hàng" (click)="onCancelOrder()"></p-button>
+          </div>
+          <div class="flex align-items-center justify-content-end gap-3 mt-3">
+            <div class="field-checkbox mb-0" *ngIf="!billDetail.isCanceled">
+              <p-checkbox id="isSpecialOrder" formControlName="isSpecialOrder" [binary]="true"
+                inputId="isSpecialOrder"></p-checkbox>
+              <label for="isSpecialOrder" translate="label.special_order"></label>
+            </div>
+            <button *ngIf="billDetail.isFinished && !billDetail.isCanceled" pButton icon="pi pi-check"
+              class="p-button-success" label="{{ 'button.create_planning_production_order' | translate }}"
+              (click)="onShowUpdatePlanning()"></button>
+            <p-button type="button" styleClass="p-button-outlined" icon="pi pi-times"
+              label="{{ 'button.backF6' | translate }}" (click)="displayBillDetail = false"></p-button>
+            <button *ngIf="!billDetail.isFinished && !billDetail.isCanceled" pButton icon="pi pi-check"
+              label="{{ 'button.save' | translate }}" (click)="onUpdateOrderProduceProduct()"></button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showUpdatePlanning" class="grid mt-5">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5 [translate]="'label.produce_planning_name'"></h5>
+      <form [formGroup]="footerActionForm" class="mt-3">
+        <div class="w-full p-3 border-orange-500 border-1 border-round mt-3">
+          <div class="w-full mt-3 grid">
+            <div class="grid col-12 px-0">
+              <div class="col-12 md:col-6">
+                <p-dropdown class="mr-3" [options]="produceProductsExistList" [optionLabel]="'procedureNumber'"
+                  filterBy="note" appendTo="body" [filter]="true" [optionValue]="'id'" [showClear]="true"
+                  [placeholder]="'label.planning_product_orders' | translate" formControlName="planningProduceProductId"
+                  (onChange)="getCars($event)">
+                </p-dropdown>
+              </div>
+              <div class="col-12 md:col-6">
+                <p-dropdown class="mr-3" [options]="cars" [optionLabel]="'licensePlates'" filterBy="licensePlates"
+                  appendTo="body" [filter]="true" [optionValue]="'id'" [showClear]="true"
+                  [placeholder]="'label.select_car' | translate" formControlName="carId">
+                </p-dropdown>
+              </div>
+            </div>
+            <div class="grid col-12">
+              <input class="w-full" pInputText type="text" [placeholder]="'label.note' | translate"
+                formControlName="produceProductsName" />
+            </div>
+          </div>
+          <div class="flex justify-content-end w-full mt-3">
+            <div class="p-inputgroup">
+              <input type="text" [value]="planBillPromotionComponent.promotionDisplay" pInputText
+                placeholder="Chọn khuyến mãi" disabled>
+              <button type="button" pButton pRipple icon="pi pi-tags" class="p-button-success"
+                (click)="planBillPromotionComponent.toggleDisplay()"></button>
+            </div>
+          </div>
+        </div>
+        <div class="w-full flex align-items-center justify-content-end gap-5 mt-3">
+          <p-button icon="pi pi-check" label="{{ 'button.create_planning_production_order' | translate }}"
+            (click)="onSaveProduceProduct();"></p-button>
+          <p-button type="button" styleClass="p-button-outlined" icon="pi pi-times"
+            label="{{ 'button.cancel' | translate }}" (click)="showUpdatePlanning = false"></p-button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-bill-promotion #billPromotionComponent [billPromotions]="billPromotions"
+  (onSuccess)="onSelectPromotionSuccess($event, false)">
+</app-bill-promotion>
+
+<app-bill-promotion #planBillPromotionComponent [billPromotions]="planningBillPromotions"
+  (onSuccess)="onSelectPromotionSuccess($event, true)">
+</app-bill-promotion>
+
+<app-new-order-good-detail [goodDetails]="goodDetail" [display]="showGoodDetail" (onClosing)="showGoodDetail = false">
+</app-new-order-good-detail>

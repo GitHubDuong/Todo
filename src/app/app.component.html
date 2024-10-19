@@ -1,0 +1,9 @@
+<div class="h-full">
+  <router-outlet></router-outlet>
+  <p-toast [baseZIndex]="999999999999999"></p-toast>
+
+  <is-confirmation></is-confirmation>
+</div>
+
+<app-report-container></app-report-container>
+<app-loading *ngIf="loader$ | async"></app-loading>

@@ -1,0 +1,140 @@
+<div *ngIf="!display" class="px-2 py-3">
+  <h5 [translate]="'label.salary_report'"></h5>
+  <p-table
+    #dt1
+    [columns]="cols"
+    [value]="salariesReports"
+    dataKey="id"
+    [rows]="10"
+    [loading]="loading"
+    [rowHover]="true"
+    styleClass="p-datatable-gridlines sidebar-custom"
+    [paginator]="true"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true"
+    [lazy]="true"
+    (onLazyLoad)="getSalaryHistories($event)"
+    scrollDirection="both"
+    [scrollable]="!isMobile"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [(first)]="first"
+  >
+    <ng-template pTemplate="caption">
+      <div
+        class="flex justify-content-start md:justify-content-between flex-column md:flex-row"
+      >
+        <div class="flex">
+          <span class="p-input-icon-left mx-2">
+            <i class="pi pi-search"></i>
+            <input
+              #filter
+              [(ngModel)]="getParams.searchText"
+              pInputText
+              type="text"
+              [placeholder]="'label.search' | translate"
+              class="w-full"
+            />
+          </span>
+
+          <span class="p-input-icon-left mx-1">
+            <p-calendar
+              [(ngModel)]="selectedMonth"
+              view="month"
+              [showIcon]="true"
+              dateFormat="mm/yy"
+              inputId="monthpicker"
+              (ngModelChange)="getSalaryHistories()"
+            >
+            </p-calendar>
+          </span>
+
+        </div>
+
+        <div
+          class="flex justify-content-between md:justify-content-end mt-2 md:mt-0"
+        >
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.LICHSULUONG,
+              action: appConstant.PERMISSION_FUNC.ADD
+            }"
+            pButton
+            [label]="'Tính lương'"
+            class="p-button-danger mx-1"
+            icon="pi pi-percentage"
+            (click)="onCalculateSalary()"
+          ></button>
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.LICHSULUONG,
+              action: appConstant.PERMISSION_FUNC.ADD
+            }"
+            pButton
+            [label]="'Export Excel'"
+            class="mx-1 p-button-success"
+            icon="pi pi-file-excel"
+            (click)="onExportExcel()"
+          ></button>
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.LICHSULUONG,
+              action: appConstant.PERMISSION_FUNC.ADD
+            }"
+            pButton
+            [label]="'Export PDF' | translate"
+            class="mx-1"
+            icon="pi pi-file-pdf"
+            (click)="onExportPdf()"
+          ></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <ng-container *ngFor="let col of columns">
+          <th *ngIf="col.display" [style]="col.width">
+            <span [translate]="col.header"></span>
+          </th>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-item let-columns="columns">
+      <tr>
+        <ng-container *ngFor="let col of columns">
+          <td *ngIf="col.display && col.value"
+              [style]="!isMobile ? col.width : ''"
+              [class]="!isMobile ? 'px-2' : 'my-2 group-td'"
+          >
+            <ng-container [ngSwitch]="col.type">
+              <ng-container *ngSwitchCase="'date'">
+                <div class="w-full flex justify-content-end">
+                  <span>{{ rowData[col.value] | date: "dd/MM/yyyy" }}</span>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchCase="'number'">
+                <div class="w-full flex justify-content-end">
+                  <span>{{ rowData[col.value] | number }}</span>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                {{ rowData[col.value] }}
+              </ng-container>
+            </ng-container>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="w-full pt-4 pb-4">No history found.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td class="w-full pt-4 pb-4">Loading history data. Please wait.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

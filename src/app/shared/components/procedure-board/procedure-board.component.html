@@ -1,0 +1,7 @@
+<div class="grid m-0 my-2 border-1 border-200 border-round-lg">
+  <ng-container *ngFor="let item of countList">
+    <div class="col-12 md:col-6 text-xl cursor-pointer" [routerLink]="getRouter(item)">
+      <span class="text-primary font-bold">{{ item.name }}:</span>&nbsp;&nbsp;
+      <span class="text-green-500 font-bold">{{ item.procedureCount }}</span></div>
+  </ng-container>
+</div>

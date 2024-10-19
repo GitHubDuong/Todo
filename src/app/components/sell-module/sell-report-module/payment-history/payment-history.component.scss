@@ -1,0 +1,15 @@
+.marquee {
+  width: 300px;
+}
+
+:host ::ng-deep {
+  .p-calendar .p-datepicker {
+    width: 400px;
+  }
+}
+
+:host ::ng-deep .date-debit {
+  .p-calendar {
+    width: 100%;
+  }
+}

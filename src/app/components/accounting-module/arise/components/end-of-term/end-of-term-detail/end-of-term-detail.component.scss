@@ -1,0 +1,22 @@
+.cl-blue {
+  background: var(--blue-300) !important;
+  color: white !important;
+}
+
+.cl-green {
+  background: var(--green-300) !important;
+  color: white !important;
+}
+
+.cl-yellow {
+  background: var(--yellow-300) !important;
+  color: white !important;
+}
+
+:host::ng-deep {
+  .eot-detail {
+    &.p-dialog {
+      max-width: unset !important;
+    }
+  }
+}

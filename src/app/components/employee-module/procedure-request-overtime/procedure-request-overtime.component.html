@@ -1,0 +1,214 @@
+<div *ngIf="!display" class="px-2 py-3">
+  <h5 [translate]="'label.suggest_overtime'"></h5>
+  <p-tabMenu [model]="items" [activeItem]="activeItem"></p-tabMenu>
+  <app-procedure-filter
+    [filter]="getParams"
+    (filterChange)="onFilterChange($event)"
+  ></app-procedure-filter>
+  <p-table
+    #dt1
+    [value]="listRequest"
+    dataKey="id"
+    [rows]="10"
+    [loading]="loading"
+    [rowHover]="true"
+    styleClass="p-datatable-gridlines sidebar-custom"
+    [paginator]="true"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true"
+    [lazy]="true"
+    (onLazyLoad)="getRequests($event)"
+    scrollDirection="both"
+    [scrollable]="!isMobile"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [(first)]="first"
+  >
+    <ng-template pTemplate="caption">
+      <div
+        class="flex justify-content-start md:justify-content-end flex-column md:flex-row"
+      >
+        <div
+          class="flex justify-content-between md:justify-content-end mt-2 md:mt-0"
+        >
+          <!-- add button -->
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.OVERTIME,
+              action: appConstant.PERMISSION_FUNC.ADD
+            }"
+            pButton
+            [label]="'button.addF7' | translate"
+            class="mb-2"
+            icon="pi pi-plus"
+            (click)="isEdit = false; showDialog()"
+          ></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.numerical_order'"></span>
+          </div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.status'"></span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex justify-content-between align-items-center">
+            <span [translate]="'label.reason'"></span>
+          </div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.from_at'"></span>
+          </div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.to_at'"></span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span [translate]="'label.employee_name'"></span>
+          </div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.time_end'"></span>
+          </div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.coefficient'"></span>
+          </div>
+        </th>
+        <th class="w-2" *ngIf="isMobile"></th>
+        <th
+          class="w-2"
+          *ngIf="!isMobile"
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+        ></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-request>
+      <tr>
+        <td class="w-1">
+          <span
+            class="p-column-title"
+            [translate]="'label.numerical_order'"
+          ></span
+          >{{ request.id }}
+        </td>
+        <td class="w-1">
+          <span class="p-column-title" [translate]="'label.status'"></span
+          >{{ request.procedureStatusName }}
+        </td>
+        <td class="w-2">
+          <span class="p-column-title" [translate]="'label.name'"></span
+          >{{ request.name }}
+        </td>
+        <td class="w-1">
+          <span class="p-column-title" [translate]="'label.from_at'"></span
+          >{{ request.fromAt | date: "dd/MM/yyyy HH:mm" }}
+        </td>
+        <td class="w-1">
+          <span class="p-column-title" [translate]="'label.to_at'"></span
+          >{{ request.toAt | date: "dd/MM/yyyy HH:mm" }}
+        </td>
+        <td class="w-2">
+          <span
+            class="p-column-title"
+            [translate]="'label.employee_name'"
+          ></span>{{ request.userId | name: employees : "fullName" }}
+        </td>
+        <td class="w-1">
+          <span class="p-column-title" [translate]="'label.time_end'"></span
+          >{{ request.isFinish }}
+        </td>
+        <td class="w-1 justify-content-end">
+          <span class="p-column-title" [translate]="'label.coefficient'"></span
+          >{{ request.coefficient }}
+        </td>
+        <td class="w-2" *ngIf="isMobile">
+          <ng-container *ngTemplateOutlet="itemButtons"></ng-container>
+        </td>
+        <td
+          *ngIf="!isMobile"
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+          class="action w-2 flex justify-content-end"
+        >
+          <ng-container *ngTemplateOutlet="itemButtons"></ng-container>
+        </td>
+        <!-- Buttons -->
+        <ng-template #itemButtons>
+          <button
+            *ngIf="currentStatus == RequestOvertimesStatus.Pending"
+            pButton
+            class="p-button-success"
+            icon="pi pi-angle-double-right"
+            (click)="approveRequest(request.id)"
+          ></button>
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.OVERTIME,
+              action: appConstant.PERMISSION_FUNC.EDIT
+            }"
+            pButton
+            class="p-button-warning"
+            icon="pi pi-pencil"
+            (click)="getDetail(request.id)"
+          ></button>
+          <button
+            *ngIf="currentStatus == RequestOvertimesStatus.Pending"
+            pButton
+            class="p-button-success"
+            icon="pi pi-angle-double-left"
+            (click)="onNotAccept(request.id)"
+          ></button>
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.OVERTIME,
+              action: appConstant.PERMISSION_FUNC.DELETE
+            }"
+            pButton
+            class="p-button-danger"
+            icon="pi pi-trash"
+            (click)="onDelete(request.id)"
+          ></button>
+        </ng-template>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="w-full pt-4 pb-4">No Symbol found.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td class="w-full pt-4 pb-4">Loading Symbol data. Please wait.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<app-procedure-request-overtime-form
+  #procedureRequestOvertimeForm
+  [formData]="formData"
+  [isReset]="isReset"
+  [display]="display"
+  (onCancel)="display = false; isReset = false"
+  [isEdit]="isEdit"
+  [procedureNumber]="procedureNumber"
+  [employees]="employees"
+></app-procedure-request-overtime-form>

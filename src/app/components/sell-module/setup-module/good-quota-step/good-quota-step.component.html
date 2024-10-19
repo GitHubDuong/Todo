@@ -1,0 +1,15 @@
+<div class="px-2 py-3">
+  <h5 [translate]="'label.good_quota_step'"></h5>
+  <app-data-table
+    #dataTableComponent
+    [columns]="columns"
+    [headerActions]="headerActions"
+    (onLoad)="loadData()"
+  >
+  </app-data-table>
+  <app-good-quota-step-form
+    #goodQuotaStepFormComponent
+    (onSuccess)="loadData()"
+  >
+  </app-good-quota-step-form>
+</div>

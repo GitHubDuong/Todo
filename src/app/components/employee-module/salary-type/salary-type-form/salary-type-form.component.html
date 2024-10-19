@@ -1,0 +1,73 @@
+<app-form-layout
+  [isDisplay]="isDisplay"
+  [header]="item ? 'Sửa loại lương khoán': 'Tạo loại lương khoán'"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <form [formGroup]="mForm">
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="name">Tên Loại lương Khoán (Dạng chữ)</label>
+          <input
+            pInputText
+            id="name"
+            class="w-full"
+            placeholder="Nhập tên"
+            [formControl]="name"
+          />
+        </div>
+        <div class="field col-12 md:col-6">
+          <label for="code">Mã loại lương khoán (dạng chữ)</label>
+          <input
+            pInputText
+            id="code"
+            class="w-full"
+            placeholder="Nhập mã"
+            [formControl]="code"
+          >
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="amountSpent">Số tiền chi (dạng số)</label>
+          <p-inputNumber
+            id="amountSpent"
+            [formControl]="amountSpent"
+            placeholder="Nhập số tiền chi"
+          ></p-inputNumber>
+        </div>
+        <div class="field col-12 md:col-6">
+          <label for="amountSpentMonthly">Số tiền chi hàng tháng (Dạng số)</label>
+          <p-inputNumber
+            id="amountSpentMonthly"
+            [formControl]="amountSpentMonthly"
+            placeholder="Nhập số tiền chi hàng tháng"
+          ></p-inputNumber>
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="amountAtTheEndYear">Số tiền giữ lại cuối năm chi (dạng số)</label>
+          <p-inputNumber
+            id="amountAtTheEndYear"
+            [formControl]="amountAtTheEndYear"
+            placeholder="Nhập số tiền chi"
+          ></p-inputNumber>
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12">
+          <label for="note">Ghi chú</label>
+          <textarea
+            pInputTextarea
+            [rows]="5"
+            id="note"
+            [formControl]="note"
+            placeholder="Nhập ghi chú"
+          ></textarea>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</app-form-layout>

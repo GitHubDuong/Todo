@@ -1,0 +1,131 @@
+<div *ngIf="display" class="px-2 py-3">
+  <div class="flex justify-content-between align-content-center">
+    <h5 translate="label.product_orders-edit"></h5>
+    <button *ngIf="currentTab == orderStatus.Pending" pButton class="mb-2" icon="pi pi-plus" label="Thêm"
+      (click)="onAddProduct()"></button>
+  </div>
+  <p-table [value]="detailItems" dataKey="name" styleClass="p-datatable-gridlines sidebar-custom"
+    [tableStyle]="{'min-width': '115rem'}" [scrollable]="true" scrollDirection="both" [rowHover]="true"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'" [autoLayout]="true">
+    <ng-template pTemplate="header">
+      <tr class="header-row">
+        <th style="width: 5rem" class="justify-content-center">
+          <p-checkbox [binary]="true" [(ngModel)]="selectAll" (ngModelChange)="onToggleSelectAll()">
+          </p-checkbox>
+        </th>
+        <th style="width: 5rem">STT</th>
+        <th style="width: 5rem"></th>
+        <th style="width: 20rem">Tên sản phẩm</th>
+        <th style="width: 20rem">Tên khách hàng</th>
+        <th style="width: 10rem">ĐVT</th>
+        <th style="width: 10rem">SL Đặt</th>
+        <th style="width: 10rem">SL Thực tế</th>
+        <th style="width: 10rem">SL Tồn</th>
+        <th style="width: 20rem">Ghi Chú</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item let-index="rowIndex">
+      <tr *ngIf="isMobile">
+        <div class="flex justify-content-between p-3">
+          <p-checkbox [(ngModel)]="item.checked" [ngModelOptions]="{standalone: true}" [binary]="true"></p-checkbox>
+          <div *ngIf="item?.goodDetails?.length" class="bg-blue-500 text-0 border-round-md p-2"
+            (click)="onShowDetail(item.goodDetails)">Nhấn xem định mức
+          </div>
+        </div>
+        <div class="grid">
+          <div class="col-12 text-orange font-bold">{{ item.goodsName }}</div>
+        </div>
+        <div class="grid">
+          <div class="col-12 text-orange font-bold">{{ item.customerName }}</div>
+        </div>
+        <div class="grid pt-2">
+          <div class="col-6 flex align-items-center">
+            <label>SL Đặt:</label>
+            &nbsp;
+            <span class="font-bold">{{ item.quantityRequired }}</span>
+          </div>
+          <div class="col-6 flex align-items-center">
+            <label>SL Tồn:</label>
+            &nbsp;
+            <span class="font-bold">{{ item.quantityStock }}</span>
+          </div>
+        </div>
+        <div class="grid pt-2">
+          <div class="col-12 flex justify-content-end">
+            <p-inputNumber inputId="integeronly" [(ngModel)]="item.quantityReal" class="w-full">
+            </p-inputNumber>
+          </div>
+        </div>
+        <div class="flex pt-2">
+          <div class="bg-green-500 text-0 border-round-md p-2">{{ item.goodsCode }}</div>
+        </div>
+        <div class="flex pt-2">
+          <div class="bg-green-500 text-0 border-round-md p-2">Note Cancel</div>
+        </div>
+      </tr>
+      <tr *ngIf="!isMobile">
+        <td style="width: 5rem" class="justify-content-center">
+          <p-checkbox [(ngModel)]="item.checked" [ngModelOptions]="{standalone: true}" [binary]="true"></p-checkbox>
+        </td>
+        <td style="width: 5rem" class="justify-content-center">
+          {{ index + 1 }}
+        </td>
+        <td style="width: 5rem" class="justify-content-center">
+          <button *ngIf="item.goodDetails?.length > 0" type="button" pButton pRipple
+            class="p-button-text p-button-rounded p-button-plain" icon="pi pi-chevron-right"
+            (click)="onShowDetail(item.goodDetails)">
+          </button>
+        </td>
+        <td style="width: 20rem">{{ item.goodsName }}</td>
+        <td *ngIf="currentTab !== orderStatus.Pending" style="width: 20rem">{{ item.customerName }}</td>
+        <td *ngIf="currentTab === orderStatus.Pending" style="width: 20rem">
+          <div class="w-full">
+            <p-dropdown [options]="customers" [(ngModel)]="item.customerId" optionLabel="name" optionValue="id"
+              [filter]="true" filterBy="name" [showClear]="true" placeholder="Chọn khách hàng" appendTo="body">
+            </p-dropdown>
+          </div>
+        </td>
+        <td class="justify-content-center" style="width: 10rem">{{ item.stockUnit }}</td>
+        <td class="justify-content-end" style="width: 10rem">{{ item.quantityRequired }}</td>
+        <td class="text-center" style="width: 10rem">
+          <input pInputText [(ngModel)]="item.quantityReal" [ngModelOptions]="{standalone: true}"
+            class="w-full text-center">
+        </td>
+        <td class="justify-content-end" style="width: 10rem">{{ item.quantityStock }}</td>
+        <td class="justify-content-start" style="width: 20rem">
+          <input pInputText [(ngModel)]="item.note" [ngModelOptions]="{standalone: true}"
+            class="w-full justify-content-start">
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr>
+        <td colspan="7" style="width: 75rem">
+            Tổng số lượng
+        </td>
+        <td colspan="3" style="width: 10rem">
+          <div class="w-full flex justify-content-end">
+            {{ totalRealQuantity() | number }}
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <div class="mt-3">
+    <div class="w-full flex align-items-center justify-content-end gap-3">
+      <p-button type="button" styleClass="p-button-outlined" icon="pi pi-times" label="{{ 'button.back' | translate }}"
+        (click)="onFormClosing.emit()"></p-button>
+      <button pButton class="p-button-danger" icon="pi pi-trash" label="{{ 'button.remove' | translate }}"
+        (click)="onRemoveOrderProduceProduct()" *ngIf="currentTab == orderStatus.Pending"></button>
+      <button pButton icon="pi pi-check" label="{{ 'button.save' | translate }}"
+        (click)="onUpdateOrderProduceProduct()"></button>
+    </div>
+  </div>
+</div>
+
+<app-new-product-form *ngIf="showNewProductForm" [(visible)]="showNewProductForm" (saveChange)="onSaveNewProduct()"
+  [item]="detail"></app-new-product-form>
+
+<app-produce-order-good-detail [goodDetails]="goodDetails" [display]="goodDetailDisplay"
+  (onClosing)="goodDetailDisplay = false">
+</app-produce-order-good-detail>

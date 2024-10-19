@@ -1,0 +1,50 @@
+<p-dialog header="Danh sách nguyên vật liệu" [(visible)]="display"
+          [style]="{width: isMobile?'92vw':'50vw'}"
+          (onHide)="onClosing.emit()">
+  <p-table [value]="goodDetails" styleClass="p-datatable-gridlines mt-2">
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-1 text-center">STT</th>
+        <th class="w-2 text-center">Mã sản phẩm</th>
+        <th class="w-2 text-center">Tên sản phẩm</th>
+        <th class="w-1 text-center">SL Đặt</th>
+        <th class="w-1 text-center">SL Thực tế</th>
+        <th class="w-1 text-center">SL Tồn</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-product let-index="rowIndex">
+      <tr *ngIf="isMobile">
+        <div class="grid mt-4">
+          <span>{{ index + 1 }}.</span>&nbsp;
+          <span class="text-orange font-bold">{{ product.goodsName }}</span>
+        </div>
+        <div class="flex justify-content-between mt-3">
+          <div>
+            <label class="text-green-500">SL:</label>&nbsp;
+            <span class="font-bold">{{ product.quantityRequired | number }}</span>
+          </div>
+          <div>
+            <label class="text-green-500">SL Thực:</label>&nbsp;
+            <span class="font-bold">{{ product.quantityReal | number }}</span>
+          </div>
+          <div>
+            <label class="text-green-500">SL Tồn:</label>&nbsp;
+            <span class="font-bold">{{ product.quantityStock | number }}</span>
+          </div>
+        </div>
+      </tr>
+      <tr *ngIf="!isMobile">
+        <td class="text-center">{{ index + 1 }}</td>
+        <td class="text-center">{{ product.goodsCode }}</td>
+        <td>{{ product.goodsName }}</td>
+        <td class="text-center">{{ product.quantityRequired | number }}</td>
+        <td class="text-center">{{ product.quantityReal | number }}</td>
+        <td class="text-center">{{ product.quantityStock | number }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <ng-template pTemplate="footer">
+    <p-button icon="pi pi-check" (click)="display=false" label="Ok" styleClass="p-button-text"></p-button>
+  </ng-template>
+</p-dialog>

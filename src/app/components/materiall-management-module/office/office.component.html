@@ -1,0 +1,138 @@
+<div *ngIf="!display" class="px-2 py-3">
+  <h5>Quản lý nhập văn phòng phẩm</h5>
+  <div class="flex justify-content-between md:justify-content-end mt-2">
+    <button
+      *appHasAccess="{
+        menu: appConstant.MENU_TYPE.QUANLYNHAPVANPHONGPHAM,
+        action: appConstant.PERMISSION_FUNC.ADD
+      }"
+      pButton
+      [label]="'button.addF7' | translate"
+      class="mb-2"
+      icon="pi pi-user-plus"
+      (click)="isEdit = false; showDialog()"
+    ></button>
+  </div>
+  <p-table
+    #dt1
+    [value]="result.data"
+    dataKey="id"
+    [rows]="10"
+    [loading]="loading"
+    [rowHover]="true"
+    styleClass="p-datatable-gridlines sidebar-custom"
+    [paginator]="true"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+    [totalRecords]="result.totalItems"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true"
+    [lazy]="true"
+    (onLazyLoad)="getListOffice($event)"
+    [scrollable]="!isMobile"
+    scrollDirection="both"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-1">
+          <div class="flex align-items-center">Số lần</div>
+        </th>
+        <th class="w-7">
+          <div class="flex align-items-center">Loại</div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">Số lượng</div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">Tổng số tiền</div>
+        </th>
+        <th class="w-2"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-office let-rowIndex="rowIndex">
+      <tr>
+        <td class="w-1">
+          <label *ngIf="isMobile" class="text-primary">
+            Số lần: &nbsp;
+          </label>
+          <span>{{ rowIndex + 1 }}</span>
+        </td>
+        <td class="w-7">
+          <label *ngIf="isMobile" class="text-primary">
+            Loại: &nbsp;
+          </label>
+          <span>{{ office.procedureNumber }}</span>
+        </td>
+        <td class="w-1 flex justify-content-between md:justify-content-end">
+          <label *ngIf="isMobile" class="text-primary">
+            Số lượng: &nbsp;
+          </label>
+          <span>{{ office.quantity | number }}</span>
+        </td>
+        <td class="w-1 flex md:justify-content-end">
+          <label *ngIf="isMobile" class="text-primary">
+            Tổng số tiền: &nbsp;
+          </label>
+          <span class="font-bold">{{ office.totalAmount | number }}</span>
+        </td>
+        <td
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+          class="w-2"
+        >
+          <div class="w-full flex justify-content-center gap-3">
+            <button
+              *appHasAccess="{
+              menu: appConstant.MENU_TYPE.NHOMQUYEN,
+              action: appConstant.PERMISSION_FUNC.EDIT
+            }"
+              pButton
+              class="p-button-warning"
+              icon="pi pi-pencil"
+              (click)="onEditOffice(office, rowIndex)"
+            ></button>
+            <ng-container
+              *appHasAccess="{
+              menu: appConstant.MENU_TYPE.NHOMQUYEN,
+              action: appConstant.PERMISSION_FUNC.DELETE
+            }"
+            >
+              <button
+                pButton
+                class="p-button-danger"
+                icon="pi pi-trash"
+                *ngIf="true"
+                (click)="onDeleteOffice(office)"
+              ></button>
+            </ng-container>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr class="p-rowgroup-footer">
+        <td colspan="10" class="w-full pt-4 pb-4">
+          {{ "info.no_data" | translate }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="10" class="w-full pt-4 pb-4">
+          {{ "info.loading" | translate }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<app-office-form
+  #officeFormComponent
+  [formData]="formData"
+  [lengthListOffice]="indexHistory ? indexHistory : result?.totalItems + 1"
+  [isReset]="isReset"
+  [listAllStationer]="listAllStationer"
+  [display]="display"
+  (onCancel)="display = false; isReset = false"
+  [isEdit]="isEdit"
+></app-office-form>

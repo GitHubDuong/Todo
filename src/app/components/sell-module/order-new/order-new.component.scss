@@ -1,0 +1,9 @@
+:host::ng-deep {
+  .p-datatable-wrapper {
+    .p-datatable-tbody {
+      .action {
+        justify-content: flex-end !important;
+      }
+    }
+  }
+}

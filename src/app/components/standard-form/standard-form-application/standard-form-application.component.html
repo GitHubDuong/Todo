@@ -1,0 +1,60 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5 [translate]="isEdit ? 'label.standard_form_edit' : 'label.standard_form_add'"></h5>
+      <form [formGroup]="standardForm" autocomplete="off">
+        <div class="grid w-full">
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="code">{{ "label.standard_form_code" | translate }}</label>
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [formControlName]="'code'"
+              placeholder="Nhập mã"
+            />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="name">{{ "label.standard_form_name" | translate }}</label>
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [formControlName]="'name'"
+              placeholder="Nhập tên"
+            />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="note">{{ "label.standard_form_note" | translate }}</label>
+            <input
+              id="float-input"
+              type="text"
+              pInputText
+              [formControlName]="'note'"
+              placeholder="Nhập ghi chú"
+            />
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onCancel.emit({})"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

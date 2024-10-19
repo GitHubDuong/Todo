@@ -1,0 +1,155 @@
+<div *ngIf="contractDepartmentList" class="px-2 py-3">
+  <div class="flex justify-content-between">
+    <h5>{{ "label.contact_department" | translate }}</h5>
+  </div>
+  <p-table
+    [value]="contractDepartmentList"
+    dataKey="id"
+    [rows]="10"
+    [loading]="loading"
+    [rowHover]="true"
+    styleClass="p-datatable-gridlines sidebar-custom"
+    [paginator]="true"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true"
+    [lazy]="true"
+    [totalRecords]="totalRecords"
+    (onLazyLoad)="getListContract($event)"
+    scrollDirection="both"
+    [scrollable]="!isMobile"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [(first)]="first"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex justify-content-end">
+        <p-button
+          [label]="'label.download_contact_employee' | translate"
+          icon="pi pi-download"
+          (click)="openFile(templateName)"
+          styleClass="p-button-success"
+        ></p-button>
+        <p-button
+          icon="pi pi-plus"
+          (click)="onCrud()"
+          class="btn-add ml-2"
+          [label]="'button.add' | translate"
+        >
+        </p-button>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <ng-container *ngTemplateOutlet="headerTableTmp"></ng-container>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-rowData>
+      <ng-container
+        *ngTemplateOutlet="bodyTableTmp; context: { rowData: rowData }"
+      ></ng-container>
+    </ng-template>
+  </p-table>
+</div>
+
+<ng-template #headerTableTmp>
+  <tr>
+    <th class="w-2">
+      <span>Mã hợp đồng</span>
+    </th>
+    <th class="w-2">
+      <span>Tên hợp đồng</span>
+    </th>
+    <th class="w-2">
+      <span>Loại hợp đồng</span>
+    </th>
+    <th class="w-2">
+      <span>Phòng ban</span>
+    </th>
+    <th class="w-2">
+      <span>File mẫu</span>
+    </th>
+    <th *ngIf="isMobile" class="w-2"></th>
+    <th
+      *ngIf="!isMobile"
+      class="w-2"
+      alignFrozen="right"
+      pFrozenColumn
+      [frozen]="true"
+    ></th>
+  </tr>
+</ng-template>
+
+<ng-template #bodyTableTmp let-rowData="rowData">
+  <tr>
+    <td class="w-2">
+      <span>{{ rowData.code }}</span>
+    </td>
+    <td class="w-2">
+      <span>{{ rowData.name }}</span>
+    </td>
+    <td class="w-2">
+      <span>{{ rowData.type | contractDepartmentType }}</span>
+    </td>
+    <td class="w-2">
+      <span>{{ rowData.department?.name }}</span>
+    </td>
+    <td class="w-2">
+      <span *ngIf="rowData.linkFile">
+        <a class="cursor-pointer" (click)="openFile(rowData.linkFile)">
+          <i class="pi pi-file"></i>
+          Xem file
+        </a>
+      </span>
+    </td>
+    <td *ngIf="isMobile" class="w-2">
+      <button
+        *appHasAccess="{
+          menu: appConstant.MENU_TYPE.LOAIHDNHANSU,
+          action: appConstant.PERMISSION_FUNC.EDIT
+        }"
+        pButton
+        class="p-button-warning"
+        icon="pi pi-pencil"
+        (click)="onCrud(rowData)"
+      ></button>
+      <button
+        *appHasAccess="{
+          menu: appConstant.MENU_TYPE.LOAIHDNHANSU,
+          action: appConstant.PERMISSION_FUNC.DELETE
+        }"
+        pButton
+        class="p-button-danger"
+        icon="pi pi-trash"
+        (click)="onRemove(rowData)"
+      ></button>
+    </td>
+    <td
+      *ngIf="!isMobile"
+      alignFrozen="right"
+      pFrozenColumn
+      [frozen]="true"
+      class="w-2 flex justify-content-start md:justify-content-center"
+    >
+      <button
+        *appHasAccess="{
+          menu: appConstant.MENU_TYPE.LOAIHDNHANSU,
+          action: appConstant.PERMISSION_FUNC.EDIT
+        }"
+        pButton
+        class="p-button-warning"
+        icon="pi pi-pencil"
+        (click)="onCrud(rowData)"
+      ></button>
+      <button
+        *appHasAccess="{
+          menu: appConstant.MENU_TYPE.LOAIHDNHANSU,
+          action: appConstant.PERMISSION_FUNC.DELETE
+        }"
+        pButton
+        class="p-button-danger"
+        icon="pi pi-trash"
+        (click)="onRemove(rowData)"
+      ></button>
+    </td>
+  </tr>
+</ng-template>

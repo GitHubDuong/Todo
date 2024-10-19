@@ -1,0 +1,83 @@
+.style_prev_kit {
+  display: inline-block;
+  border: 0;
+  position: relative;
+  -webkit-transition: all 400ms ease-in;
+  -webkit-transform: scale(1);
+  -ms-transition: all 400ms ease-in;
+  -ms-transform: scale(1);
+  -moz-transition: all 400ms ease-in;
+  -moz-transform: scale(1);
+  transition: all 400ms ease-in;
+  transform: scale(1);
+}
+
+.style_prev_kit:hover {
+  box-shadow: 0 0 40px #000000;
+  z-index: 999;
+  -webkit-transition: all 400ms ease-in;
+  -webkit-transform: scale(2);
+  -ms-transition: all 400ms ease-in;
+  -ms-transform: scale(2);
+  -moz-transition: all 400ms ease-in;
+  -moz-transform: scale(2);
+  transition: all 400ms ease-in;
+  transform: scale(2);
+  cursor: pointer;
+}
+
+img {
+  width: 80px;
+  height: 40px;
+  border-radius: 4px;
+  border: 3px solid var(--primary-color);
+}
+
+img:hover {
+  cursor: pointer;
+}
+:host ::ng-deep {
+  .p-accordion .p-accordion-header .p-accordion-header-link img {
+    display: none;
+  }
+
+  .multiselect-custom {
+    .p-multiselect-label {
+      padding: 0.25rem !important;
+    }
+  }
+
+  .p-accordion p-accordiontab .p-accordion-tab {
+    margin-bottom: 0 !important;
+  }
+
+  .p-accordion .p-accordion-header .p-accordion-header-link {
+    border-radius: unset !important;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .p-accordion .p-accordion-content {
+    border-radius: unset !important;
+  }
+
+  .p-button.p-button-success {
+    color: #ffffff !important;
+    background: #22c55e !important;
+    border: 1px solid #22c55e !important;
+  }
+
+  .p-button.p-button-danger {
+    color: #ffffff !important;
+    background: var(--invalid-primary-color) !important;
+    border: 1px solid var(--invalid-primary-color) !important;
+  }
+
+  .p-calendar {
+    width: 100%;
+  }
+}
+
+.accordion-custom:hover {
+  border-left-color: #0b4d85;
+}

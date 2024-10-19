@@ -1,0 +1,24 @@
+<p-dialog
+  [header]="header"
+  [modal]="true"
+  [visible]="visible"
+  [style]="{'width': width ? width : '50%'}"
+  [closable]="false"
+>
+  <ng-template pTemplate="content">
+    <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <div class="action">
+      <ng-container *ngFor="let item of actionList">
+        <button
+          pButton
+          [label]="item.label"
+          [icon]="item.icon"
+          (click)="item.command()"
+          [class]="item.class"
+        ></button>
+      </ng-container>
+    </div>
+  </ng-template>
+</p-dialog>

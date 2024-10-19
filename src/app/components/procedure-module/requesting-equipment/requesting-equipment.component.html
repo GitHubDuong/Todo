@@ -1,0 +1,33 @@
+<div *ngIf="!isDetailVisible" class="px-2 py-3">
+  <h5 [translate]="'label.request_equipment_list'"></h5>
+  <app-tab-menu [tabItems]="tabMenus" [(ngModel)]="filterParams.statusTab" (onTabChange)="loadData()"></app-tab-menu>
+  <app-procedure-filter
+    [filter]="filterParams"
+    (filterChange)="onFilterChange($event)"
+  ></app-procedure-filter>
+  <app-data-table
+    [(filterParams)]="filterParams"
+    [columns]="columns"
+    [headerActions]="headerActions"
+    [dataSource]="dataSource"
+    (onLoad)="loadData()"
+    [paginator]="paginator"
+    [showSearch]="false"
+  ></app-data-table>
+</div>
+<ng-template #dateCol let-row>
+  <div>
+    <div class="mb-2">{{ row.userName }}</div>
+    <div>{{ row.date | date: 'dd/MM/yyyy' }}</div>
+  </div>
+</ng-template>
+<app-requesting-equipment-form
+  #detailFormComponent
+  [(visible)]="isDetailVisible"
+  (onFormClosing)="onFormClosing($event)"
+></app-requesting-equipment-form>
+<app-image-dialog
+  *ngIf="showImage"
+  [(visible)]="showImage"
+  [fileList]="fileList"
+></app-image-dialog>

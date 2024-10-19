@@ -1,0 +1,86 @@
+<div *ngIf="!showForm">
+  <app-table-layout
+    pageTitle="label.user_role_management"
+  >
+    <ng-template appTemplate="action_right">
+      <button
+        *appHasAccess="{
+            menu: appConstant.MENU_TYPE.NHOMQUYEN,
+            action: appConstant.PERMISSION_FUNC.ADD
+          }"
+        pButton
+        [label]="'button.addF7' | translate"
+        icon="pi pi-plus"
+        (click)="onAddUserRole()"
+      ></button>
+    </ng-template>
+    <ng-template appTemplate="content">
+      <app-table
+        [loading]="loading"
+        [data]="data"
+        [columns]="columns"
+        [pageIndex]="param.page"
+        [pageSize]="param.pageSize"
+        [totalRecords]="totalItems"
+        (load)="getUserRoles($event)"
+      >
+        <ng-template appTemplate="action" let-item>
+          <ng-container
+            *appHasAccess="{ menu: appConstant.MENU_TYPE.NHOMQUYEN, action: appConstant.PERMISSION_FUNC.DELETE }"
+          >
+            <button
+              pButton
+              class="p-button-danger"
+              icon="pi pi-trash"
+              *ngIf="!item.isNotAllowDelete"
+              (click)="onDeleteUserRole(item.id)"
+            ></button>
+          </ng-container>
+          <button
+            *appHasAccess="{ menu: appConstant.MENU_TYPE.NHOMQUYEN, action: appConstant.PERMISSION_FUNC.EDIT }"
+            pButton
+            class="p-button-warning"
+            icon="pi pi-pencil"
+            (click)="onEditUserRole(item)"
+          ></button>
+        </ng-template>
+      </app-table>
+    </ng-template>
+  </app-table-layout>
+</div>
+<ng-container
+  *appHasAccess="{
+    menu: appConstant.MENU_TYPE.NHOMQUYEN,
+    action: appConstant.PERMISSION_FUNC.ADD || appConstant.PERMISSION_FUNC.EDIT
+  }"
+>
+  <app-user-role-edit
+    [display]="showForm"
+    [formData]="selectedData"
+    (onCancel)="onCancelForm($event)"
+  ></app-user-role-edit>
+</ng-container>
+<p-confirmDialog
+  #cd
+  icon="pi pi-exclamation-triangle"
+  [style]="{ 'min-width': '45vw' }"
+>
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      [label]="'button.back' | translate"
+      class="mr-3"
+      (click)="cd.reject()"
+    ></button>
+    <button
+      class="p-button-danger"
+      type="button"
+      pButton
+      icon="pi pi-check"
+      [label]="'button.remove' | translate"
+      (click)="cd.accept()"
+    ></button>
+  </ng-template>
+</p-confirmDialog>

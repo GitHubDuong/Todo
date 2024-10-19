@@ -1,0 +1,83 @@
+<app-table-layout
+  *ngIf="!display"
+  pageTitle="label.floors_management"
+>
+  <ng-template appTemplate="action_left">
+    <span class="w-full p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            class="w-full"
+            [(ngModel)]="params.searchText"
+            pInputText
+            (keypress)="onSearch($event)"
+            [placeholder]="'label.search' | translate"
+          />
+        </span>
+  </ng-template>
+  <ng-template appTemplate="action_right">
+    <button
+      pButton
+      [label]="'button.addF7' | translate"
+      icon="pi pi-plus"
+      (click)="onAddBranch()"
+    ></button>
+  </ng-template>
+  <ng-template appTemplate="content">
+    <app-table
+      [data]="floors"
+      [columns]="columns"
+      [loading]="loading"
+      [pageIndex]="params.page-1"
+      [pageSize]="params.pageSize"
+      [totalRecords]="totalRecords"
+      (load)="getFloors($event)"
+    >
+      <ng-template appTemplate="action" let-item>
+        <button
+          pButton
+          class="p-button-danger"
+          icon="pi pi-trash"
+          (click)="onDelete(item.id)"
+        ></button>
+        <button
+          pButton
+          class="p-button-warning"
+          icon="pi pi-pencil"
+          (click)="getDetail(item.id)"
+        ></button>
+      </ng-template>
+    </app-table>
+  </ng-template>
+</app-table-layout>
+<app-good-warehouse-floors-form
+  #branchForm
+  [formData]="formData"
+  [isReset]="isReset"
+  [display]="display"
+  (onCancel)="display = false; getFloors(null, false); isReset = false"
+  [isEdit]="isEdit"
+></app-good-warehouse-floors-form>
+
+<p-confirmDialog
+  #cd
+  icon="pi pi-exclamation-triangle"
+  [style]="{ 'min-width': '45vw' }"
+>
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      [label]="'button.back' | translate"
+      (click)="cd.reject()"
+    ></button>
+    <button
+      class="p-button-danger"
+      type="button"
+      pButton
+      icon="pi pi-check"
+      [label]="'button.remove' | translate"
+      (click)="cd.accept()"
+    ></button>
+  </ng-template>
+</p-confirmDialog>

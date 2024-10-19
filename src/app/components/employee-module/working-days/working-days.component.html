@@ -1,0 +1,185 @@
+<div *ngIf="!display" class="px-2 py-3">
+  <h5 [translate]="'label.setup_working_day'"></h5>
+  <p-table
+    #dt1
+    [value]="lstDays"
+    dataKey="id"
+    [rows]="10"
+    [loading]="loading"
+    [rowHover]="true"
+    styleClass="p-datatable-gridlines sidebar-custom"
+    [paginator]="true"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true"
+    [lazy]="true"
+    (onLazyLoad)="getDays($event)"
+    scrollDirection="both"
+    [scrollable]="!isMobile"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [(first)]="first"
+  >
+    <ng-template pTemplate="caption">
+      <div
+        class="flex justify-content-start md:justify-content-between flex-column md:flex-row"
+      >
+        <span class="p-input-icon-left mb-2">
+          <i class="pi pi-search"></i>
+          <input
+            #filter
+            [(ngModel)]="getParams.searchText"
+            pInputText
+            type="text"
+            (keypress)="onSearch($event)"
+            [placeholder]="'label.search' | translate"
+            class="w-full"
+          />
+        </span>
+        <div
+          class="flex justify-content-between md:justify-content-end mt-2 md:mt-0"
+        >
+          <!-- add button -->
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.THIETLAPNGAYLAMVIEC,
+              action: appConstant.PERMISSION_FUNC.ADD
+            }"
+            pButton
+            [label]="'button.addF7' | translate"
+            class="mb-2"
+            icon="pi pi-plus"
+            (click)="isEdit = false; showDialog()"
+          ></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.numerical_order'"></span>
+          </div>
+        </th>
+        <th class="w-4">
+          <div class="flex justify-content-between align-items-center">
+            <span [translate]="'label.working_day'"></span>
+          </div>
+        </th>
+        <th class="w-4">
+          <div class="flex align-items-center">
+            <span [translate]="'label.holiday'"></span>
+          </div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span [translate]="'label.year'"></span>
+          </div>
+        </th>
+        <th class="w-2" *ngIf="isMobile"></th>
+        <th
+          class="w-2"
+          *ngIf="!isMobile"
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+        ></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-day>
+      <tr>
+        <td class="w-1">
+          <span
+            class="p-column-title"
+            [translate]="'label.numerical_order'"
+          ></span
+          >{{ day.id }}
+        </td>
+        <td class="w-4">
+          <span class="p-column-title" [translate]="'label.day_name'"></span
+          >{{ day.days.split(",") | workingDay }}
+        </td>
+        <td class="w-4">
+          <span class="p-column-title" [translate]="'label.time_in'"></span
+          ><span *ngFor="let date of day.holidays.split(',')"
+        >{{ date | date: "dd/MM/yyyy" }},
+          </span>
+        </td>
+        <td class="w-1">
+          <span class="p-column-title" [translate]="'label.time_out'"></span
+          >{{ day.year }}
+        </td>
+        <td class="w-2" *ngIf="isMobile">
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.THIETLAPNGAYLAMVIEC,
+              action: appConstant.PERMISSION_FUNC.EDIT
+            }"
+            pButton
+            class="p-button-warning"
+            icon="pi pi-pencil"
+            (click)="getDetail(day.id)"
+          ></button>
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.THIETLAPNGAYLAMVIEC,
+              action: appConstant.PERMISSION_FUNC.DELETE
+            }"
+            pButton
+            class="p-button-danger"
+            icon="pi pi-trash"
+            (click)="onDelete(day.id)"
+          ></button>
+        </td>
+        <td
+          *ngIf="!isMobile"
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+          class="w-2 flex justify-content-start md:justify-content-center"
+        >
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.THIETLAPNGAYLAMVIEC,
+              action: appConstant.PERMISSION_FUNC.EDIT
+            }"
+            pButton
+            class="p-button-warning"
+            icon="pi pi-pencil"
+            (click)="getDetail(day.id)"
+          ></button>
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.THIETLAPNGAYLAMVIEC,
+              action: appConstant.PERMISSION_FUNC.DELETE
+            }"
+            pButton
+            class="p-button-danger"
+            icon="pi pi-trash"
+            (click)="onDelete(day.id)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="w-full pt-4 pb-4">No Symbol found.</td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td class="w-full pt-4 pb-4">Loading Symbol data. Please wait.</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<app-working-days-form
+  #dayForm
+  [formData]="formData"
+  [isReset]="isReset"
+  [display]="display"
+  (onCancel)="display = false; isReset = false"
+  [isEdit]="isEdit"
+  [years]="years"
+></app-working-days-form>

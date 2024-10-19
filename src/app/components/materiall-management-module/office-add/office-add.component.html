@@ -1,0 +1,125 @@
+<div *ngIf="!display" class="px-2 py-3">
+  <h5>Danh sách văn phòng phẩm</h5>
+  <div class="flex justify-content-between md:justify-content-end mt-2">
+    <button
+      *appHasAccess="{
+        menu: appConstant.MENU_TYPE.DANHSACHVANPHONGPHAM,
+        action: appConstant.PERMISSION_FUNC.ADD
+      }"
+      pButton
+      [label]="'button.addF7' | translate"
+      class="mb-2"
+      icon="pi pi-user-plus"
+      (click)="showDialog()"
+    ></button>
+  </div>
+  <p-table
+    #dt1
+    [value]="result.data"
+    dataKey="id"
+    [rows]="10"
+    [loading]="loading"
+    [rowHover]="true"
+    styleClass="p-datatable-gridlines sidebar-custom"
+    [paginator]="true"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+    [totalRecords]="result.totalItems"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true"
+    [lazy]="true"
+    (onLazyLoad)="getListStationeies($event)"
+    [scrollable]="!isMobile"
+    scrollDirection="both"
+    currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-3">
+          <div class="flex align-items-center">Mã</div>
+        </th>
+        <th class="w-3">
+          <div class="flex align-items-center">Đơn vị</div>
+        </th>
+        <th class="w-3">
+          <div class="flex align-items-center">Tên</div>
+        </th>
+        <th class="w-3"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-stationerie>
+      <tr>
+        <td class="w-3">
+          <label *ngIf="isMobile" class="text-primary">
+            Mã: &nbsp;
+          </label>
+          <span>{{ stationerie.code }}</span>
+        </td>
+        <td class="w-3">
+          <label *ngIf="isMobile" class="text-primary">
+            Đơn vị: &nbsp;
+          </label>
+          <span>{{ stationerie.unit }}</span>
+        </td>
+        <td class="w-3">
+          <label *ngIf="isMobile" class="text-primary">
+            Tên: &nbsp;
+          </label>
+          <span>{{ stationerie.name }}</span>
+        </td>
+        <td
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+          class="w-3 flex justify-content-center"
+        >
+          <button
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.NHOMQUYEN,
+              action: appConstant.PERMISSION_FUNC.EDIT
+            }"
+            pButton
+            class="p-button-warning"
+            icon="pi pi-pencil"
+            (click)="onEditStationeie(stationerie)"
+          ></button>
+          <ng-container
+            *appHasAccess="{
+              menu: appConstant.MENU_TYPE.NHOMQUYEN,
+              action: appConstant.PERMISSION_FUNC.DELETE
+            }"
+          >
+            <button
+              pButton
+              class="p-button-danger"
+              icon="pi pi-trash"
+              *ngIf="true"
+              (click)="onDeleteStationeie(stationerie)"
+            ></button>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr class="p-rowgroup-footer">
+        <td colspan="10" class="w-full pt-4 pb-4">
+          {{ "info.no_data" | translate }}
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody">
+      <tr>
+        <td colspan="10" class="w-full pt-4 pb-4">
+          {{ "info.loading" | translate }}
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+<app-office-add-form
+  #officeAddFormComponent
+  [formData]="formData"
+  [isReset]="isReset"
+  [display]="display"
+  (onCancel)="display = false; getListStationeies(); isReset = false"
+  [isEdit]="isEdit"
+></app-office-add-form>

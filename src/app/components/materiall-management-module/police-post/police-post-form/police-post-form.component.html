@@ -1,0 +1,45 @@
+<app-form-layout
+  [isDisplay]="isDisplay"
+  [header]="item ? 'Tạo lộ trình':'Sửa lộ trình'"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <form [formGroup]="mForm">
+      <div class="p-fluid formgrid grid">
+        <div class="field col">
+          <label for="code">Mã</label>
+          <input
+            pInputText
+            id="code"
+            class="w-full"
+            placeholder="Nhập mã"
+            [formControl]="code"
+          />
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col">
+          <label for="name">Tên chốt</label>
+          <input
+            pInputText
+            id="name"
+            class="w-full"
+            placeholder="Nhập tên chốt"
+            [formControl]="name"
+          />
+        </div>
+      </div>
+      <div class="p-fluid formgrid grid">
+        <div class="field col-12 md:col-6">
+          <label for="amount">Số tiền</label>
+          <p-inputNumber
+            id="amount"
+            [formControl]="amount"
+            placeholder="Nhập mô số tiền"
+          ></p-inputNumber>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+</app-form-layout>

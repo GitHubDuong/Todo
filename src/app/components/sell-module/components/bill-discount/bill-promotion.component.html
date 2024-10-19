@@ -1,0 +1,204 @@
+<p-dialog [modal]="true" [header]="'label.promotion' | translate" [(visible)]="display"
+          [dismissableMask]="false"
+          [style]="{width: '92vw'}">
+  <p-table
+    [value]="billPromotions"
+    dataKey="id"
+    [rows]="10"
+    [rowHover]="true"
+    styleClass="p-datatable-gridlines sidebar-custom"
+    [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [showCurrentPageReport]="true"
+    [scrollable]="!isMobile"
+    scrollDirection="both"
+  >
+    <ng-template pTemplate="caption">
+      <div
+        class="flex justify-content-start md:justify-content-between flex-column md:flex-row"
+      >
+        <div class="flex justify-content-between md:justify-content-end mt-2 md:mt-0 gap-1">
+          <button
+            pButton
+            [label]="!isMobile ? ('button.add' | translate) : ''"
+            class="p-button-success"
+            icon="pi pi-plus"
+            (click)="appendItem()"
+          ></button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-3">
+          <div class="flex align-items-center">
+            <span [translate]="'label.promotion'"></span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span [translate]="'label.content'"></span>
+          </div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span>Số lượng</span>
+          </div>
+        </th>
+        <th class="w-1">
+          <div class="flex align-items-center">
+            <span>Đơn vị</span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span>Chiết khấu</span>
+          </div>
+        </th>
+        <th class="w-2">
+          <div class="flex align-items-center">
+            <span [translate]="'label.total_cost'"></span>
+          </div>
+        </th>
+        <th class="w-1"
+            *ngIf="isMobile"
+            style="min-width: 80px !important"
+        ></th>
+        <th class="w-1"
+            *ngIf="!isMobile"
+            style="min-width: 80px !important"
+            alignFrozen="right"
+            pFrozenColumn
+            [frozen]="true"
+        ></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-promotion let-rowIndex="rowIndex">
+      <tr>
+        <td class="w-3">
+          <div class="field w-full mb-0 px-2">
+            <label *ngIf="isMobile" for="name">{{ 'label.promotion' | translate }}</label>
+            <p-dropdown
+              id="name"
+              appendTo="body"
+              class="dropdown-table"
+              [options]="promotions"
+              [optionLabel]="'name'"
+              [optionValue]="'id'"
+              [(ngModel)]="promotion.id"
+              placeholder="Chọn khuyến mãi"
+              [filter]="true"
+              [showClear]="true"
+              filterBy="name"
+              (onChange)="onChangePromotion($event, promotion)"
+            >
+              <ng-template let-item pTemplate="selectedItem">
+                <div> {{ item.code }} | {{ item.name }} | {{ item.standard }}</div>
+              </ng-template>
+
+              <ng-template let-item pTemplate="item">
+                <div class="country-item">
+                  <div> {{ item.code }} | {{ item.name }} | {{ item.standard }}</div>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+        </td>
+        <td class="w-2">
+          <div class="field w-full mb-0 px-2">
+            <label *ngIf="isMobile" for="note">{{ 'label.content' | translate }}</label>
+            <input
+              id="note"
+              class="w-full pl-2"
+              [(ngModel)]="promotion.note"
+              type="text"
+              pInputText
+              placeholder="Nội dung"
+            >
+          </div>
+        </td>
+        <td class="w-1">
+          <div class="field w-full mb-0 px-2">
+            <label *ngIf="isMobile">Số lượng</label>
+            <p-inputNumber
+              class="w-full"
+              [(ngModel)]="promotion.qty"
+              (ngModelChange)="onCalcAmount(promotion)"
+              placeholder="Số lượng"
+            ></p-inputNumber>
+          </div>
+        </td>
+        <td class="w-1">
+          <div class="field w-full mb-0 px-2">
+            <label *ngIf="isMobile">Đơn vị</label>
+            <input
+              pInputText
+              class="w-full"
+              [(ngModel)]="promotion.unit"
+              placeholder="Đơn vị"
+            >
+          </div>
+        </td>
+        <td class="w-2">
+          <div class="field flex justify-content-between md:justify-content-end w-full mb-0 px-2">
+            <label *ngIf="isMobile">Chiết khấu &nbsp;</label>
+            <p-inputNumber
+              class="w-full"
+              [(ngModel)]="promotion.discount"
+              (ngModelChange)="onCalcAmount(promotion)"
+              placeholder="Đơn giá"
+            ></p-inputNumber>
+          </div>
+        </td>
+        <td class="w-2">
+          <div class="field w-full mb-0 px-2 flex justify-content-end">
+            <label *ngIf="isMobile">{{ 'label.total_cost' | translate }} &nbsp;</label>
+            {{ promotion.amount | number }}
+          </div>
+        </td>
+        <td
+          style="min-width: 80px !important"
+          alignFrozen="right"
+          pFrozenColumn
+          [frozen]="true"
+          class="w-1 flex justify-content-center md:justify-content-center"
+        >
+          <button
+            pButton
+            class="p-button-danger"
+            icon="pi pi-trash"
+            (click)="removeItem(rowIndex)"
+          ></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td class="w-full pt-4 pb-4"></td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr class="footer-row">
+        <td colspan="5" class="w-9 flex justify-content-end">
+          {{ "label.total" | translate | uppercase }}
+        </td>
+        <td class="w-2 flex justify-content-end">
+          {{ sumAmount | number }}
+        </td>
+        <td
+          style="min-width: 80px !important"
+          class="w-1 flex justify-content-start md:justify-content-center"
+          pFrozenColumn
+          alignFrozen="right"
+          [frozen]="true"
+        >
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-end">
+      <p-button class="w-full" icon="pi pi-check" (click)="onSubmit()" label="Ok" styleClass="p-button-text"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

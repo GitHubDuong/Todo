@@ -1,0 +1,113 @@
+<div *ngIf="!isDisplayForm" class="px-2 py-3">
+    <h5 [translate]="'label.approval-process'"></h5>
+    <p-tabMenu [model]="menuItems" [activeItem]="activeMenu"></p-tabMenu>
+
+    <p-table #dt1 [value]="dataList" [columns]="cols" [loading]="loading" [rowHover]="true"
+        styleClass="p-datatable-gridlines sidebar-custom" [rows]="this.pageSize" [rowsPerPageOptions]="[10, 25, 50]"
+        [showCurrentPageReport]="true" [resizableColumns]="true" [paginator]="true"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries" [totalRecords]="totalRecords"
+        [lazy]="true" (onLazyLoad)="onLazyLoad($event)" [responsiveLayout]="isMobile ? 'stack' : 'scroll'"
+        [scrollable]="!isMobile" rowGroupMode="subheader" [autoLayout]="true" scrollDirection="both"
+        [resizableColumns]="true">
+        <ng-template pTemplate="caption">
+            <div class="grid p-fluid">
+                <div class="field col-12 md:col-2">
+                    <p-calendar [showIcon]="true" inputId="icon" [(ngModel)]="startDate" dateFormat="dd-mm-yy"
+                        [placeholder]="'Ngày bắt đầu'" (onSelect)="loadData()"></p-calendar>
+                </div>
+                <div class="field col-12 md:col-2">
+                    <p-calendar [showIcon]="true" inputId="icon" [(ngModel)]="endDate" dateFormat="dd-mm-yy"
+                        [placeholder]="'Ngày kết thúc'" (onSelect)="loadData()"></p-calendar>
+                </div>
+                <div class="col-12 md:col-2">
+                    <p-dropdown [options]="employees" [ngModelOptions]="{ standalone: true }" [optionLabel]="'fullName'"
+                        [filter]="true" filterBy="fullName" [(ngModel)]="getParams.userId" [optionValue]="'id'"
+                        [showClear]="true" [placeholder]="'label.employee' | translate" (onChange)="loadData()">
+                    </p-dropdown>
+                </div>
+                <div class="col-12 md:col-5"></div>
+                <div class="field col-12 md:col-1">
+                    <button pButton [label]="'button.add' | translate" class="mb-2" icon="pi pi-plus"
+                        (click)="isDisplayForm = true;"></button>
+                </div>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header" let-columns>
+            <tr>
+                <ng-container *ngFor="let col of columns">
+                    <th [style]="col.style" *ngIf="col.display">
+                        {{ col.header }}
+                    </th>
+                </ng-container>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="body" let-columns let-rowData let-index="rowIndex">
+            <tr>
+                <td style="width:20%; justify-content:start; word-break: break-word; white-space: normal;">
+                    {{ rowData?.file?.fileName }}
+                </td>
+                <td style="width:50%; justify-content:start; word-break: break-word; white-space: normal;">
+                    {{ rowData.employeeNames }}
+                </td>
+                <td style="width:10%; justify-content:center;">
+                    <button pButton class="p-button-success" icon="pi pi-eye" *ngIf="!rowData.isFinished" (click)="reviewFile(rowData)"></button>
+                </td>
+                <td style="width:10%; justify-content:center;">
+                    <button pButton class="p-button-success" icon="pi pi-download" *ngIf="rowData.isFinished" (click)="downloadFile(rowData)"></button>
+                </td>
+                <td style="width:10%; justify-content:center;">
+                    <button pButton class="p-button-success" icon="pi pi-angle-double-right" *ngIf="!rowData.isFinished" (click)="accept(rowData)"></button>
+                </td>
+            </tr>
+        </ng-template>
+
+        <ng-template pTemplate="emptymessage">
+            <tr>
+                <td colspan="4" class="w-full pt-4 pb-4">Không tìm thấy dữ liệu.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<div *ngIf="isDisplayForm" class="grid grid-nogutter">
+    <div class="col-12 p-0">
+        <div class="px-2 py-3">
+            <h5>Tạo mới Ký Duyệt</h5>
+            <div class="grid w-full">
+                <!-- Employee Control -->
+                <div class="field col-12 md:col-12 flex flex-column">
+                    <label>
+                        Người kiểm duyệt<span class="text-pink-400">*</span>
+                    </label>
+                    <p-multiSelect [options]="employees" [filter]="true" [filterBy]="'fullName'" optionLabel="fullName"
+                        optionValue="id" [(ngModel)]="employeeSelecteds" [ngModelOptions]="{ standalone: true }"
+                        [placeholder]="'label.employee_name' | translate">
+                    </p-multiSelect>
+                </div>
+                <!-- Upload file -->
+                <div class="field col-12 md:col-12 flex flex-column">
+                    <label>
+                        Tệp<span class="text-pink-400">*</span>
+                    </label>
+                    <p-fileUpload accept=".docx" [showUploadButton]="false" maxFileSize="1000000" chooseLabel="Tải tệp"
+                        cancelLabel="Hủy" (onSelect)="onSelect($event)">
+                        <ng-template pTemplate="content">
+                            <span *ngIf="this.uploadedFile">{{uploadedFile.name}} - {{uploadedFile.size}} bytes</span>
+                        </ng-template>
+                    </p-fileUpload>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="p-fluid p-formgrid grid mt-2">
+                    <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+                        <p-button icon="pi pi-times" [label]="'button.back' | translate" (click)="cancel()"
+                            styleClass="p-button-outlined"></p-button>
+                        <p-button icon="pi pi-check" [label]="'button.save' | translate" (click)="saveInfo()">
+                        </p-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

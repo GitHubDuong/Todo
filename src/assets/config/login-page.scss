@@ -1,0 +1,43 @@
+:host ::ng-deep {
+  --primary-color: rgba(255, 80, 0, 255);
+  --light-primary-color: #fa6b05;
+}
+
+.logo {
+  max-width: 11rem;
+  max-height: 11rem;
+  // Get from link
+  //content: url("https://asianasa.com/assets/layout/images/logo-xl.png");
+  // Get from local source
+  content: url("../layout/images/logo-xl.png");
+}
+
+:host ::ng-deep .p-inputtext {
+  width: 100%;
+  padding: 1rem;
+  position: relative;
+}
+
+:host ::ng-deep .p-input-icon-right > i {
+  top: auto !important;
+}
+
+:host ::ng-deep .pi-eye,
+:host ::ng-deep .pi-eye-slash {
+  transform: scale(1.6);
+  cursor: pointer;
+  color: var(--primary-color) !important;
+  position: absolute;
+  margin-top: 1.25rem !important;
+  right: 1rem !important;
+}
+
+:host ::ng-deep #language .p-dropdown {
+  width: auto !important;
+}
+
+@media screen and (max-width: 768px) {
+  .pt-200px {
+    padding-top: 200px;
+  }
+}

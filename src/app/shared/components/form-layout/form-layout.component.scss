@@ -1,0 +1,30 @@
+.form-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: white;
+  .header {
+    padding: 8px;
+  }
+
+  .body {
+    flex: 1;
+    overflow: auto;
+  }
+
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    padding: 16px;
+  }
+}
+
+:host::ng-deep {
+  p-button {
+    &.p-button-outlined {
+
+    }
+  }
+}

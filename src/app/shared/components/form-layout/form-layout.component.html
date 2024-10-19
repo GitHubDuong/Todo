@@ -1,0 +1,21 @@
+<div *ngIf="isDisplay" class="form-layout">
+  <div class="header mt-3">
+    <h5
+      [translate]="header"
+    ></h5>
+  </div>
+  <div class="body">
+    <ng-container *ngTemplateOutlet="bodyTemplate"></ng-container>
+  </div>
+  <div class="footer">
+    <ng-container *ngFor="let item of actionList">
+      <button
+        pButton
+        icon="pi {{item.icon}}"
+        class="w-auto {{item.class}}"
+        (click)="item.command()"
+        [label]="item.label | translate"
+      ></button>
+    </ng-container>
+  </div>
+</div>

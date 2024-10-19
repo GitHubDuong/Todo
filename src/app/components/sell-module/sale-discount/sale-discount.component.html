@@ -1,0 +1,37 @@
+<app-table-layout
+  *ngIf="!showForm"
+  pageTitle="Quản lý chiết khấu sale"
+>
+  <ng-template appTemplate="action_right">
+    <button
+      pButton
+      [label]="'button.addF7' | translate"
+      icon="pi pi-save"
+      (click)="onShowForm()"
+    ></button>
+  </ng-template>
+  <ng-template appTemplate="content">
+    <app-table
+      [loading]="loading"
+      [data]="data"
+      [columns]="columns"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [totalRecords]="totalItem"
+      (load)="onLoad($event)"
+    >
+      <ng-template appTemplate="action" let-item>
+        <button pButton class="p-button-warning" icon="pi pi-pencil" (click)="onShowForm(item)"></button>
+        <button pButton class="p-button-danger" icon="pi pi-trash" (click)="onDelete(item.id)"></button>
+      </ng-template>
+    </app-table>
+  </ng-template>
+</app-table-layout>
+<app-sale-discount-form
+  *ngIf="showForm"
+  [(isDisplay)]="showForm"
+  [positionList]="positionList"
+  [item]="selectedItem"
+>
+
+</app-sale-discount-form>

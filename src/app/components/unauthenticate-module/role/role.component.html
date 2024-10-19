@@ -1,0 +1,132 @@
+<app-table-layout
+  *ngIf="!display"
+  pageTitle="label.role_management"
+>
+  <ng-template appTemplate="action_left">
+    <div class="flex gap-2 flex-column md:flex-row">
+      <div class="flex gap-2 align-items-center pr-3">
+        <p-inputSwitch
+          (click)="getMenuRole()"
+          [(ngModel)]="getParams.isParent"
+        ></p-inputSwitch>
+        <span class="text-primary">{{ "label.is_role_menu_parent" | translate }}</span>
+      </div>
+      <p-dropdown
+        [options]="codeParents"
+        [(ngModel)]="getParams.codeParent"
+        placeholder="Chọn nhóm cha"
+        (ngModelChange)="getMenuRole()"
+        class="md:w-15rem"
+        optionLabel="name"
+        optionValue="code"
+        [ngModelOptions]="{ standalone: true }"
+        [filter]="true"
+        [showClear]="true"
+      ></p-dropdown>
+      <span class="p-input-icon-left">
+        <i class="pi pi-search"></i>
+        <input
+          #filter
+          [(ngModel)]="getParams.searchText"
+          pInputText
+          type="text"
+          (input)="onSearch()"
+          [placeholder]="'label.search' | translate"
+          class="w-full"
+        />
+      </span>
+    </div>
+  </ng-template>
+  <ng-template appTemplate="action_right">
+    <button
+      *appHasAccess="{
+            menu: appConstant.MENU_TYPE.PHANQUYEN,
+            action: appConstant.PERMISSION_FUNC.ADD
+          }"
+      pButton
+      [label]="'button.addF7' | translate"
+      icon="pi pi-plus"
+      (click)="onAddRole()"
+    ></button>
+  </ng-template>
+  <ng-template appTemplate="content">
+    <app-table
+      [data]="result.data"
+      [columns]="columns"
+      [loading]="false"
+      [pageIndex]="result.currentPage"
+      [pageSize]="result.pageSize"
+      [totalRecords]="result.totalItems"
+      (load)="getMenuRole($event)"
+    >
+      <ng-template appTemplate="action" let-item>
+        <button
+          *appHasAccess="{
+              menu: appConstant.MENU_TYPE.PHANQUYEN,
+              action: appConstant.PERMISSION_FUNC.DELETE
+            }"
+          pButton
+          class="p-button-danger"
+          icon="pi pi-trash"
+          (click)="onDeleteRole(item.id)"
+        ></button>
+        <button
+          *appHasAccess="{
+              menu: appConstant.MENU_TYPE.PHANQUYEN,
+              action: appConstant.PERMISSION_FUNC.EDIT
+            }"
+          pButton
+          class="p-button-warning"
+          icon="pi pi-pencil"
+          (click)="onEditRole(item)"
+        ></button>
+      </ng-template>
+    </app-table>
+  </ng-template>
+</app-table-layout>
+<ng-template #parentCode let-row>
+  <p-tag
+    *ngIf="row?.codeParent"
+    [value]="row?.codeParent"
+    class="border-round-md"
+    [ngStyle]="{ background: getParentColor(row?.codeParent)}"
+  ></p-tag>
+</ng-template>
+<ng-container
+  *appHasAccess="{
+    menu: appConstant.MENU_TYPE.PHANQUYEN,
+    action: appConstant.PERMISSION_FUNC.ADD || appConstant.PERMISSION_FUNC.EDIT
+  }"
+>
+  <app-role-edit
+    [display]="display"
+    [formData]="formData"
+    [codeParents]="codeParents"
+    (onCancel)="onCancelForm($event)"
+  ></app-role-edit>
+</ng-container>
+
+<p-confirmDialog
+  #cd
+  icon="pi pi-exclamation-triangle"
+  [style]="{ 'min-width': '45vw' }"
+>
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      [label]="'button.back' | translate"
+      class="mr-3"
+      (click)="cd.reject()"
+    ></button>
+    <button
+      class="p-button-danger"
+      type="button"
+      pButton
+      icon="pi pi-check"
+      [label]="'button.remove' | translate"
+      (click)="cd.accept()"
+    ></button>
+  </ng-template>
+</p-confirmDialog>

@@ -1,0 +1,104 @@
+<p-dialog
+  header="Thêm sản phẩm và tạo lệnh sản xuất"
+  [(visible)]="visible"
+  (visibleChange)="visibleChange.emit(false)"
+  [style]="{ width: '92%' }"
+  [modal]="true"
+  [resizable]="false"
+>
+  <ng-template pTemplate="body">
+    <div class="grid">
+      <div class="field col-12 md:col-6 pr-2">
+        <input
+          pInputText
+          placeholder="Nhập từ khóa"
+          [(ngModel)]="keyword"
+          (keyup.enter)="onLoad()"
+          class="w-full"
+        >
+      </div>
+      <div class="field col-12 md:col-6 pr-2">
+        <p-dropdown
+          [options]="accountList"
+          [(ngModel)]="selectedAccount"
+          (ngModelChange)="onSelectAccount()"
+          [showClear]="true"
+          styleClass="w-full"
+          optionLabel="label"
+          optionValue="code"
+          [filter]="true"
+          filterBy="label"
+          placeholder="Chọn tài khoản"
+          appendTo="body"
+        ></p-dropdown>
+      </div>
+      <div class="field col-12 md:col-6 pr-2">
+        <p-dropdown
+          [options]="storeList"
+          [(ngModel)]="selectedStore"
+          (ngModelChange)="onLoad()"
+          [showClear]="true"
+          styleClass="w-full"
+          optionLabel="name"
+          optionValue="code"
+          [filter]="true"
+          filterBy="name"
+          placeholder="Chọn kho"
+          appendTo="body"
+        ></p-dropdown>
+      </div>
+      <div class="field col-12 md:col-6 pr-2">
+        <p-dropdown
+          [options]="detailIList"
+          [(ngModel)]="selectedDetail"
+          (ngModelChange)="onLoad()"
+          [showClear]="true"
+          styleClass="w-full"
+          optionLabel="name"
+          optionValue="code"
+          [filter]="true"
+          filterBy="name"
+          placeholder="Chọn chi tiết"
+          appendTo="body"
+        ></p-dropdown>
+      </div>
+    </div>
+    <app-table
+      [action]="false"
+      [data]="data"
+      [columns]="columns"
+      [loading]="loading"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [totalRecords]="totalItem"
+      (load)="onLoad($event)"
+    ></app-table>
+  </ng-template>
+  <ng-template #quantity let-row>
+    <p-inputNumber
+      [(ngModel)]="row.quantity"
+      class="w-full"
+    ></p-inputNumber>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <p-button
+      icon="pi pi-times"
+      label="{{ 'button.cancel' | translate }}"
+      styleClass="p-button-text"
+      (click)="onCancel()"
+    ></p-button>
+    <p-button
+      class="p-button-success"
+      icon="pi pi-plus"
+      label="{{ 'button.addContinue' | translate }}"
+      (click)="onAddContinue()"
+    ></p-button>
+    <button
+      pButton
+      icon="pi pi-check"
+      label="{{ 'button.save' | translate }}"
+      styleClass="p-button-text"
+      (click)="onAdd()"
+    ></button>
+  </ng-template>
+</p-dialog>

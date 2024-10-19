@@ -1,0 +1,12 @@
+:host ::ng-deep .p-dropdown {
+  width: 250px;
+}
+
+:host ::ng-deep .p-inputtext {
+  width: 250px;
+}
+
+:host ::ng-deep p-autocomplete,
+:host ::ng-deep .p-autocomplete {
+  width: auto !important;
+}

@@ -1,0 +1,31 @@
+.row-mobile {
+  padding: 6px 2px;
+}
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  padding: 0.25rem 0.5rem;
+}
+:host ::ng-deep .p-frozen-column {
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-datatable-frozen-tbody {
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-progressbar {
+  height: 0.5rem;
+}
+
+.p-button {
+  height: 40px;
+}
+
+@media screen and (max-width: 768px) {
+  :host ::ng-deep .p-datatable.p-datatable-gridlines .p-datatable-header {
+    padding: 0.1rem 0.5rem;
+  }
+
+  :host ::ng-deep .p-panel.p-panel-toggleable .p-panel-header {
+    min-height: auto;
+  }
+}

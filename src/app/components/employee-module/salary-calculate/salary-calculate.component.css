@@ -1,0 +1,21 @@
+:host ::ng-deep .p-frozen-column {
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-datatable-frozen-tbody {
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-progressbar {
+  height: 0.5rem;
+}
+
+:host ::ng-deep .group-td {
+  float: left;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 50%;
+}
+
+/*# sourceMappingURL=salary-history.component.css.map */

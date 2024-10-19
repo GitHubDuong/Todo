@@ -1,0 +1,110 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5
+        [translate]="
+          isEdit ? 'label.edit_license_plate' : 'label.add_license_plate'
+        "
+      ></h5>
+      <form [formGroup]="carForm" autocomplete="off">
+        <div class="grid w-full">
+          <!-- License plate -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label>{{ "label.license_plate" | translate }}</label>
+            <input
+              type="text"
+              pInputText
+              formControlName="licensePlates"
+            />
+          </div>
+
+          <!-- NOTE -->
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label>{{ "label.note" | translate }}</label>
+            <input
+              type="text"
+              pInputText
+              formControlName="note"
+            />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label>Định mức 100km</label>
+            <p-inputNumber
+              formControlName="mileageAllowance"
+            ></p-inputNumber>
+          </div>
+          <div class="field col-12 flex flex-column">
+            <label>Nội dung</label>
+            <textarea
+              pInputTextarea
+              rows="3"
+              [formControlName]="'content'"
+            ></textarea>
+          </div>
+
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label>{{ "Tệp tin" | translate }}</label>
+            <button
+              pButton
+              icon="pi pi-upload"
+              (click)="uploadFile.click()"
+              [label]="'button.import' | translate"
+            ></button>
+            <input
+              #uploadFile
+              class="hidden"
+              type="file"
+              (change)="doAttachFile($event)"
+              multiple
+            />
+            <small
+              *ngIf="selectedFile"
+              class="p-error"
+              style="cursor: pointer; margin-top: 10px"
+            >
+              <div *ngFor="let file of selectedFile; let index = index">
+                <span class="pr-2">{{ file.name }}</span>
+                <i
+                  (click)="removeFile(index, selectedFile)"
+                  class="pi pi-times"
+                ></i>
+              </div>
+            </small>
+            <small
+              *ngIf="selectedFile == undefined || selectedFile == null"
+              class="p-error"
+              style="cursor: pointer; margin-top: 10px"
+            >
+              <div *ngFor="let file of fileName; let index = index">
+                <span class="pr-2">{{ file.fileUrl }}</span>
+                <i
+                  (click)="removeFile(index, fileName)"
+                  class="pi pi-times"
+                ></i>
+              </div>
+            </small>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onCancel.emit({})"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,58 @@
+<app-form-layout
+  [isDisplay]="display"
+  [header]="isEdit ? 'label.user_role_edit' : 'label.user_role_add'"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <div class="p-fluid formgrid grid">
+      <div class="field col">
+        <label for="code">{{ "label.user_role_code" | translate }}</label>
+        <input
+          pInputText
+          id="code"
+          class="w-full"
+          placeholder="Nhập mã nhóm quyền"
+          [(ngModel)]="userRoleModel.code"
+        />
+      </div>
+    </div>
+    <div class="p-fluid formgrid grid">
+      <div class="field col">
+        <label for="name">{{ "label.user_role_title" | translate }}</label>
+        <input
+          pInputText
+          id="name"
+          class="w-full"
+          placeholder="Nhập tên nhóm quyền"
+          [(ngModel)]="userRoleModel.title"
+        />
+      </div>
+    </div>
+    <div class="p-fluid formgrid grid">
+      <div class="field col">
+        <label for="order">{{ "label.user_role_order" | translate }}</label>
+        <input
+          pInputText
+          id="order"
+          type="number"
+          class="w-full"
+          placeholder="Nhập thứ tự"
+          [(ngModel)]="userRoleModel.order"
+        />
+      </div>
+    </div>
+    <div class="p-fluid formgrid grid">
+      <div class="field col">
+        <label for="note">{{ "label.user_role_note" | translate }}</label>
+        <textarea
+          pInputTextarea
+          id="note"
+          [(ngModel)]="userRoleModel.note"
+          rows="4"
+          placeholder="Nhập ghi chú"
+        ></textarea>
+      </div>
+    </div>
+  </ng-template>
+</app-form-layout>

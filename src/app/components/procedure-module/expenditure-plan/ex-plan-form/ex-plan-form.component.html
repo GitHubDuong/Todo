@@ -1,0 +1,154 @@
+<app-form-layout
+  [isDisplay]="visible"
+  [actionList]="actionList"
+  header="{{detail?.procedureNumber}} - {{detail?.date | date: 'dd/MM/yyyy'}}"
+  (back)="onBack()"
+  (save)="onSave()"
+>
+  <ng-template appTemplate="body">
+    <p-table
+      [value]="getItems()"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="w-2">Mã</th>
+          <th class="w-2">Nội dung</th>
+          <th class="w-1">Dự chi</th>
+          <th class="w-2">File</th>
+          <th class="w-2">Chứng từ</th>
+          <th class="w-1">Đồng ý</th>
+          <th class="w-1">Trạng thái</th>
+          <ng-container>
+            <th class="w-1"></th>
+          </ng-container>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-idx="rowIndex">
+        <tr>
+          <td class="w-2 px-2">
+            <label class="text-primary" *ngIf="isMobile">Mã:</label>
+            {{ item.fromProcedureCode }}
+          </td>
+          <td class="w-2 px-2">
+            <label class="text-primary" *ngIf="isMobile">Nội dung:</label>
+            <span>{{ item.fromProcedureNote }}</span>
+          </td>
+          <td class="w-1 px-3">
+            <div class="w-full flex justify-content-end">
+              <label class="text-primary white-space-nowrap" *ngIf="isMobile">Dự chi: &nbsp;</label>
+              {{ item.expenditurePlanAmount | number }}
+            </div>
+          </td>
+          <td class="w-2">
+            <app-multiple-upload
+              [fileLink]="item.files"
+              [disabledUpload]="detail.isFinished"
+              [hideLabel]="true"
+              [minimal]="true"
+              [removable]="false"
+              (attackFiles)="onAttachFile(item, $event)">
+            </app-multiple-upload>
+          </td>
+          <td class="w-2">
+            <app-multiple-upload
+              [fileLink]="item.fileStatuses"
+              [disabledUpload]="!detail.isFinished"
+              [hideLabel]="true"
+              [minimal]="true"
+              [removable]="false"
+              (attackFiles)="onAttachFileStatuses(item, $event)">
+            </app-multiple-upload>
+          </td>
+          <td class="w-1 px-2">
+            <p-checkbox [binary]="true" [(ngModel)]="item.isApply"></p-checkbox>
+          </td>
+          <td class="w-1 px-2">
+            <span>{{ getStatus(item.status) }}</span>
+          </td>
+          <ng-container>
+            <td class="w-3">
+              <div class="w-full">
+                <button
+                  *ngIf="!detail.isFinished"
+                  pButton
+                  icon="pi pi-trash"
+                  class="mr-3"
+                  (click)="onRemove(idx)"
+                ></button>
+                <button
+                  pButton
+                  icon="pi pi-angle-right"
+                  (click)="onOpenPriceDialog(item)"
+                ></button>
+              </div>
+            </td>
+          </ng-container>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="2" class="w-2">
+            <span>Tổng tiền</span>
+          </td>
+          <td class="w-1">
+            <div class="w-full flex justify-content-end">
+              <span>{{ totalAmount | number }}</span>
+            </div>
+          </td>
+          <td colspan="4" class="w-4"></td>
+          <td colspan="4" class="w-4"></td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-template>
+</app-form-layout>
+
+<app-dialog-layout
+  header="Bạn chắc chắn đây là chứng từ?"
+  [visible]="showConfirmUploadFile$ | async"
+  width="25%"
+  (save)="onUploadFiles()"
+  (cancel)="onCancelUploadFiles()"
+>
+  <ng-template appTemplate="content">
+    <p>Nếu Upload lên là Không xóa được. Bạn cần kiểm tra chứng từ kỹ trước khi Up nhé.</p>
+    <div>
+      <p-dropdown
+        [options]="paidOptions"
+        [(ngModel)]="selectedItem.status"
+        class="w-full"
+        placeholder="Chọn trạng thái"
+        appendTo="body"
+      >
+      </p-dropdown>
+    </div>
+  </ng-template>
+</app-dialog-layout>
+<app-dialog-layout
+  header="Nhập giá trị thực thi"
+  [visible]="showPriceDialog"
+  width="50%"
+  (save)="onSavePrice()"
+  (cancel)="onCancelPrice()">
+  <ng-template appTemplate="content">
+    <div class="w-full grid">
+      <div class="col-12 md:col-4 field">
+        <label>Thực thi</label>
+        <p-inputNumber class="w-full" [(ngModel)]="cloneSelected.approveAmount"></p-inputNumber>
+      </div>
+      <div class="col-12 md:col-4 field">
+        <label>Quyết toán</label>
+        <input
+          pInputText
+          class="w-full"
+          value="{{ (cloneSelected.expenditurePlanAmount - cloneSelected.approveAmount) | number }}"
+          [disabled]="true"
+        >
+      </div>
+      <div class="col-12 md:col-4 field">
+        <label>Ghi chú</label>
+        <input pInputText class="w-full" [(ngModel)]="cloneSelected.note">
+      </div>
+    </div>
+  </ng-template>
+</app-dialog-layout>

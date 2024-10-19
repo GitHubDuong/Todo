@@ -1,0 +1,34 @@
+<app-form-layout
+  [isDisplay]="isDisplay"
+  header="Chi tiết theo sản phẩm"
+  [actionList]="actionList"
+  (back)="onBack()"
+>
+  <ng-template appTemplate="body">
+    <p-table
+      [value]="detailList"
+    >
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="w-4">Mã sản phẩm</th>
+        <th class="w-2">Số lượng</th>
+        <th class="w-3">Đang làm</th>
+        <th class="w-3">Đã bàn giao</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-row>
+      <tr class="w-full">
+        <td colspan="4" class="w-full p-2">Khách hàng: {{ row.user }}</td>
+      </tr>
+      <ng-container *ngFor="let item of getItem(row)">
+        <tr>
+          <td class="w-4 px-3">{{item.orderProduceProductCode}}</td>
+          <td class="w-2 px-3">{{item.quantity}}</td>
+          <td class="w-3 px-3">{{item.quantityInProgress}}</td>
+          <td class="w-3 px-3">{{item.quantityDelivered}}</td>
+        </tr>
+      </ng-container>
+  </ng-template>
+    </p-table>
+  </ng-template>
+</app-form-layout>

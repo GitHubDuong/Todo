@@ -1,0 +1,19 @@
+<div class="w-full h-full table-layout px-2 py-3">
+  <div class="header">
+    <h5 [translate]="pageTitle"></h5>
+  </div>
+  <div *ngIf="menuTemplate">
+    <ng-container *ngTemplateOutlet="menuTemplate"></ng-container>
+  </div>
+  <div class="action flex-column md:flex-row gap-2" *ngIf="actionLeftTemplate || actionRightTemplate">
+    <div class="left w-full md:w-auto">
+      <ng-container *ngTemplateOutlet="actionLeftTemplate"></ng-container>
+    </div>
+    <div class="right w-full md:w-auto">
+      <ng-container *ngTemplateOutlet="actionRightTemplate"></ng-container>
+    </div>
+  </div>
+  <div class="table-content">
+    <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+  </div>
+</div>

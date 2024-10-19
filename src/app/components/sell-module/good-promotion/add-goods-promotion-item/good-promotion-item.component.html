@@ -1,0 +1,270 @@
+<tr class="block w-full">
+  <!-- Quantity At -->
+  <td class="inline-block w-2">
+    <input
+      class="w-full"
+      pInputText
+      type="text"
+      [ngClass]="checkValidValidator('standard')"
+      [(ngModel)]="rowData.standard"
+    />
+
+    <small
+      *ngIf="checkValidValidator('standard')"
+      class="p-error"
+      [innerHTML]="'info.required_field' | translate"
+    ></small>
+  </td>
+
+  <!-- Discount -->
+  <td class="inline-block w-2">
+    <p-inputNumber
+      class="w-full"
+      [ngClass]="checkValidValidator('discount')"
+      [(ngModel)]="rowData.discount"
+    ></p-inputNumber>
+
+    <small
+      *ngIf="checkValidValidator('discount')"
+      class="p-error"
+      [innerHTML]="'info.required_field' | translate"
+    ></small>
+  </td>
+
+  <!-- Account -->
+  <td class="inline-block w-2">
+    <div class="group-input">
+      <p-autoComplete
+        #accountEle
+        field="displaySelected"
+        class="p-inputtext-sm capitalize custom-autocomplete"
+        emptyMessage="Không tìm thấy dữ liệu"
+        [inputId]="'accountEle' + rowIndex"
+        [ngModel]="rowData.account"
+        [suggestions]="accountFilter"
+        [ngClass]="{ 'autocomplete-panel-hidden': rowData.account && accountFilter?.length }"
+        [showEmptyMessage]="true"
+        [autoHighlight]="true"
+        [lazy]="true"
+        [virtualScroll]="true"
+        [virtualScrollItemSize]="20"
+        [completeOnFocus]="true"
+        [showClear]="false"
+        appendTo="body"
+        (completeMethod)="filterAccount($event, rowData)"
+        (onFocus)="accountEle.handleDropdownClick($event)"
+        (input)="setAccountValue($event?.target?.value, rowData)"
+        (onClear)="onClearAccount(rowData)"
+        (onSelect)="onSelectAccount($event, rowData, accountDetail1Ele.inputId)"
+      >
+        <ng-template let-account pTemplate="item">
+          <div class="w-auto flex flex-nowrap align-content-center">
+            <div class="w-5rem border-right-1">
+              <p>{{ account.code }}</p>
+            </div>
+            <div class="w-26rem overflow-hidden border-right-1 px-1">
+              <marquee *ngIf="account.name?.length > 54"
+              >{{ account.name }}
+              </marquee>
+              <p class="mb-0" *ngIf="account.name?.length <= 54">
+                {{ account.name }}
+              </p>
+            </div>
+            <div class="w-6rem border-right-1 px-1">
+              <p>Tính chất {{ account.accGroup }}</p>
+            </div>
+            <div class="w-6rem px-1">
+              <p>
+                {{ account.closingDebit | number: "1.0-0" }}
+              </p>
+            </div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+      <div
+        class="p-inputgroup-addon cursor-pointer"
+        (click)="accountEle.clear()"
+      >
+        <i class="pi pi-times"></i>
+      </div>
+    </div>
+  </td>
+
+  <!-- Detail 1 -->
+  <td class="inline-block w-2">
+    <div class="group-input">
+      <p-autoComplete
+        #accountDetail1Ele
+        field="displaySelected"
+        class="p-inputtext-sm capitalize"
+        emptyMessage="Không tìm thấy dữ liệu"
+        [inputId]="'accountDetail1Ele' + rowIndex"
+        [ngModel]="rowData.detail1"
+        [ngClass]="{
+                'autocomplete-panel-hidden': rowData.detail1 && accountDetail1Filter?.length
+              }"
+        [suggestions]="accountDetail1Filter"
+        [showEmptyMessage]="true"
+        [autoHighlight]="true"
+        [delay]="500"
+        [disabled]="!rowData?.account || !rowData?.account?.hasDetails"
+        [completeOnFocus]="true"
+        [showClear]="false"
+        (completeMethod)="filterAccountDetail1($event, rowData)"
+        (onFocus)="accountDetail1Ele.handleDropdownClick($event)"
+        (onKeyUp)="onKeyUpAutoCompleteLazyLoading({
+                event: $event,
+                key: configAriseEnum.creditDetailCodeFirst
+              })
+              "
+        (input)="setAccountDetail1($event?.target?.value, rowData)"
+        (onClear)="onClearAccountDetail1(rowData, accountDetail1Ele.inputId)"
+        (onSelect)="onSelectAccountDetail1($event, rowData, accountDetail2Ele.inputId)"
+      >
+        <ng-template let-account pTemplate="item">
+          <div
+            *ngIf="account"
+            class="w-auto flex flex-nowrap align-content-center"
+          >
+            <div class="w-5rem border-right-1">
+              <p>{{ account.code }}</p>
+            </div>
+            <div class="w-3rem border-right-1 px-1">
+              <p>{{ account.warehouseCode }}</p>
+            </div>
+            <div class="w-26rem overflow-hidden border-right-1 px-1">
+              <marquee *ngIf="account.name?.length > 54">{{
+                  account.name
+                }}
+              </marquee>
+              <p class="mb-0" *ngIf="account.name?.length <= 54">
+                {{ account.name }}
+              </p>
+            </div>
+            <div class="w-6rem border-right-1 px-1">
+              <p>{{ account.closingStockQuantity || 0 }}</p>
+            </div>
+            <div class="w-6rem px-1">
+              <p>
+                {{ account.closingDebit || 0 | number: "1.0-0" }}
+              </p>
+            </div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+      <div
+        class="p-inputgroup-addon cursor-pointer"
+        (click)="accountDetail1Ele.clear()"
+      >
+        <i class="pi pi-times"></i>
+      </div>
+    </div>
+  </td>
+
+  <!-- Detail 2 -->
+  <td class="inline-block w-2">
+    <div class="group-input">
+      <p-autoComplete
+        #accountDetail2Ele
+        field="displaySelected"
+        class="p-inputtext-sm capitalize"
+        emptyMessage="Không tìm thấy dữ liệu"
+        [inputId]="'accountDetail2Ele' + rowIndex"
+        [ngModel]="rowData.detail2"
+        [ngClass]="{
+                'autocomplete-panel-hidden': rowData.detail2 && accountDetail2Filter?.length
+              }"
+        [suggestions]="accountDetail2Filter"
+        [showEmptyMessage]="true"
+        [autoHighlight]="true"
+        [delay]="500"
+        [disabled]="!rowData?.detail1 || !rowData?.detail1?.hasDetails"
+        [completeOnFocus]="true"
+        [showClear]="false"
+        (completeMethod)="filterAccountDetail2($event, rowData)"
+        (onFocus)="accountDetail2Ele.handleDropdownClick($event)"
+        (onKeyUp)="onKeyUpAutoCompleteLazyLoading({
+                event: $event,
+                key: configAriseEnum.creditDetailCodeFirst
+              })
+              "
+        (input)="setAccountDetail2($event?.target?.value, rowData)"
+        (onClear)="onClearAccountDetail2(rowData, accountDetail2Ele.inputId)"
+        (onSelect)="onSelectAccountDetail2($event, rowData)"
+      >
+        <ng-template let-account pTemplate="item">
+          <div
+            *ngIf="account"
+            class="w-auto flex flex-nowrap align-content-center"
+          >
+            <div class="w-5rem border-right-1">
+              <p>{{ account.code }}</p>
+            </div>
+            <div class="w-3rem border-right-1 px-1">
+              <p>{{ account.warehouseCode }}</p>
+            </div>
+            <div class="w-26rem overflow-hidden border-right-1 px-1">
+              <marquee *ngIf="account.name?.length > 54">{{
+                  account.name
+                }}
+              </marquee>
+              <p class="mb-0" *ngIf="account.name?.length <= 54">
+                {{ account.name }}
+              </p>
+            </div>
+            <div class="w-6rem border-right-1 px-1">
+              <p>{{ account.closingStockQuantity || 0 }}</p>
+            </div>
+            <div class="w-6rem px-1">
+              <p>
+                {{ account.closingDebit || 0 | number: "1.0-0" }}
+              </p>
+            </div>
+          </div>
+        </ng-template>
+      </p-autoComplete>
+      <div
+        class="p-inputgroup-addon cursor-pointer"
+        (click)="accountDetail2Ele.clear()"
+      >
+        <i class="pi pi-times"></i>
+      </div>
+    </div>
+  </td>
+
+  <td
+    *ngIf="isMobile"
+    style="min-width: 80px !important"
+    class="inline-block w-2"
+    pFrozenColumn
+    alignFrozen="right"
+    [frozen]="true"
+  >
+    <button
+      *ngIf="currentPageRole && currentPageRole.delete"
+      class="p-button-danger"
+      pButton
+      icon="pi pi-trash"
+      (click)="onRemove.emit()"
+    ></button>
+  </td>
+
+  <td
+    *ngIf="!isMobile"
+    style="min-width: 80px !important"
+    class="inline-block w-2"
+    pFrozenColumn
+    alignFrozen="right"
+    [frozen]="true"
+  >
+    <div class="w-full flex justify-content-center">
+      <button
+        *ngIf="currentPageRole && currentPageRole.delete"
+        pButton
+        class="p-button-danger"
+        icon="pi pi-trash"
+        (click)="onRemove.emit()"
+      ></button>
+    </div>
+  </td>
+</tr>

@@ -1,0 +1,13 @@
+:host::ng-deep {
+  .p-datatable-gridlines {
+    .p-datatable-wrapper {
+      .p-datatable-tbody {
+        tr {
+          td {
+            white-space: pre-wrap;
+          }
+        }
+      }
+    }
+  }
+}

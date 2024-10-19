@@ -1,0 +1,119 @@
+<p-toast></p-toast>
+<div *ngIf="display" class="grid">
+  <div class="col-12 p-0">
+    <div class="card card-table">
+      <h5
+        [translate]="!itemId ? 'label.salary_history_add' : 'label.salary_history_edit'"
+      ></h5>
+      <form [formGroup]="salaryHistoryForm" autocomplete="off">
+        <div class="grid w-full">
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="code">{{ "label.salary_history_code" | translate }}</label>
+            <input
+              type="text"
+              pInputText
+              formControlName="userCode"
+            />
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="employeesName">
+              {{ "label.salary_history_contract_type" | translate}}
+            </label>
+            <p-dropdown
+              [options]="contractTypes"
+              formControlName="contractTypeId"
+              [optionLabel]="'name'"
+              [optionValue]="'id'"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              [placeholder]="'label.salary_history_contract_type' | translate"
+            >
+            </p-dropdown>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="name">{{ "label.salary_history_fullname" | translate }}</label>
+            <p-dropdown
+              [options]="users"
+              formControlName="userId"
+              optionLabel="fullName"
+              [optionValue]="'id'"
+              [filter]="true"
+              filterBy="fullName"
+              [showClear]="true"
+              [placeholder]="'label.salary_history_fullname' | translate"
+            >
+              <ng-template let-data pTemplate="selectedItem">
+                <div class="flex align-items-start gap-2">
+                  <div>{{ data.username + ' | ' + data.fullName }}</div>
+                </div>
+              </ng-template>
+              <ng-template let-data pTemplate="item">
+                <div class="flex align-items-start gap-2">
+                  <div>{{ data.username + ' | ' + data.fullName }}</div>
+                </div>
+              </ng-template>
+            </p-dropdown>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="dateFrom">{{ "label.salary_history_effective_from" | translate }}</label>
+            <p-calendar
+              [style]="{ width: '100%' }"
+              [showIcon]="true"
+              inputId="icon"
+              formControlName="effectiveFrom"
+            ></p-calendar>
+          </div>
+
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="dateTo">{{ "label.salary_history_effective_to" | translate }}</label>
+            <p-calendar
+              [style]="{ width: '100%' }"
+              [showIcon]="true"
+              inputId="icon"
+              formControlName="effectiveTo"
+            ></p-calendar>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="note">{{ "label.salary_history_basic_salary" | translate }}</label>
+            <p-inputNumber formControlName="socialInsuranceSalary"></p-inputNumber>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="note">{{ "label.salary_history_net_salary" | translate }}</label>
+            <p-inputNumber formControlName="salaryTo"></p-inputNumber>
+          </div>
+          <div class="field col-12 md:col-4 flex flex-column">
+            <label htmlFor="note">Phần trăm lương nhận</label>
+            <p-inputNumber formControlName="percent"></p-inputNumber>
+          </div>
+          <div class="field col-12 flex flex-column">
+            <label htmlFor="note">{{ "label.salary_history_note" | translate }}</label>
+            <textarea
+              rows="3"
+              pInputTextarea
+              formControlName="note"
+            ></textarea>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="p-fluid p-formgrid grid mt-2">
+            <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+              <p-button
+                icon="pi pi-times"
+                (click)="onCancel.emit({})"
+                [label]="'button.backF6' | translate"
+                styleClass="p-button-outlined"
+              ></p-button>
+              <p-button
+                icon="pi pi-check"
+                (click)="onSubmit()"
+                [label]="'button.saveF8' | translate"
+              >
+              </p-button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

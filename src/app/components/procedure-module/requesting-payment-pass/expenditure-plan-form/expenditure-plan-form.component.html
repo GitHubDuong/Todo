@@ -1,0 +1,41 @@
+<p-dialog
+  [(visible)]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+  [header]="'Tạo kế hoạch dự chi'"
+  [modal]="true"
+  [style]="{width: '92vw'}"
+>
+  <ng-template pTemplate="body">
+    <div class="grid">
+      <div class="field col-12 md:col-6">
+        <label>Ghi chú</label>
+        <input pInputText class="w-full" [(ngModel)]="note">
+      </div>
+      <div class="field col-12 md:col-6">
+        <label>Kế hoạch dự chi</label>
+        <p-dropdown
+          [options]="expenditurePlanList"
+          [(ngModel)]="selectedExpenditurePlan"
+          (ngModelChange)="onChangeExpenditurePlan()"
+          [showClear]="true"
+          optionLabel="procedureNumber"
+          placeholder="Chọn kế hoạch dự chi"
+          appendTo="body"
+        ></p-dropdown>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <p-button
+      styleClass="p-button-outlined"
+      icon="pi pi-times"
+      label="{{ 'button.cancel' | translate }}"
+      (click)="onCancel()"
+    ></p-button>
+    <p-button
+      icon="pi pi-check"
+      label="{{ 'button.save' | translate }}"
+      (click)="onSave()"
+    ></p-button>
+  </ng-template>
+</p-dialog>

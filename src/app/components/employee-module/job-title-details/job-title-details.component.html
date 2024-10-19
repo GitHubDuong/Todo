@@ -1,0 +1,112 @@
+<app-table-layout
+  *ngIf="!display"
+  pageTitle="label.PositionDetail_management"
+>
+  <ng-template appTemplate="action_left">
+    <span class=" w-full p-input-icon-left">
+          <i class="pi pi-search"></i>
+          <input
+            #filter
+            [(ngModel)]="getParams.searchText"
+            pInputText
+            (keypress)="onSearch($event)"
+            [placeholder]="'label.search' | translate"
+            class="w-full"
+          />
+        </span>
+  </ng-template>
+  <ng-template appTemplate="action_right">
+    <button
+      *appHasAccess="{
+              menu: appConstant.MENU_TYPE.CHITIETCHUCDANH,
+              action: appConstant.PERMISSION_FUNC.ADD
+            }"
+      pButton
+      [label]="'button.addF7' | translate"
+      icon="pi pi-plus"
+      (click)="isEdit = false; showDialog()"
+    ></button>
+  </ng-template>
+  <ng-template appTemplate="content">
+    <app-table
+      [data]="lstPositionDetails"
+      [columns]="columns"
+      [loading]="loading"
+      [pageIndex]="getParams.page-1"
+      [pageSize]="getParams.pageSize"
+      [totalRecords]="totalRecords"
+      (load)="getPositionDetails($event)"
+    >
+      <ng-template appTemplate="action" let-item>
+        <button
+          *appHasAccess="{
+              menu: appConstant.MENU_TYPE.CHITIETCHUCDANH,
+              action: appConstant.PERMISSION_FUNC.DELETE
+            }"
+          pButton
+          class="p-button-danger"
+          icon="pi pi-trash"
+          (click)="onDelete(item.id)"
+        ></button>
+        <button
+          *appHasAccess="{
+              menu: appConstant.MENU_TYPE.CHITIETCHUCDANH,
+              action: appConstant.PERMISSION_FUNC.EDIT
+            }"
+          pButton
+          class="p-button-warning"
+          icon="pi pi-pencil"
+          (click)="getDetail(item.id)"
+        ></button>
+      </ng-template>
+    </app-table>
+  </ng-template>
+</app-table-layout>
+<ng-container
+  *appHasAccess="{
+    menu: appConstant.MENU_TYPE.CHITIETCHUCDANH,
+    action: appConstant.PERMISSION_FUNC.ADD || appConstant.PERMISSION_FUNC.EDIT
+  }"
+>
+  <app-job-title-details-form
+    #PositionDetailForm
+    [formData]="formData"
+    [isReset]="isReset"
+    [display]="display"
+    (onCancel)="
+      display = false; getPositionDetails(null, false); isReset = false
+    "
+    [isEdit]="isEdit"
+  >
+  </app-job-title-details-form>
+</ng-container>
+
+<p-confirmDialog
+  #cd
+  icon="pi pi-exclamation-triangle"
+  [style]="{ 'min-width': '45vw' }"
+>
+  <ng-template pTemplate="header">
+    <h4
+      class="m-0 text-white"
+      [translate]="'question.delete_PositionDetail_header'"
+    ></h4>
+  </ng-template>
+  <ng-template pTemplate="footer">
+    <button
+      type="button"
+      pButton
+      icon="pi pi-times"
+      [label]="'button.back' | translate"
+      (click)="cd.reject()"
+    ></button>
+    <button
+      class="p-button-danger"
+      type="button"
+      pButton
+      icon="pi pi-check"
+      [label]="'button.remove' | translate"
+      (click)="cd.accept()"
+    ></button>
+  </ng-template>
+</p-confirmDialog>

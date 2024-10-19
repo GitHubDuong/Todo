@@ -1,0 +1,52 @@
+<app-table-layout
+  *ngIf="!showForm"
+  pageTitle="Quản lý đơn mua hàng"
+>
+  <ng-template appTemplate="menu">
+    <p-tabMenu [model]="tabMenuList" [activeItem]="activeItem"></p-tabMenu>
+  </ng-template>
+  <ng-template appTemplate="action_left">
+    <app-procedure-filter
+      [filter]="filter"
+      (filterChange)="onFilterChange($event)"
+    ></app-procedure-filter>
+  </ng-template>
+  <ng-template appTemplate="content">
+    <app-table
+      [loading]="loading"
+      [data]="data"
+      [columns]="columns"
+      [pageIndex]="pageIndex"
+      [pageSize]="pageSize"
+      [totalRecords]="totalItem"
+      (load)="onLoad($event)"
+    >
+      <ng-template appTemplate="action" let-item>
+        <button
+          *ngIf="currentStatus == orderStatus.Pending"
+          pButton class="p-button-success" icon="pi pi-angle-double-right" (click)="onAccept(item)"></button>
+        <button pButton icon="pi pi-search-plus" (click)="onShowForm(item)"></button>
+        <button
+          *ngIf="currentStatus == orderStatus.Pending && item.shoulNotAccept"
+          pButton class="p-button-success" icon="pi pi-angle-double-left" (click)="onNotAccept(item)"></button>
+        <button
+          *ngIf="currentStatus == orderStatus.Pending && item.shoulDelete"
+          pButton class="p-button-danger" icon="pi pi-trash" (click)="onDelete(item.id)"></button>
+        <button *ngIf="item.isFinished" pButton class="p-button-info"
+                icon="pi pi-download" (click)="onExport(item.id)"></button>
+      </ng-template>
+    </app-table>
+  </ng-template>
+</app-table-layout>
+<ng-template #userCol let-row>
+  <div class="w-full">
+    <div>{{ row.userName }}</div>
+    <div class="flex justify-content-end font-bold">{{ row.amount }}</div>
+  </div>
+</ng-template>
+<app-request-equipment-order-form
+  *ngIf="showForm"
+  [(isDisplay)]="showForm"
+  [item]="selectedItem"
+>
+</app-request-equipment-order-form>

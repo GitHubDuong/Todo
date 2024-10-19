@@ -1,0 +1,27 @@
+:host ::ng-deep .p-frozen-column {
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-datatable-frozen-tbody {
+  font-weight: bold;
+}
+
+:host ::ng-deep .p-progressbar {
+  height: 0.5rem;
+}
+
+:host ::ng-deep .p-calendar {
+  .p-datepicker {
+    min-width: 175%;
+  }
+}
+
+:host ::ng-deep .dropdown-table {
+  height: 100%;
+  width: 100%;
+
+  .p-drangeDateArrayropdown {
+    height: 100%;
+    width: 100%;
+  }
+}

@@ -1,0 +1,104 @@
+<div *ngIf="display != true" class="px-2 py-3">
+  <h5 [translate]="'label.produce_planning'"></h5>
+  <p-tabMenu [model]="tabMenuItems" [activeItem]="activeItem"></p-tabMenu>
+  <div class="action flex justify-content-start md:justify-content-between flex-column md:flex-row">
+    <div class="p-input-icon-left grid">
+      <div class="col-6 md:col-3">
+        <p-calendar [showIcon]="true" inputId="icon" [(ngModel)]="startDate" dateFormat="dd-mm-yy"
+                    styleClass="mb-2"
+                    [placeholder]="'Ngày bắt đầu'" (onSelect)="getProductionOrderList()"></p-calendar>
+      </div>
+      <div class="col-6 md:col-3">
+        <p-calendar [showIcon]="true" inputId="icon" [(ngModel)]="endDate" dateFormat="dd-mm-yy"
+                    styleClass="mb-2"
+                    [placeholder]="'Ngày kết thúc'" (onSelect)="getProductionOrderList()"></p-calendar>
+      </div>
+      <div class="col-12 md:col-3">
+        <input #filter [(ngModel)]="getParams.searchText" pInputText type="text" (keypress)="getProductionOrderList()"
+               [placeholder]="'label.search' | translate" class="w-full mb-2" />
+      </div>
+      <div class="col-12 md:col-3">
+        <p-dropdown
+          styleClass="w-full"
+          [options]="userList"
+          [(ngModel)]="getParams.userId"
+          [showClear]="true"
+          (ngModelChange)="getProductionOrderList()"
+          placeholder="Nhân viên"
+          optionLabel="fullName"
+          optionValue="id"
+        ></p-dropdown>
+      </div>
+    </div>
+  </div>
+  <app-table
+    [data]="producesTemp"
+    [columns]="columns"
+    [loading]="loading"
+    [pageIndex]="getParams.page"
+    [pageSize]="getParams.pageSize"
+    [totalRecords]="totalRecords"
+    actionClass="w-3"
+    (load)="getProductionOrderList($event)"
+  >
+    <ng-template appTemplate="mobile" let-item>
+      <div class="grid mt-3">
+        <div class="col-6 flex align-items-center">
+          <span class="flex align-items-center font-bold">{{ item.procedureNumber }}</span>
+        </div>
+        <div class="col-6 flex justify-content-end">
+          <div class="bg-blue-500 text-0 border-round-md p-2">{{ item.procedureStatusName }}</div>
+        </div>
+      </div>
+      <div class="grid mt-2">
+        <div class="col-12"><label>Số lượng:</label>&nbsp;<span class="font-bold">{{ item.quantity }}</span></div>
+      </div>
+      <div class="grid mt-2">
+        <div class="col-12"><label>Ghi chú:</label>&nbsp;<span class="font-bold">{{ item.note }}</span></div>
+      </div>
+      <div class="flex justify-content-center mt-2 mb-3 gap-2">
+        <button *ngIf="currentStatus == OrderStatus.Pending" pButton class="p-button-success"
+                icon="pi pi-angle-double-right" (click)="accept(item.id)"></button>
+
+        <button pButton icon="pi pi-search-plus" (click)="onDetailProduce(item)"></button>
+        <button *ngIf="currentStatus == OrderStatus.Pending && item.shoulNotAccept"
+                pButton class="p-button-success"
+                icon="pi pi-angle-double-left" (click)="notAccept(item.id)"></button>
+
+        <button *ngIf="currentStatus == OrderStatus.Pending && item.shoulDelete"
+                pButton class="p-button-danger" icon="pi pi-trash"
+                (click)="delete(item.id)"></button>
+
+        <button pButton icon="pi pi-download" class="p-button-info" (click)="export(item.id)"></button>
+      </div>
+    </ng-template>
+    <ng-template appTemplate="action" let-item>
+      <div class="flex gap-2">
+        <button *ngIf="currentStatus == OrderStatus.Pending" pButton class="p-button-success"
+                icon="pi pi-angle-double-right" (click)="accept(item.id)"></button>
+
+        <button pButton icon="pi pi-search-plus" (click)="onDetailProduce(item)"></button>
+        <button *ngIf="currentStatus == OrderStatus.Pending && item.shoulNotAccept"
+                pButton class="p-button-success"
+                icon="pi pi-angle-double-left" (click)="notAccept(item.id)"></button>
+
+        <button *ngIf="currentStatus == OrderStatus.Pending && item.shoulDelete"
+                pButton class="p-button-danger" icon="pi pi-trash"
+                (click)="delete(item.id)"></button>
+
+        <button pButton icon="pi pi-download"
+                class="p-button-info" (click)="export(item.id)"></button>
+      </div>
+    </ng-template>
+  </app-table>
+</div>
+
+<app-produce-planning-form
+  (onFormClosing)="display = false"
+  [currentTab]="currentStatus"
+  [display]="display"
+  [plan]="selectedItem"
+  [detail]="orderDetail"
+  [planningProduceProductId]="planningProduceProductId"
+  (carInfoUpdated)="onDetailProduce(selectedItem)">
+</app-produce-planning-form>

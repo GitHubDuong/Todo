@@ -1,0 +1,278 @@
+<p-toast></p-toast>
+<div class="grid">
+    <ng-container *ngTemplateOutlet="taiKhoanNoTmp"></ng-container>
+    <ng-container *ngTemplateOutlet="chiTietNo1Tmp"></ng-container>
+    <ng-container *ngTemplateOutlet="chiTietNo2Tmp"></ng-container>
+</div>
+<add-edit-account-details
+    #addEditAccountDetail
+    [accountType]="currentAccountType"
+    (updateSuccessfull)="onAddEditFirstChildAccountSuccess($event)"
+></add-edit-account-details>
+<ng-template #taiKhoanNoTmp>
+    <div class="field col-12 md:col-4 flex flex-column">
+        <label htmlFor="debit"
+            >{{ "label.account" | translate }}
+            <span class="text-pink-400">*</span></label
+        >
+        <div class="flex">
+            <div class="p-inputgroup w-full mr-2">
+                <p-autoComplete
+                    #debitCodeTmp
+                    [ngModel]="fc['debitCode'].value"
+                    [suggestions]="debitCodeFilter"
+                    [ngClass]="{
+                        'autocomplete-panel-hidden':
+                            isHiddenAutoCompleteDebitCode
+                    }"
+                    [emptyMessage]="emptyMessageAutoComplete"
+                    [showEmptyMessage]="true"
+                    [autoHighlight]="true"
+                    [lazy]="true"
+                    [virtualScroll]="true"
+                    [virtualScrollItemSize]="20"
+                    [completeOnFocus]="true"
+                    [showClear]="false"
+                    [autoWidth]="false"
+                    (completeMethod)="filterDebitCode($event)"
+                    (onFocus)="debitCodeTmp.handleDropdownClick()"
+                    (input)="fc['debitCode'].setValue($event?.target?.value)"
+                    (onClear)="onClearDebitCode()"
+                    (onSelect)="onSelectDebitCode($event)"
+                    field="code"
+                    class="p-inputtext-sm capitalize"
+                    appendTo="body"
+                >
+                    <ng-template let-debit pTemplate="item">
+                        <div
+                            class="w-auto flex flex-nowrap align-content-center"
+                        >
+                            <div class="w-5rem border-right-1">
+                                <p>{{ debit.code }}</p>
+                            </div>
+                            <div
+                                class="w-26rem overflow-hidden border-right-1 px-1"
+                            >
+                                <marquee *ngIf="debit.name?.length > 54"
+                                    >{{ debit.name }}
+                                </marquee>
+                                <p
+                                    class="mb-0"
+                                    *ngIf="debit.name?.length <= 54"
+                                >
+                                    {{ debit.name }}
+                                </p>
+                            </div>
+                            <div class="w-6rem border-right-1 px-1">
+                                <p>Tính chất {{ debit.accGroup }}</p>
+                            </div>
+                            <div class="w-6rem px-1">
+                                <p>
+                                    {{ debit.closingDebit | number: "1.0-0" }}
+                                </p>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <div
+                    (click)="debitCodeTmp.clear()"
+                    class="p-inputgroup-addon cursor-pointer"
+                >
+                    <i class="pi pi-times"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #chiTietNo1Tmp>
+    <div class="field col-12 md:col-4 flex flex-column">
+        <label htmlFor="debit1" [translate]="'label.detail_1'"></label>
+        <div class="flex">
+            <div class="p-inputgroup w-full mr-2">
+                <p-autoComplete
+                    #debitDetailCodeFirstTmp
+                    [ngModel]="fc['debitDetailCodeFirst'].value"
+                    [ngClass]="{
+                        'autocomplete-panel-hidden':
+                            isHiddenAutoCompleteDebitDetailCodeFirst
+                    }"
+                    [emptyMessage]="emptyMessageAutoComplete"
+                    [suggestions]="debitDetailCodeFirstFilter"
+                    [showEmptyMessage]="true"
+                    [autoHighlight]="true"
+                    [delay]="500"
+                    [disabled]="!isDebitCodeHas || !isDebitCodeHasDetails"
+                    [completeOnFocus]="true"
+                    [showClear]="false"
+                    [autoWidth]="false"
+                    (completeMethod)="filterDebitDetailCodeFirst($event)"
+                    (onFocus)="debitDetailCodeFirstTmp.handleDropdownClick()"
+                    (input)="
+                        fc['debitDetailCodeFirst'].setValue(
+                            $event?.target?.value
+                        )
+                    "
+                    (onKeyUp)="
+                        onKeyUpAutoCompleteLazyLoadding({
+                            event: $event,
+                            key: configAriseEnum.debitDetailCodeFirst
+                        })
+                    "
+                    (onClear)="onClearDebitDetailCodeFirst()"
+                    (onSelect)="onSelectDebitDetailCodeFirst($event)"
+                    field="code"
+                    class="p-inputtext-sm capitalize"
+                    appendTo="body"
+                >
+                    <ng-template let-debit pTemplate="item">
+                        <div
+                            *ngIf="debit"
+                            class="w-auto flex flex-nowrap align-content-center"
+                        >
+                            <div class="w-10rem border-right-1">
+                                <p>{{ debit.code }}</p>
+                            </div>
+                            <div class="w-3rem border-right-1 px-1">
+                                <p>{{ debit.warehouseCode }}</p>
+                            </div>
+                            <div
+                                class="w-26rem overflow-hidden border-right-1 px-1"
+                            >
+                                <marquee *ngIf="debit.name?.length > 54"
+                                    >{{ debit.name }}
+                                </marquee>
+                                <p
+                                    class="mb-0"
+                                    *ngIf="debit.name?.length <= 54"
+                                >
+                                    {{ debit.name }}
+                                </p>
+                            </div>
+                            <div class="w-6rem border-right-1 px-1">
+                                <p>{{ debit.closingStockQuantity || 0 }}</p>
+                            </div>
+                            <div class="w-6rem px-1">
+                                <p>
+                                    {{
+                                        debit.closingDebit || 0
+                                            | number: "1.0-0"
+                                    }}
+                                </p>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <div
+                    (click)="debitDetailCodeFirstTmp.clear()"
+                    class="p-inputgroup-addon cursor-pointer"
+                >
+                    <i class="pi pi-times"></i>
+                </div>
+            </div>
+            <button
+                pButton
+                icon="pi pi-plus"
+                class="w-4rem"
+                (click)="onAddEditAccountDetail(true)"
+            ></button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #chiTietNo2Tmp>
+    <div class="field col-12 md:col-4 flex flex-column">
+        <label htmlFor="debit2" [translate]="'label.detail_2'"></label>
+        <div class="flex">
+            <div class="p-inputgroup w-full mr-2">
+                <p-autoComplete
+                    #debitDetailCodeSecondTmp
+                    [ngModel]="fc['debitDetailCodeSecond'].value"
+                    [ngClass]="{
+                        'autocomplete-panel-hidden':
+                            isHiddenAutoCompleteDebitDetailCodeSecond
+                    }"
+                    [emptyMessage]="emptyMessageAutoComplete"
+                    [suggestions]="debitDetailCodeSecondFilter"
+                    [showEmptyMessage]="true"
+                    [autoHighlight]="true"
+                    [delay]="500"
+                    [disabled]="
+                        !isDebitDetailCodeFirstHasDetails ||
+                        !isDebitDetailCodeFirstHas
+                    "
+                    [completeOnFocus]="true"
+                    [showClear]="false"
+                    [autoWidth]="false"
+                    (completeMethod)="filterDebitDetailCodeSecond($event)"
+                    (onKeyUp)="
+                        onKeyUpAutoCompleteLazyLoadding({
+                            event: $event,
+                            key: configAriseEnum.debitDetailCodeSecond
+                        })
+                    "
+                    (onFocus)="debitDetailCodeSecondTmp.handleDropdownClick()"
+                    (input)="
+                        fc['debitDetailCodeSecond'].setValue(
+                            $event?.target?.value
+                        )
+                    "
+                    (onClear)="onClearDebitDetailCodeSecond()"
+                    (onSelect)="onSelectDebitDetailCodeSecond($event)"
+                    field="code"
+                    class="p-inputtext-sm capitalize"
+                    appendTo="body"
+                >
+                    <ng-template let-debit pTemplate="item">
+                        <div
+                            *ngIf="debit"
+                            class="w-auto flex flex-nowrap align-content-center"
+                        >
+                            <div class="w-10rem border-right-1">
+                                <p>{{ debit.code }}</p>
+                            </div>
+                            <div class="w-3rem border-right-1 px-1">
+                                <p>{{ debit.warehouseCode }}</p>
+                            </div>
+                            <div
+                                class="w-26rem overflow-hidden border-right-1 px-1"
+                            >
+                                <marquee *ngIf="debit.name?.length > 54"
+                                    >{{ debit.name }}
+                                </marquee>
+                                <p
+                                    class="mb-0"
+                                    *ngIf="debit.name?.length <= 54"
+                                >
+                                    {{ debit.name }}
+                                </p>
+                            </div>
+                            <div class="w-6rem border-right-1 px-1">
+                                <p>{{ debit.closingStockQuantity || 0 }}</p>
+                            </div>
+                            <div class="w-6rem px-1">
+                                <p>
+                                    {{
+                                        debit.closingDebit || 0
+                                            | number: "1.0-0"
+                                    }}
+                                </p>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-autoComplete>
+                <div
+                    (click)="debitDetailCodeSecondTmp.clear()"
+                    class="p-inputgroup-addon cursor-pointer"
+                >
+                    <i class="pi pi-times"></i>
+                </div>
+            </div>
+            <button
+                pButton
+                icon="pi pi-plus"
+                class="w-4rem"
+                [disabled]="!firstComplete"
+                (click)="onAddEditAccountDetail(false)"
+            ></button>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,347 @@
+<div *ngIf="display" class="card card-table">
+  <h5
+    [translate]="
+      isEdit ? 'label.edit_quota_history' : 'label.add_quota_history'
+    "
+  ></h5>
+  <form [formGroup]="goodsQuotaForm">
+    <div class="grid w-full mt-3">
+      <div class="field col-12 md:col-3 flex flex-column">
+        <label htmlFor="orderNumber">{{
+            "label.formula_type" | translate
+          }}</label>
+        <p-dropdown
+          [options]="listQuotaRecipes"
+          [(ngModel)]="goodsQuotaForm.value.goodsQuotaRecipeId"
+          [formControlName]="'goodsQuotaRecipeId'"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          [optionValue]="'id'"
+          [placeholder]="'label.formula_type' | translate"
+          [ngClass]="checkValidValidator('goodsQuotaRecipeId')"
+        >
+          <ng-template pTemplate="item" let-item>
+            <div class="flex">
+              <span [pTooltip]="item.name" [tooltipPosition]="'bottom'">{{ item.name }}</span>
+            </div>
+          </ng-template>
+        </p-dropdown>
+        <small
+          *ngIf="checkValidValidator('goodsQuotaRecipeId')"
+          class="pl-1 p-error"
+          [innerHTML]="'info.required_field' | translate"
+        ></small>
+      </div>
+      <div class="field col-12 md:col-3 flex flex-column">
+        <label htmlFor="orderNumber">{{
+            "label.quota_history_code" | translate
+          }}</label>
+        <input
+          pInputText
+          [(ngModel)]="goodsQuotaForm.value.code"
+          formControlName="code"
+        />
+      </div>
+      <div class="field col-12 md:col-3 flex flex-column">
+        <label htmlFor="orderNumber">{{
+            "label.quota_history_name" | translate
+          }}</label>
+        <input
+          pInputText
+          [(ngModel)]="goodsQuotaForm.value.name"
+          formControlName="name"
+          [ngClass]="checkValidValidator('name')"
+        />
+        <small
+          *ngIf="checkValidValidator('name')"
+          class="pl-1 p-error"
+          [innerHTML]="'info.required_field' | translate"
+        ></small>
+      </div>
+      <div class="field col-12 md:col-3 flex flex-column">
+        <label htmlFor="orderNumber">{{
+            "label.formula_application_date" | translate
+          }}</label>
+        <p-calendar
+          [style]="{ width: '100%' }"
+          [(ngModel)]="goodsQuotaForm.value.date"
+          formControlName="date"
+          [ngClass]="checkValidValidator('date')"
+          [disabled]="true"
+        ></p-calendar>
+        <small
+          *ngIf="checkValidValidator('date')"
+          class="pl-1 p-error"
+          [innerHTML]="'info.required_field' | translate"
+        ></small>
+      </div>
+    </div>
+    <div class="grid w-full">
+      <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+        <label htmlFor="orderNumber">{{ "label.account" | translate }}</label>
+        <p-dropdown
+          [placeholder]="'label.account' | translate"
+          [(ngModel)]="account"
+          [options]="creditAccounts"
+          [optionValue]="'id'"
+          showClear="true"
+          [filter]="true"
+          filterBy="code, name"
+          [ngModelOptions]="{ standalone: true }"
+          (onChange)="chooseCreditCode($event)"
+          (onClear)="clearCreditCode($event)"
+        >
+          <ng-template
+            let-creditAccounts
+            pTemplate="creditAccounts"
+            pTemplate="selectedItem"
+          >
+            <span>{{ creditAccounts.code }} - {{ creditAccounts.name }}</span>
+          </ng-template>
+          <ng-template
+            let-creditAccounts
+            pTemplate="creditAccounts"
+            pTemplate="item"
+          >
+            <span>{{ creditAccounts.code }} - {{ creditAccounts.name }}</span>
+          </ng-template>
+        </p-dropdown
+        >
+      </div>
+      <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+        <label htmlFor="orderNumber">{{ "label.detail_1" | translate }}</label>
+
+        <p-dropdown
+          #creditDetailCodeFirst
+          [placeholder]="'label.detail_1' | translate"
+          [(ngModel)]="codeDetail1"
+          [options]="listDetail1"
+          [optionValue]="'code'"
+          showClear="true"
+          [filter]="true"
+          filterBy="label"
+          [disabled]="listDetail1.length == 0"
+          [ngModelOptions]="{ standalone: true }"
+          (onChange)="chooseDetail1($event)"
+          (onClear)="clearDetail1($event)"
+        >
+          <ng-template
+            let-listDetail1
+            pTemplate="listDetail1"
+            pTemplate="selectedItem"
+          >
+            <span>{{ listDetail1.code }} - {{ listDetail1.name }}</span>
+          </ng-template>
+          <ng-template let-listDetail1 pTemplate="listDetail1" pTemplate="item">
+            <span>{{ listDetail1.code }} - {{ listDetail1.name }}</span>
+          </ng-template>
+        </p-dropdown>
+      </div>
+      <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+        <label htmlFor="orderNumber">{{ "label.detail_2" | translate }}</label>
+        <p-dropdown
+          #creditDetailCodeSecond
+          [placeholder]="'label.detail_2' | translate"
+          [(ngModel)]="codeDetail2"
+          [options]="listDetail2"
+          [optionValue]="'code'"
+          showClear="true"
+          [filter]="true"
+          filterBy="label"
+          [disabled]="listDetail2.length == 0"
+          [ngModelOptions]="{ standalone: true }"
+          (onChange)="chooseDetail2($event)"
+        >
+          <ng-template
+            let-listDetail2
+            pTemplate="listDetail2"
+            pTemplate="selectedItem"
+          >
+            <span>{{ listDetail2.code }} - {{ listDetail2.name }}</span>
+          </ng-template>
+          <ng-template let-listDetail2 pTemplate="listDetail2" pTemplate="item">
+            <span>{{ listDetail2.code }} - {{ listDetail2.name }}</span>
+          </ng-template>
+        </p-dropdown>
+      </div>
+      <div class="field col-12 md:col-3 flex flex-column justify-content-end">
+        <button
+          pButton
+          [label]="'button.add' | translate"
+          class=""
+          icon="pi pi-plus"
+          (click)="addQuota()"
+          [disabled]="!account"
+        ></button>
+      </div>
+    </div>
+    <p-table
+      #dt1
+      [value]="listQuota"
+      dataKey="id"
+      [loading]="loading"
+      [rowHover]="true"
+      styleClass="p-datatable-gridlines mt-2"
+      [paginator]="false"
+      responsiveLayout="scroll'"
+      [showCurrentPageReport]="true"
+      [lazy]="true"
+      scrollable="true"
+      scrollDirection="both"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="w-1">
+            <div class="flex align-items-center">
+              <span [translate]="'label.stt'"></span>
+            </div>
+          </th>
+          <th class="w-2">
+            <div class="flex align-items-center">
+              <span [translate]="'label.material_code'"></span>
+            </div>
+          </th>
+          <th class="w-2">
+            <div class="flex align-items-center">
+              <span [translate]="'label.material_name'"></span>
+            </div>
+          </th>
+          <th class="w-2">
+            <div class="flex align-items-center">
+              <span [translate]="'left_menu.quota'"></span>
+            </div>
+          </th>
+          <th class="w-2">
+            <div class="flex align-items-center">
+              <span [translate]="'label.cost_of_capital'"></span>
+            </div>
+          </th>
+          <th class="w-2">
+            <div class="flex align-items-center">
+              <span [translate]="'label.into_money'"></span>
+            </div>
+          </th>
+          <th
+            class="w-1 flex justify-content-start md:justify-content-center"
+            *ngIf="isMobile"
+            style="min-width: 80px !important"
+          ></th>
+          <th
+            class="w-1 flex justify-content-start md:justify-content-center"
+            *ngIf="!isMobile"
+            style="min-width: 80px !important"
+            alignFrozen="right"
+            pFrozenColumn
+            [frozen]="true"
+          ></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+        <tr [pReorderableRow]="rowIndex">
+          <td class="w-1">
+            <i class="pi pi-bars" 
+                        [pReorderableRowHandle]="rowIndex"> 
+                    </i> 
+          </td>
+          <td class="w-2">
+            {{ getCode(item) }}
+          </td>
+          <td class="w-2">
+            {{ getName(item) }}
+          </td>
+          <td class="w-2">
+            <p-inputNumber
+              class="w-full"
+              [(ngModel)]="item.quantity"
+              [ngModelOptions]="{ standalone: true }"
+              [maxFractionDigits]="10"
+            ></p-inputNumber>
+          </td>
+          <td class="w-2">
+            <p-inputNumber
+              class="w-full"
+              [(ngModel)]="item.warehouse"
+              [ngModelOptions]="{ standalone: true }"
+            ></p-inputNumber>
+          </td>
+          <td class="w-2 flex justify-content-end pr-3">
+            <span>{{ formatNumber(item.quantity * item.warehouse) }}</span>
+          </td>
+
+          <td
+            class="w-1"
+            *ngIf="isMobile"
+            style="min-width: 80px !important"
+            alignFrozen="right"
+          >
+            <button
+              pButton
+              class="p-button-danger"
+              icon="pi pi-trash"
+              (click)="onDelete(rowIndex)"
+            ></button>
+          </td>
+          <td
+            *ngIf="!isMobile"
+            style="min-width: 80px !important"
+            alignFrozen="right"
+            pFrozenColumn
+            [frozen]="true"
+            class="w-1 flex justify-content-start md:justify-content-center"
+          >
+            <button
+              pButton
+              class="p-button-danger"
+              icon="pi pi-trash"
+              (click)="onDelete(rowIndex)"
+            ></button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr class="p-rowgroup-footer">
+          <td colspan="10" class="w-full pt-4 pb-4">
+            {{ "info.no_data" | translate }}
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="loadingbody">
+        <tr>
+          <td colspan="10" class="w-full pt-4 pb-4">
+            {{ "info.loading" | translate }}
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+        <div class="w-full flex">
+          <div class="w-5 pl-3">Tổng cộng</div>
+          <div class="w-2 flex justify-content-end pr-3"> {{ totalQuantity() | currency: ' ' }}</div>
+          <div class="w-2"></div>
+          <div class="w-2 flex justify-content-end pr-3">{{ totalValue() | currency: ' ' }}</div>
+        </div>
+      </ng-template>
+    </p-table>
+    <div class="row">
+      <div class="col-12">
+        <div class="p-fluid p-formgrid grid mt-2">
+          <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+            <p-button
+              icon="pi pi-times"
+              (click)="onCancel.emit({})"
+              [label]="'button.backF6' | translate"
+              styleClass="p-button-outlined"
+            ></p-button>
+            <p-button
+              icon="pi pi-check"
+              (click)="onSubmit()"
+              [label]="'button.saveF8' | translate"
+            >
+            </p-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

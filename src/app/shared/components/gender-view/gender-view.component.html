@@ -1,0 +1,16 @@
+<ng-container *ngIf="mode === 'badge'">
+  <ng-container *ngIf="value == 0">
+    <p-badge severity="success" [value]="'label.male' | translate"></p-badge>
+  </ng-container>
+  <ng-container *ngIf="value == 1">
+    <p-badge severity="danger" [value]="'label.female' | translate"></p-badge>
+  </ng-container>
+</ng-container>
+<ng-container *ngIf="mode === 'icon'">
+  <ng-container *ngIf="value == 0">
+    <img [ngSrc]="'assets/layout/images/man.png'" width="40" height="40" />
+  </ng-container>
+  <ng-container *ngIf="value == 1">
+    <img [ngSrc]="'assets/layout/images/woman.png'" width="40" height="40" />
+  </ng-container>
+</ng-container>

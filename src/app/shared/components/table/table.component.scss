@@ -1,0 +1,15 @@
+:host::ng-deep {
+  .p-button {
+    &.p-button-icon-only {
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+  }
+
+  .p-datatable {
+    .p-paginator {
+      margin-top: 0;
+      padding-bottom: 8px;
+    }
+  }
+}

@@ -1,0 +1,37 @@
+:host::ng-deep {
+  .p-datatable {
+    .p-datatable-header {
+      padding: 8px;
+
+      .header {
+        align-items: center;
+        gap: 8px;
+
+        .search-box {
+          margin-bottom: 0 !important;
+          width: auto;
+          @media screen and (max-width: 768px) {
+            width: 100%;
+          }
+        }
+
+        .button-list {
+          margin-bottom: 0 !important;
+          margin-top: unset !important;
+          width: auto;
+          @media screen and (max-width: 768px) {
+            width: 100%;
+          }
+        }
+      }
+    }
+
+    .p-datatable-wrapper {
+      .p-datatable-tbody {
+        .action {
+          justify-content: flex-end !important;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,319 @@
+<!--Dialog IF enable dialog mode-->
+<p-dialog *ngIf="dialog; else formContentTemplate"
+          [header]="isEdit ? ('label.requesting_payment_pass_edit' | translate) : ('label.requesting_payment_pass_add' | translate)"
+          [(visible)]="visible"
+          [style]="{width: '100vw'}">
+  <ng-container [ngTemplateOutlet]="formContentTemplate"></ng-container>
+  <ng-template pTemplate="footer">
+    <ng-container [ngTemplateOutlet]="footerActionsTemplate"></ng-container>
+  </ng-template>
+</p-dialog>
+
+<!--Form content-->
+<ng-template #formContentTemplate>
+  <div *ngIf="visible" class="grid grid-nogutter">
+    <div class="col-12 p-0">
+      <div class="px-2 py-3">
+        <h5 *ngIf="!dialog"
+            [translate]="isEdit ? 'label.requesting_payment_pass_edit' : 'label.requesting_payment_pass_add'"></h5>
+        <form [formGroup]="detailForm" autocomplete="off">
+          <div class="grid w-full">
+            <div class="field col-12 md:col-4 flex flex-column">
+              <label htmlFor="procedureNumber">{{ "label.requesting_payment_pass_procedure_id" | translate }}</label>
+              <input
+                id="procedureNumber"
+                type="text"
+                pInputText
+                [formControlName]="'procedureNumber'"
+              />
+            </div>
+
+            <div class="field col-12 md:col-4 flex flex-column">
+              <label htmlFor="outAt"
+              >{{
+                  "label.date" | translate
+                }}<span class="text-pink-400">*</span></label
+              >
+              <p-calendar
+                class="w-full p-calendar-width-full"
+                [showIcon]="true"
+                formControlName="date"
+                dateFormat="dd-mm-yy"
+                [placeholder]="'label.date' | translate"
+                [showTime]="true" [showSeconds]="true"
+                appendTo="body"
+                [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('date')}"
+              ></p-calendar>
+            </div>
+
+            <div class="field col-12 md:col-4 flex flex-column">
+              <label htmlFor="approved">{{ "label.payment_method" | translate }}</label>
+              <p-dropdown
+                class="mr-3"
+                [options]="paymentMethods"
+                [optionLabel]="'name'"
+                appendTo="body"
+                [optionValue]="'id'"
+                [showClear]="true"
+                [placeholder]="'label.payment_method' | translate"
+                formControlName="paymentMethod"
+                [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('paymentMethod')}"
+              >
+              </p-dropdown>
+            </div>
+
+            <div class="field col-12 md:col-12 flex flex-column">
+              <label htmlFor="reason">{{ "label.note" | translate }}</label>
+              <textarea
+                pInputTextarea
+                rows="5"
+                formControlName="note"
+                placeholder="Nhập lý do"
+                [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('note')}">
+            </textarea>
+            </div>
+            <div class="field col-12 md:col-4">
+              <label>Đề suất mua sắm</label>
+              <p-dropdown
+                styleClass="w-full"
+                [options]="requestEquipmentList"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Chọn đề suất mua sắm"
+                formControlName="requestEquipmentId"
+              >
+              </p-dropdown>
+            </div>
+            <div class="field col-12 md:col-4">
+              <label>Báo giá mua hàng</label>
+              <p-dropdown
+                styleClass="w-full"
+                [options]="requestEquipmentOrderList"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Chọn báo giá mua hàng"
+                formControlName="requestEquipmentOrderId">
+              </p-dropdown>
+            </div>
+            <div class="field col-12 md:col-4">
+              <label>Đề nghị tạm ứng</label>
+              <p-dropdown
+                styleClass="w-full"
+                [options]="advancedPaymentList"
+                optionLabel="name"
+                optionValue="id"
+                placeholder="Chọn đề nghị tạm ứng"
+                formControlName="advancePaymentId">
+              </p-dropdown>
+            </div>
+            <div class="field col-12">
+              <app-multiple-upload
+                [fileLink]="fileLink"
+                (removeFile)="onFileLinkChange($event)"
+                (attackFiles)="onAttachFile($event)"
+              ></app-multiple-upload>
+            </div>
+          </div>
+          <p-table
+            #dt
+            dataKey="id"
+            styleClass="p-datatable-gridlines mt-2"
+            responsiveLayout="scroll'"
+            scrollable="true"
+            scrollDirection="both"
+            [value]="rows.controls"
+            [rows]="10"
+            [rowHover]="true"
+          >
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="w-1 flex justify-content-center">
+                  {{ "label.order_number" | translate }}
+                </th>
+
+                <th class="w-5 flex justify-content-center">
+                  {{ "label.content" | translate }}
+                </th>
+
+                <th class="w-2 flex justify-content-center">
+                  {{ "label.amount_of_money" | translate }}
+                </th>
+
+                <th class="w-3 flex justify-content-center">
+                  {{ "label.note" | translate }}
+                </th>
+
+                <th
+                  class="w-1 flex justify-content-start md:justify-content-center"
+                  alignFrozen="right"
+                  pFrozenColumn
+                  [frozen]="true"
+                >
+                  <button
+                    pButton
+                    icon="pi pi-plus"
+                    (click)="addItem()"
+                  ></button>
+                </th>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="body" let-rowIndex="rowIndex">
+              <ng-container formArrayName="items">
+                <ng-container [formGroupName]="rowIndex">
+                  <tr>
+                    <td class="w-1 flex justify-content-center">
+                      <strong>{{ rowIndex + 1 }}</strong>
+                    </td>
+
+                    <td class="w-5 flex justify-content-center">
+                      <input
+                        pInputText
+                        formControlName="content"
+                        [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'content')}"
+                        class="w-full">
+                    </td>
+
+                    <td class="w-2 flex justify-content-center">
+                      <p-inputNumber
+                        class="w-full"
+                        [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'amount')}"
+                        formControlName="amount">
+                      </p-inputNumber>
+                    </td>
+
+                    <td class="w-3 flex justify-content-center">
+                      <input
+                        pInputText
+                        formControlName="note"
+                        [ngClass]="{'ng-invalid ng-dirty': checkInvalidRow(rowIndex,'note')}"
+                        class="w-full">
+                    </td>
+
+                    <td
+                      style="min-width: 80px !important"
+                      class="w-1 flex justify-content-start md:justify-content-center"
+                      pFrozenColumn
+                      alignFrozen="right"
+                      [frozen]="true">
+                      <button
+                        pButton
+                        class="p-button-danger"
+                        icon="pi pi-trash"
+                        (click)="deleteItem(rowIndex)"
+                      ></button>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+            </ng-template>
+
+            <ng-template pTemplate="emptymessage">
+              <tr class="p-rowgroup-footer hover:bg-white">
+                <td colspan="12"
+                    class="w-full flex justify-content-center pt-4 pb-4 border-left-none border-right-none border-bottom-none">
+                  {{ "info.no_data" | translate }}
+                </td>
+              </tr>
+            </ng-template>
+
+            <ng-template pTemplate="footer">
+              <tr class="footer-row">
+                <td colspan="2" class="w-6 flex justify-content-end">
+                  {{ "label.total" | translate | uppercase }}
+                </td>
+
+                <td class="w-2 flex justify-content-end">
+                  {{ sumAmount | number }}
+                </td>
+
+                <td class="w-3 flex justify-content-center">
+                </td>
+
+                <td
+                  style="min-width: 80px !important"
+                  class="w-1 flex justify-content-start md:justify-content-center"
+                  pFrozenColumn
+                  alignFrozen="right"
+                  [frozen]="true"
+                >
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="w-6 flex justify-content-end">
+                  {{ "label.requesting_payment_pass_advanced_mount" | translate }}
+                </td>
+
+                <td class="w-2 flex justify-content-center">
+                  <p-inputNumber
+                    class="w-full flex justify-content-center"
+                    [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('advanceAmount')}"
+                    formControlName="advanceAmount">
+                  </p-inputNumber>
+                </td>
+
+                <td colspan="2" class="w-4 flex justify-content-center">
+
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="w-6 flex justify-content-end">
+                  {{ "label.requesting_payment_pass_refund_mount" | translate }}
+                </td>
+
+                <td class="w-2 flex justify-content-end">
+                  <p-inputNumber
+                    class="w-full"
+                    [ngClass]="{'ng-invalid ng-dirty': checkInvalidField('refundAmount')}"
+                    formControlName="refundAmount">
+                  </p-inputNumber>
+                </td>
+
+                <td colspan="2" class="w-4 flex justify-content-center">
+
+                </td>
+              </tr>
+
+              <tr>
+                <td colspan="2" class="w-6 flex justify-content-end">
+                  {{ "label.requesting_payment_pass_additional_mount" | translate }}
+                <td class="w-2 flex justify-content-end">
+                  {{ totalAmount | number }}
+                </td>
+                <td colspan="2" class="w-4 flex justify-content-center"></td>
+              </tr>
+            </ng-template>
+          </p-table>
+
+          <div *ngIf="!dialog" class="col-12">
+            <div class="p-fluid p-formgrid grid mt-2">
+              <div class="field col-12 gap-8 flex justify-content-end mt-4 p-0">
+                <ng-container [ngTemplateOutlet]="footerActionsTemplate"></ng-container>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Footer buttons -->
+<ng-template #footerActionsTemplate>
+  <p-checkbox [(ngModel)]="isImmediate" (ngModelChange)="onChangeImmediate()" label="Cần chi gấp"
+              [binary]="true"></p-checkbox>
+  <p-button
+    icon="pi pi-times"
+    (click)="onBack()"
+    [label]="'button.backF6' | translate"
+    styleClass="p-button-outlined"
+  ></p-button>
+  <p-button
+    icon="pi pi-check"
+    (click)="submit()"
+    [label]="'button.saveF8' | translate"
+  >
+  </p-button>
+</ng-template>

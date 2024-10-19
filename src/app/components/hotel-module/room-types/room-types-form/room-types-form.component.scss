@@ -1,0 +1,13 @@
+:host ::ng-deep {
+  .required{
+      color: red;
+  }
+  .amenity{
+      .grid-border{
+          border:1px solid #dee2e6,
+      }
+  }
+  .input-error {
+      border: red 1px solid;
+  }
+}

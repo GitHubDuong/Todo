@@ -1,0 +1,91 @@
+<app-form-layout
+  [isDisplay]="visible"
+  [header]="header"
+  [actionList]="actionList"
+>
+  <ng-template appTemplate="body">
+    <div class="grid">
+      <div class="col-12 mt-2">
+        <div class="grid border-1 border-primary	p-2 border-round-md">
+          <div class="field col-12 md:col-6">
+            <label>Chốt công an</label>
+            <p-dropdown
+              [options]="policePostList"
+              [(ngModel)]="selectedPolicePost"
+              (ngModelChange)="onChangePolicePost()"
+              [showClear]="true"
+              optionLabel="label"
+              styleClass="w-full"
+              placeholder="Chọn chốt công an"
+            ></p-dropdown>
+          </div>
+          <div class="field col-12 md:col-6">
+            <label>Vị trí phát sinh</label>
+            <input
+              pInputText
+              class="w-full"
+              [(ngModel)]="location"
+            >
+          </div>
+          <div class="field col-12 md:col-6">
+            <label>Số tiền</label>
+            <p-inputNumber
+              class="w-full"
+              [(ngModel)]="amount"
+            ></p-inputNumber>
+          </div>
+          <div class="field col-12 md:col-6">
+            <label>Ghi chú</label>
+            <input
+              pInputText
+              class="w-full"
+              [(ngModel)]="note"
+            >
+          </div>
+          <div class="col-12 flex justify-content-end">
+            <button pButton label="Thêm" (click)="onAddPolicePost()"></button>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">
+        <p-table [value]="itemDetail">
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="w-1">STT</th>
+              <th class="w-2">Thời gian</th>
+              <th class="w-1">Kinh độ</th>
+              <th class="w-1">Vĩ độ</th>
+              <th class="w-2">Vị trí</th>
+              <th class="w-2">Số tiền</th>
+              <th class="w-3">Ghi chú</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-row let-idx="rowIndex">
+            <tr>
+              <td class="w-1 px-2">{{ idx + 1 }}</td>
+              <td class="w-2 px-2">{{ row.date | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td class="w-1 px-2">{{ row.longitude }}</td>
+              <td class="w-1 px-2">{{ row.latitude }}</td>
+              <td class="w-2 px-2">{{ row.location }}</td>
+              <td class="w-2 px-2">
+                <div class="w-full flex justify-content-end">{{ row.amount | number }}</div>
+              </td>
+              <td class="w-3 px-2">{{ row.note }}</td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="footer">
+            <tr>
+              <td colspan="5" class="w-7">Tổng tiền</td>
+              <td class="w-2 px-2">
+                <div class="w-full flex justify-content-end">
+                  <span>{{totalAmount | number}}</span>
+              </div>
+              </td>
+              <td class="w-3 px-2"></td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+  </ng-template>
+</app-form-layout>

@@ -1,0 +1,117 @@
+<div class="w-full h-full">
+  <div class="w-full flex justify-content-start p-3">
+    <div class="w-full flex justify-content-between">
+      <p-calendar
+        placeholder="Chọn ngày"
+        [(ngModel)]="selectedDate"
+        [showIcon]="true"
+        (ngModelChange)="getMealByDate()"
+      ></p-calendar>
+      <button
+        pButton
+        label="Refresh"
+        class="p-button-success"
+        icon="pi pi-refresh"
+        (click)="onRefresh()"
+      ></button>
+    </div>
+  </div>
+  <div class="grid">
+    <ng-container *ngFor="let item of mealSummaryList">
+      <div class="col-6 sm:col-3 flex flex-column">
+        <app-meal-summary
+          [header]="item.header"
+          [num]="item.num"
+          [color]="item.color"
+          [bgColor]="item.bgColor"
+          [icon]="item.icon"
+          (click)="onSelectMealType(item)"
+        ></app-meal-summary>
+      </div>
+    </ng-container>
+  </div>
+  <div *ngIf="canAddMeal()" class="grid">
+    <div class="col-12 md:col-2">
+      <p-dropdown
+        [options]="userTypeOpts"
+        [ngModel]="userType"
+        (ngModelChange)="onChangeType($event)"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Nhân viên/Khách hàng"
+      ></p-dropdown>
+    </div>
+    <div class="col-12 md:col-2">
+      <p-dropdown
+        [options]="mealTypeOpts"
+        [(ngModel)]="selectedMeal"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Chọn suất ăn"
+      ></p-dropdown>
+    </div>
+    <ng-container *ngIf="userType">
+      <div class="col-12 md:col-8 grid">
+        <div class="col-12 md:col-4">
+          <p-dropdown
+            *ngIf="userType == userTypes.staff"
+            [options]="userOpts"
+            [(ngModel)]="selectedUser"
+            optionLabel="label"
+            placeholder="Chọn người dùng"
+            [filter]="true"
+            filterBy="label"
+          ></p-dropdown>
+          <input
+            *ngIf="userType == userTypes.customer"
+            pInputText class="w-full"
+            placeholder="Nhập tên khách hàng"
+            [(ngModel)]="customer">
+        </div>
+        <div class="col-12 md:col-4">
+          <input
+            pInputText
+            [(ngModel)]="address"
+            class="w-full"
+            placeholder="Nhập địa chỉ">
+        </div>
+        <div class="col-12 md:col-2">
+          <p-inputNumber
+            [(ngModel)]="mealNumber"
+            [showButtons]="true"
+            buttonLayout="horizontal"
+            spinnerMode="horizontal"
+            decrementButtonClass="p-button-secondary"
+            incrementButtonClass="p-button-secondary"
+            incrementButtonIcon="pi pi-plus"
+            decrementButtonIcon="pi pi-minus">
+          </p-inputNumber>
+        </div>
+        <div class="col-12 md:col-2 flex justify-content-end">
+          <button pButton label="Thêm" (click)="onAddMeal()" [disabled]="isDisable() && canAddMeal()"></button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="p-2">
+    <app-table
+      [loading]="loading"
+      [data]="data"
+      [columns]="columns"
+      [paging]="false"
+      (load)="onLoad($event)"
+    >
+      <ng-template appTemplate="action" let-item>
+        <div class="flex justify-content-center">
+          <button
+            pButton
+            class="p-button-danger"
+            icon="pi pi-trash"
+            *ngIf="canAddMeal()"
+            (click)="onDeleteMeal(item)"
+          ></button>
+        </div>
+      </ng-template>
+    </app-table>
+  </div>
+</div>
